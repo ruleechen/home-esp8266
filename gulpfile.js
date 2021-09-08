@@ -7,7 +7,7 @@ const rename = require("gulp-rename");
 const resource = {
   css: ["web/*.css"],
   js: ["web/*.js", "!web/mithril.min.js"],
-  copy: ["web/*.htm", "web/fav.ico", "web/mithril.min.js"],
+  copy: ["web/*.htm", "web/fav.ico", "web/mithril.min.js", "web/README.md"],
 };
 
 const paths = {
