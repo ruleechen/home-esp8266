@@ -1,5 +1,5 @@
-#ifndef SystemHelpers_h
-#define SystemHelpers_h
+#ifndef GlobalHelpers_h
+#define GlobalHelpers_h
 
 #include <vector>
 #include <Arduino.h>
@@ -151,4 +151,4 @@ namespace Victor {
 
 } // namespace Victor
 
-#endif // SystemHelpers_h
+#endif // GlobalHelpers_h
