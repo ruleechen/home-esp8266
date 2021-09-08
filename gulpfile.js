@@ -11,7 +11,7 @@ const resource = {
 };
 
 const paths = {
-  dist: "./dist",
+  dist: "./data/web",
 };
 
 function clean() {
