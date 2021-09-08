@@ -24,5 +24,16 @@
   "license": "MIT",
   "frameworks": "arduino",
   "platforms": "espressif8266",
-  "examples": []
+  "examples": [],
+  "export": {
+    "exclude": [
+      "src/main.cpp"
+    ],
+    "include": [
+      "data/*",
+      "examples/*",
+      "include/*",
+      "src/*"
+    ]
+  }
 }
