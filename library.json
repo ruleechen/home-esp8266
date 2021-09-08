@@ -1,0 +1,28 @@
+{
+  "name": "home-esp8266",
+  "version": "0.0.1",
+  "description": "ESP8266 foundation on Arduino",
+  "keywords": [
+    "esp8266",
+    "arduino"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ruleechen/home-esp8266.git"
+  },
+  "authors": [
+    {
+      "name": "Rulee Chen",
+      "email": "rulee@live.cn",
+      "url": "https://github.com/ruleechen",
+      "maintainer": true
+    }
+  ],
+  "dependencies": {
+    "bblanchon/ArduinoJson": "^6.18.0"
+  },
+  "license": "MIT",
+  "frameworks": "*",
+  "platforms": "*",
+  "examples": []
+}
