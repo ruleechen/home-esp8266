@@ -24,7 +24,17 @@
   "license": "MIT",
   "frameworks": "arduino",
   "platforms": "espressif8266",
-  "examples": [],
+  "examples": [
+    {
+      "name": "web",
+      "base": "examples/web",
+      "files": [
+        "WebPortal.h",
+        "WebPortal.cpp",
+        "main.cpp"
+      ]
+    }
+  ],
   "export": {
     "exclude": [
       "src/main.cpp"
