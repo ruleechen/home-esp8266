@@ -33,7 +33,6 @@ namespace Victor::Components {
   }
 
   void VictorWeb::_registerHandlers() {
-    _server->serveStatic("/fav.ico", LittleFS, "/web/fav.ico", "max-age=43200");
     _server->serveStatic("/style.min.css", LittleFS, "/web/style.min.css", "max-age=43200");
     _server->serveStatic("/mithril.min.js", LittleFS, "/web/mithril.min.js", "max-age=43200");
     _server->serveStatic("/app.min.js", LittleFS, "/web/app.min.js");
