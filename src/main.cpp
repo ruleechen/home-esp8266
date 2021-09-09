@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include <ESP8266mDNS.h>
 
 #include "BuiltinLed.h"
 #include "VictorOTA.h"
@@ -30,12 +29,7 @@ void setup(void) {
   webPortal.onRequestEnd = []() { builtinLed->turnOff(); };
   webPortal.setup();
 
-  timer.setInterval(10 * 1000, []() {
-    // https://github.com/Mixiaoxiao/Arduino-HomeKit-ESP8266/issues/9
-    if (MDNS.isRunning()) {
-      MDNS.announce();
-    }
-  });
+  timer.setInterval(1 * 1000, []() { console.log("heartbeat"); });
 
   console.log(F("setup complete"));
   builtinLed->flash();
