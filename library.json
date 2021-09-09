@@ -1,6 +1,6 @@
 {
   "name": "home-esp8266",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "ESP8266 foundation on Arduino",
   "keywords": [
     "esp8266",
@@ -33,7 +33,9 @@
       "data/*",
       "examples/*",
       "include/*",
-      "src/*"
+      "src/*",
+      "LICENSE",
+      "README.md"
     ]
   }
 }
