@@ -133,6 +133,7 @@ namespace Victor::Components {
     }
     // send
     DynamicJsonDocument res(512);
+    res[F("localHost")] = VictorWifi::getLocalHostName();
     res[F("running")] = GlobalHelpers::timeSince(0);
     res[F("wifiMode")] = strWifiMode;
     res[F("joined")] = ssidJoined;

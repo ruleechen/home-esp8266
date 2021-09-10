@@ -11,7 +11,7 @@ namespace Victor::Components {
       wifiMode = WIFI_AP_STA;
     }
 
-    auto hostName = getHostName(true);
+    auto hostName = getHostName();
     auto isApEnabled = ((wifiMode & WIFI_AP) != 0);
     if (isApEnabled) {
       // IPAddress apIp(192, 168, 1, 33);
@@ -65,6 +65,10 @@ namespace Victor::Components {
     id.toUpperCase();
     id = id.substring(id.length() - 6);
     return id;
+  }
+
+  String VictorWifi::getLocalHostName() {
+    return getHostName(false);
   }
 
   String VictorWifi::getHostName(bool includeVersion) {

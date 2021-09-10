@@ -13,7 +13,8 @@ namespace Victor::Components {
     static void reset();
     static void join(String ssid, String password, bool waitForConnecting = true);
     static String getHostId();
-    static String getHostName(bool includeVersion = false);
+    static String getLocalHostName();
+    static String getHostName(bool includeVersion = true);
 
    private:
     static void _onWifiEvent(WiFiEvent_t event);

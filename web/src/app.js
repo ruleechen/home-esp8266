@@ -125,6 +125,12 @@ const HomeView = {
       this.state.loading = false;
       this.state.rows = [
         ["Running", res.running],
+        [
+          "Local Host",
+          res.localHost
+            ? m("a", { href: `http://${res.localHost}` }, res.localHost)
+            : "",
+        ],
         ["Wifi Mode", res.wifiMode],
         ["Joined", res.joined ? res.joined : "-"],
         [
