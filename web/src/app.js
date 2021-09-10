@@ -1,4 +1,4 @@
-(function (win) {
+((win) => {
   const _init = [];
   const vic = (fn) => {
     _init.push(fn);
@@ -49,7 +49,9 @@ vic.getRoute = () => {
   return config;
 };
 
-vic.getLoading = () => [vic.getNav(), m("div.loading", "Loading....")];
+vic.confirm = () => confirm("Are you sure you want to do it?");
+
+vic.getLoading = () => [vic.getNav(), m("div.loading", "Loading")];
 
 vic.navItem = (href, text) => {
   const curr = m.route.get();
@@ -57,7 +59,7 @@ vic.navItem = (href, text) => {
   return m(m.route.Link, { href, class: match ? "match" : "" }, text);
 };
 
-vic.renderSelect = (name, value, options) => {
+vic.mSelect = (name, value, options) => {
   return m(
     "select",
     { name },
@@ -67,7 +69,7 @@ vic.renderSelect = (name, value, options) => {
   );
 };
 
-vic.renderTable = (data) => {
+vic.mTable = (data) => {
   let rows = [];
   if (data.header && data.header.length > 0) {
     rows.push(
@@ -90,7 +92,7 @@ vic.renderTable = (data) => {
   return m("table", rows);
 };
 
-function renderSelectionList(type, name, values, list) {
+const mSelectionList = (type, name, values, list) => {
   const items = list.map((item) =>
     m("li", [
       m("input", {
@@ -104,31 +106,31 @@ function renderSelectionList(type, name, values, list) {
     ])
   );
   return m("ul", items);
-}
+};
 
-vic.renderRadioList = (name, values, list) =>
-  renderSelectionList("radio", name, values, list);
-vic.renderCheckList = (name, values, list) =>
-  renderSelectionList("checkbox", name, values, list);
+vic.mRadioList = (name, values, list) =>
+  mSelectionList("radio", name, values, list);
+vic.mCheckList = (name, values, list) =>
+  mSelectionList("checkbox", name, values, list);
 
-const HomeView = {
-  state: {
+const HomeView = (() => {
+  const state = {
     loading: true,
     rows: [],
-  },
-  oninit() {
-    this.state.loading = true;
+  };
+  const oninit = () => {
+    state.loading = true;
     m.request({
       method: "GET",
       url: "/home",
     }).then((res) => {
-      this.state.loading = false;
-      this.state.rows = [
+      state.loading = false;
+      state.rows = [
         ["Running", res.running],
         [
           "Local Host",
           res.localHost
-            ? m("a", { href: `http://${res.localHost}` }, res.localHost)
+            ? m("a", { href: `http://${res.localHost}.local` }, res.localHost)
             : "",
         ],
         ["Wifi Mode", res.wifiMode],
@@ -151,38 +153,41 @@ const HomeView = {
       ];
       m.redraw();
     });
-  },
-  view() {
-    if (this.state.loading) {
-      return vic.getLoading();
-    }
-    return [
-      vic.getNav(),
-      m("h3", "Home"),
-      m("p", [
-        vic.renderTable({
-          header: null,
-          rows: this.state.rows,
-        }),
-      ]),
-    ];
-  },
-};
+  };
+  return {
+    oninit,
+    view() {
+      if (state.loading) {
+        return vic.getLoading();
+      }
+      return [
+        vic.getNav(),
+        m("h3", "Home"),
+        m("p", [
+          vic.mTable({
+            header: null,
+            rows: state.rows,
+          }),
+        ]),
+      ];
+    },
+  };
+})();
 
-const FileSystemView = {
-  state: {
+const FileSystemView = (() => {
+  const state = {
     loading: true,
     infos: [],
     files: [],
-  },
-  oninit() {
-    this.state.loading = true;
+  };
+  const oninit = () => {
+    state.loading = true;
     m.request({
       method: "GET",
       url: "/fs",
     }).then((res) => {
-      this.state.loading = false;
-      this.state.infos = [
+      state.loading = false;
+      state.infos = [
         ["Total Bytes", res.totalBytes],
         ["Used Bytes", res.usedBytes],
         ["Max Path Length", res.maxPathLength],
@@ -190,48 +195,51 @@ const FileSystemView = {
         ["Block Size", res.blockSize],
         ["Page Size", res.pageSize],
       ];
-      this.state.files = res.files;
+      state.files = res.files;
       m.redraw();
     });
-  },
-  view() {
-    if (this.state.loading) {
-      return vic.getLoading();
-    }
-    return [
-      vic.getNav(),
-      m("h3", "File System"),
-      m("p", [
-        vic.renderTable({
-          header: ["Storage", ""],
-          rows: this.state.infos,
-        }),
-      ]),
-      m("p", [
-        vic.renderTable({
-          header: ["Files", "Bytes"],
-          rows: Object.keys(this.state.files).map((path) => [
-            m(
-              m.route.Link,
-              {
-                href: m.buildPathname("/fs/file/:path", { path }),
-              },
-              path
-            ),
-            this.state.files[path],
-          ]),
-        }),
-      ]),
-    ];
-  },
-};
+  };
+  return {
+    oninit,
+    view() {
+      if (state.loading) {
+        return vic.getLoading();
+      }
+      return [
+        vic.getNav(),
+        m("h3", "File System"),
+        m("p", [
+          vic.mTable({
+            header: ["Storage", ""],
+            rows: state.infos,
+          }),
+        ]),
+        m("p", [
+          vic.mTable({
+            header: ["Files", "Bytes"],
+            rows: Object.keys(state.files).map((path) => [
+              m(
+                m.route.Link,
+                {
+                  href: m.buildPathname("/fs/file/:path", { path }),
+                },
+                path
+              ),
+              state.files[path],
+            ]),
+          }),
+        ]),
+      ];
+    },
+  };
+})();
 
-const FileItemView = {
-  state: {
+const FileItemView = (() => {
+  const state = {
     loading: true,
     file: { name: "", size: 0, content: "" },
-  },
-  request(method, body) {
+  };
+  const request = (method, body) => {
     const path = m.route.param("path");
     return m.request({
       method,
@@ -239,21 +247,21 @@ const FileItemView = {
       params: { path },
       body,
     });
-  },
-  save() {
-    this.request("POST", {
+  };
+  const save = () => {
+    request("POST", {
       content: vic.query("textarea").value,
     }).then((res) => {
       if (res.error) {
         alert(res.error);
       } else {
-        this.oninit();
+        oninit();
       }
     });
-  },
-  remove() {
-    if (confirm("Are you sure you want to do it?")) {
-      this.request("DELETE").then((res) => {
+  };
+  const remove = () => {
+    if (vic.confirm()) {
+      request("DELETE").then((res) => {
         if (res.error) {
           alert(res.error);
           return;
@@ -261,48 +269,49 @@ const FileItemView = {
         m.route.set("/fs");
       });
     }
-  },
-  oninit() {
-    this.state.loading = true;
-    this.request("GET").then((res) => {
-      this.state.file = res;
-      this.state.loading = false;
+  };
+  const oninit = () => {
+    state.loading = true;
+    request("GET").then((res) => {
+      state.file = res;
+      state.loading = false;
       m.redraw();
     });
-  },
-  view() {
-    if (this.state.loading) {
-      return vic.getLoading();
-    }
-    return [
-      vic.getNav(),
-      m("h3", `${this.state.file.name} (${this.state.file.size} bytes)`),
-      m("p", [m(m.route.Link, { href: "/fs" }, "< Files")]),
-      m("div.form", [
-        m("p", [
-          m("textarea", { cols: 50, rows: 10 }, this.state.file.content),
+  };
+  return {
+    oninit,
+    view() {
+      if (state.loading) {
+        return vic.getLoading();
+      }
+      return [
+        vic.getNav(),
+        m("h3", `${state.file.name} (${state.file.size} bytes)`),
+        m("p", [m(m.route.Link, { href: "/fs" }, "< Files")]),
+        m("div.form", [
+          m("p", [m("textarea", { cols: 50, rows: 10 }, state.file.content)]),
+          m("p", [
+            m("button.btn", { onclick: save }, "Save"),
+            m("button.btn.weak", { onclick: remove }, "Delete"),
+          ]),
         ]),
-        m("p", [
-          m("button.btn", { onclick: this.save.bind(this) }, "Save"),
-          m("button.btn.weak", { onclick: this.remove.bind(this) }, "Delete"),
-        ]),
-      ]),
-    ];
-  },
-};
+      ];
+    },
+  };
+})();
 
-const WifiView = {
-  state: {
+const WifiView = (() => {
+  const state = {
     loading: true,
     connected: null,
     founds: [{ ssid: "", rssi: 10 }],
     password: "",
-  },
-  scan() {
-    this.state.password = vic.query("#txtPassword").value;
-    this.oninit();
-  },
-  join() {
+  };
+  const scan = () => {
+    state.password = vic.query("#txtPassword").value;
+    oninit();
+  };
+  const join = () => {
     const ssidEl = vic.query("input[type=radio]:checked");
     if (!ssidEl) {
       alert("Please select wifi to join");
@@ -321,59 +330,62 @@ const WifiView = {
       }
       m.redraw();
     });
-  },
-  oninit() {
-    this.state.loading = true;
+  };
+  const oninit = () => {
+    state.loading = true;
     m.request({
       method: "GET",
       url: "/wifi",
     }).then((res) => {
-      this.state.loading = false;
-      Object.assign(this.state, res);
+      state.loading = false;
+      Object.assign(state, res);
       m.redraw();
     });
-  },
-  view() {
-    if (this.state.loading) {
-      return vic.getLoading();
-    }
-    return [
-      vic.getNav(),
-      m("h3", "Join WiFi"),
-      m("div.form", [
-        vic.renderRadioList(
-          "ssid",
-          [this.state.connected],
-          this.state.founds.map((x) => ({
-            value: x.ssid,
-            text: `${x.ssid} (${-x.rssi}%)`,
-          }))
-        ),
-        m("p", [
-          m("label", { for: "txtPassword" }, "Password"),
-          m("input[type=text]", {
-            id: "txtPassword",
-            maxLength: 32,
-            value: this.state.password,
-          }),
+  };
+  return {
+    oninit,
+    view() {
+      if (state.loading) {
+        return vic.getLoading();
+      }
+      return [
+        vic.getNav(),
+        m("h3", "Join WiFi"),
+        m("div.form", [
+          vic.mRadioList(
+            "ssid",
+            [state.connected],
+            state.founds.map((x) => ({
+              value: x.ssid,
+              text: `${x.ssid} (${-x.rssi}%)`,
+            }))
+          ),
+          m("p", [
+            m("label", { for: "txtPassword" }, "Password"),
+            m("input[type=text]", {
+              id: "txtPassword",
+              maxLength: 32,
+              value: state.password,
+            }),
+          ]),
+          m("p", [
+            m("button.btn", { onclick: scan }, "Scan"),
+            m("button.btn", { onclick: join }, "Join"),
+          ]),
         ]),
-        m("p", [
-          m("button.btn", { onclick: this.scan.bind(this) }, "Scan"),
-          m("button.btn", { onclick: this.join.bind(this) }, "Join"),
-        ]),
-      ]),
-    ];
-  },
-};
+      ];
+    },
+  };
+})();
 
-const OtaView = {
-  state: {
+const OtaView = (() => {
+  const state = {
     loading: true,
     version: null,
     newVersion: null,
     rows: [],
-  },
-  fire() {
+  };
+  const fire = () => {
     const version = "";
     const otaType = "";
     m.request({
@@ -387,18 +399,18 @@ const OtaView = {
         m.redraw();
       }
     });
-  },
-  oninit() {
-    this.state.loading = true;
+  };
+  const oninit = () => {
+    state.loading = true;
     m.request({
       method: "GET",
       url: "/ota",
     }).then((res) => {
-      this.state.loading = false;
-      this.state.version = res.otaVersion;
-      this.state.newVersion = res.otaNewVersion;
-      this.state.overTheWeb = res.overTheWeb;
-      this.state.rows = [
+      state.loading = false;
+      state.version = res.otaVersion;
+      state.newVersion = res.otaNewVersion;
+      state.overTheWeb = res.overTheWeb;
+      state.rows = [
         ["Chip ID", res.chipId],
         ["Chip Size", res.chipSize],
         ["Sketch Size", res.sketchSize],
@@ -408,48 +420,51 @@ const OtaView = {
       ];
       m.redraw();
     });
-  },
-  view() {
-    if (this.state.loading) {
-      return vic.getLoading();
-    }
-    return [
-      vic.getNav(),
-      m("h3", "OTA"),
-      this.state.overTheWeb
-        ? m("p", [
-            m(m.route.Link, { href: "/ota/otw" }, "Update - Over The Web"),
-          ])
-        : null,
-      m("div.form", [
-        m("p", [
-          vic.renderTable({
-            header: ["ESP", ""],
-            rows: this.state.rows,
-          }),
-        ]),
-        m("p", "Remote Latest: " + this.state.newVersion),
-        m("p", "Local Firmware: " + this.state.version),
-        vic.renderRadioList(
-          "OtaType",
-          ["sketch"],
-          [
-            { value: "all", text: "All" },
-            { value: "sketch", text: "Sketch" },
-            { value: "fs", text: "File System" },
-          ]
-        ),
-        m("p", [
-          m(
-            "button.btn",
-            { onclick: this.fire.bind(this) },
-            "Load + Burn " + this.state.newVersion
+  };
+  return {
+    oninit,
+    view() {
+      if (state.loading) {
+        return vic.getLoading();
+      }
+      return [
+        vic.getNav(),
+        m("h3", "OTA"),
+        state.overTheWeb
+          ? m("p", [
+              m(m.route.Link, { href: "/ota/otw" }, "Update - Over The Web"),
+            ])
+          : null,
+        m("div.form", [
+          m("p", [
+            vic.mTable({
+              header: ["ESP", ""],
+              rows: state.rows,
+            }),
+          ]),
+          m("p", "Remote Latest: " + state.newVersion),
+          m("p", "Local Firmware: " + state.version),
+          vic.mRadioList(
+            "OtaType",
+            ["sketch"],
+            [
+              { value: "all", text: "All" },
+              { value: "sketch", text: "Sketch" },
+              { value: "fs", text: "File System" },
+            ]
           ),
+          m("p", [
+            m(
+              "button.btn",
+              { onclick: fire },
+              "Load + Burn " + state.newVersion
+            ),
+          ]),
         ]),
-      ]),
-    ];
-  },
-};
+      ];
+    },
+  };
+})();
 
 const OtaOtwView = {
   view() {
@@ -472,11 +487,11 @@ const OtaOtwView = {
   },
 };
 
-const ResetView = {
-  state: {
+const ResetView = (() => {
+  const state = {
     loading: true,
-  },
-  reset() {
+  };
+  const reset = () => {
     const values = vic
       .queryAll("input[name=Reset]:checked")
       .map((x) => x.value)
@@ -492,33 +507,36 @@ const ResetView = {
         m.redraw();
       }
     });
-  },
-  oninit() {
-    this.state.loading = false;
-  },
-  view() {
-    if (this.state.loading) {
-      return vic.getLoading();
-    }
-    return [
-      vic.getNav(),
-      m("h3", "Reset"),
-      m("div.form", [
-        vic.renderCheckList(
-          "Reset",
-          [],
-          [
-            { value: "EspRestart", text: "ESP Restart" },
-            { value: "EspReset", text: "ESP Reset" },
-            { value: "EspEraseCfg", text: "ESP Erase Config" },
-            { value: "WifiReset", text: "Reset Wifi" },
-          ]
-        ),
-        m("p", [m("button.btn", { onclick: this.reset.bind(this) }, "Submit")]),
-      ]),
-    ];
-  },
-};
+  };
+  const oninit = () => {
+    state.loading = false;
+  };
+  return {
+    oninit,
+    view() {
+      if (state.loading) {
+        return vic.getLoading();
+      }
+      return [
+        vic.getNav(),
+        m("h3", "Reset"),
+        m("div.form", [
+          vic.mCheckList(
+            "Reset",
+            [],
+            [
+              { value: "EspRestart", text: "ESP Restart" },
+              { value: "EspReset", text: "ESP Reset" },
+              { value: "EspEraseCfg", text: "ESP Erase Config" },
+              { value: "WifiReset", text: "Reset Wifi" },
+            ]
+          ),
+          m("p", [m("button.btn", { onclick: reset }, "Submit")]),
+        ]),
+      ];
+    },
+  };
+})();
 
 const NotfoundView = {
   view() {
