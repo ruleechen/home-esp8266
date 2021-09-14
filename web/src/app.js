@@ -126,7 +126,11 @@ const HomeView = (() => {
     }).then((res) => {
       state.loading = false;
       state.rows = [
-        ["Running", res.running],
+        ["Boot", res.running],
+        ["Free Heap", res.freeHeap],
+        ["Chip Size", res.chipSize],
+        ["Sketch Size", res.sketchSize],
+        ["Sketch Free Space", res.sketchFreeSpace],
         [
           "Local Host",
           res.localHost

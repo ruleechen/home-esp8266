@@ -131,17 +131,25 @@ namespace Victor::Components {
         apAddress = apIP.toString();
       }
     }
-    // send
+    // res
     DynamicJsonDocument res(512);
-    res[F("localHost")] = VictorWifi::getLocalHostName();
+    // status
     res[F("running")] = GlobalHelpers::timeSince(0);
+    res[F("freeHeap")] = ESP.getFreeHeap();
+    res[F("chipSize")] = ESP.getFlashChipRealSize();
+    res[F("sketchSize")] = ESP.getSketchSize();
+    res[F("sketchFreeSpace")] = ESP.getFreeSketchSpace();
+    res[F("localHost")] = VictorWifi::getLocalHostName();
+    // wifi
     res[F("wifiMode")] = strWifiMode;
     res[F("joined")] = ssidJoined;
     res[F("staAddress")] = staAddress;
     res[F("staMacAddress")] = staMacAddress;
     res[F("apAddress")] = apAddress;
     res[F("apMacAddress")] = apMacAddress;
+    // software
     res[F("firmwareVersion")] = FirmwareVersion;
+    // end
     _sendJson(res);
     _dispatchRequestEnd();
   }

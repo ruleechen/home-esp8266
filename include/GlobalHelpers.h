@@ -43,39 +43,52 @@ namespace Victor {
     static String timeSince(unsigned long timestamp) {
       float s = (millis() - timestamp) / 1000;
       float timespan;
+      String since = "";
       // y
-      timespan = s / 31536000;
+      auto oneYear = 31536000;
+      timespan = s / oneYear;
       if (timespan > 1) {
         int years = floor(timespan);
-        return String(years) + F(" ") + F("years");
+        s = s - years * oneYear;
+        since += String(years) + F(" ") + F("years");
       }
       // m
-      timespan = s / 2592000;
+      auto oneMonth = 2592000;
+      timespan = s / oneMonth;
       if (timespan > 1) {
         int months = floor(timespan);
-        return String(months) + F(" ") + F("months");
+        s = s - months * oneMonth;
+        since += String(months) + F(" ") + F("months");
       }
       // d
-      timespan = s / 86400;
+      auto oneDay = 86400;
+      timespan = s / oneDay;
       if (timespan > 1) {
         int days = floor(timespan);
-        return String(days) + F(" ") + F("days");
+        s = s - days * oneDay;
+        since += String(days) + F(" ") + F("days");
       }
       // h
-      timespan = s / 3600;
+      auto oneHour = 3600;
+      timespan = s / oneHour;
       if (timespan > 1) {
         int hours = floor(timespan);
-        return String(hours) + F(" ") + F("hours");
+        s = s - hours * oneHour;
+        since += String(hours) + F(" ") + F("hours");
       }
       // m
-      timespan = s / 60;
+      auto oneMinute = 60;
+      timespan = s / oneMinute;
       if (timespan > 1) {
         int minutes = floor(timespan);
-        return String(minutes) + F(" ") + F("minutes");
+        s = s - minutes * oneMinute;
+        since += String(minutes) + F(" ") + F("minutes");
       }
       // s
       int seconds = floor(s);
-      return String(seconds) + F(" ") + F("seconds");
+      since += String(seconds) + F(" ") + F("seconds");
+      // ret
+      return since;
     }
 
     static unsigned char h2int(char c) {
