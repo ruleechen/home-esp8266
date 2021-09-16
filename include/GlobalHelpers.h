@@ -40,55 +40,71 @@ namespace Victor {
       return parts;
     }
 
+    static String padLeft(int num, int length) {
+      auto str = String(num);
+      while (str.length() < length) {
+        str = "0" + str;
+      }
+      return str;
+    }
+
     static String timeSince(unsigned long timestamp) {
       float s = (millis() - timestamp) / 1000;
       float timespan;
-      String since = "";
+      String date = "";
+      String time = "";
       // y
+      int years = 0;
       auto oneYear = 31536000;
       timespan = s / oneYear;
       if (timespan > 1) {
-        int years = floor(timespan);
+        years = floor(timespan);
         s = s - years * oneYear;
-        since += String(years) + F(" ") + F("years");
       }
+      date += padLeft(years, 4);
       // m
+      int months = 0;
       auto oneMonth = 2592000;
       timespan = s / oneMonth;
       if (timespan > 1) {
-        int months = floor(timespan);
+        months = floor(timespan);
         s = s - months * oneMonth;
-        since += String(months) + F(" ") + F("months");
       }
+      date += F("/") + padLeft(months, 2);
       // d
+      int days = 0;
       auto oneDay = 86400;
       timespan = s / oneDay;
       if (timespan > 1) {
-        int days = floor(timespan);
+        days = floor(timespan);
         s = s - days * oneDay;
-        since += String(days) + F(" ") + F("days");
       }
+      date += F("/") + padLeft(days, 2);
       // h
+      int hours = 0;
       auto oneHour = 3600;
       timespan = s / oneHour;
       if (timespan > 1) {
-        int hours = floor(timespan);
+        hours = floor(timespan);
         s = s - hours * oneHour;
-        since += String(hours) + F(" ") + F("hours");
       }
+      time += padLeft(hours, 2);
       // m
+      int minutes = 0;
       auto oneMinute = 60;
       timespan = s / oneMinute;
       if (timespan > 1) {
-        int minutes = floor(timespan);
+        minutes = floor(timespan);
         s = s - minutes * oneMinute;
-        since += String(minutes) + F(" ") + F("minutes");
       }
+      time += F(":") + padLeft(minutes, 2);
       // s
       int seconds = floor(s);
-      since += String(seconds) + F(" ") + F("seconds");
+      time += F(":") + padLeft(seconds, 2);
       // ret
-      return since;
+      return (years > 0 || months > 0 || days > 0)
+        ? date + F(" ") + time
+        : time;
     }
 
     static unsigned char h2int(char c) {
