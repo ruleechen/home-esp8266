@@ -20,7 +20,7 @@ namespace Victor::Components {
       WiFi.softAP(hostName); // name which is displayed on AP list
       auto currentApIp = WiFi.softAPIP();
       if (currentApIp) {
-        console.log().write(F("[Wifi] AP Address > ")).write(currentApIp.toString()).newline();
+        console.log().write(F("[WiFi] AP Address > ")).write(currentApIp.toString()).newline();
       }
     }
 
@@ -36,12 +36,12 @@ namespace Victor::Components {
     // wifi_config_reset();
     WiFi.disconnect(true);
     WiFi.mode(WIFI_AP_STA);
-    console.log(F("[Wifi] mode > WIFI_AP_STA"));
+    console.log(F("[WiFi] mode > WIFI_AP_STA"));
   }
 
   void VictorWifi::join(String ssid, String password, bool waitForConnecting) {
-    console.log().write(F("[Wifi] ssid > ")).write(ssid).newline();
-    console.log().write(F("[Wifi] password > ")).write(password).newline();
+    console.log().write(F("[WiFi] ssid > ")).write(ssid).newline();
+    console.log().write(F("[WiFi] password > ")).write(password).newline();
     WiFi.persistent(true);
     WiFi.begin(ssid, password);
     if (waitForConnecting) {
@@ -92,23 +92,23 @@ namespace Victor::Components {
   void VictorWifi::_onWifiEvent(WiFiEvent_t event) {
     switch (event) {
       case WiFiEvent::WIFI_EVENT_STAMODE_CONNECTED: {
-        console.log(F("[Wifi] event > STA connected"));
+        console.log(F("[WiFi] event > STA connected"));
         break;
       }
       case WiFiEvent::WIFI_EVENT_STAMODE_DISCONNECTED: {
-        console.log(F("[Wifi] event > STA disconnected"));
+        console.log(F("[WiFi] event > STA disconnected"));
         break;
       }
       case WiFiEvent::WIFI_EVENT_STAMODE_GOT_IP: {
-        console.log(F("[Wifi] event > STA got ip"));
+        console.log(F("[WiFi] event > STA got ip"));
         break;
       }
       case WiFiEvent::WIFI_EVENT_SOFTAPMODE_STACONNECTED: {
-        console.log(F("[Wifi] event > AP connected"));
+        console.log(F("[WiFi] event > AP connected"));
         break;
       }
       case WiFiEvent::WIFI_EVENT_SOFTAPMODE_STADISCONNECTED: {
-        console.log(F("[Wifi] event > AP disconnected"));
+        console.log(F("[WiFi] event > AP disconnected"));
         break;
       }
       default: {

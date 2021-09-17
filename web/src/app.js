@@ -18,6 +18,8 @@
 
 vic.query = (selector) => document.querySelector(selector);
 vic.queryAll = (selector) => Array.from(document.querySelectorAll(selector));
+vic.bytes = (bytes) =>
+  bytes > 1024 ? (bytes / 1024).toFixed(2) + "KB" : `${bytes}B`;
 
 vic._navFns = [];
 vic.appendNav = (fn) => vic._navFns.push(fn);
@@ -116,7 +118,7 @@ vic.mCheckList = (name, values, list) =>
 const HomeView = (() => {
   const state = {
     loading: true,
-    rows: [],
+    data: {},
   };
   const oninit = () => {
     state.loading = true;
@@ -125,36 +127,7 @@ const HomeView = (() => {
       url: "/home",
     }).then((res) => {
       state.loading = false;
-      state.rows = [
-        ["Boot", res.running],
-        ["Free Heap", res.freeHeap],
-        ["Chip Size", res.chipSize],
-        ["Sketch Size", res.sketchSize],
-        ["Sketch Free Space", res.sketchFreeSpace],
-        [
-          "Local Host",
-          res.localHost
-            ? m("a", { href: `http://${res.localHost}.local` }, res.localHost)
-            : "",
-        ],
-        ["Wifi Mode", res.wifiMode],
-        ["Joined", res.joined ? res.joined : "-"],
-        [
-          "STA Address",
-          res.staAddress
-            ? m("a", { href: `http://${res.staAddress}` }, res.staAddress)
-            : "-",
-        ],
-        ["STA MAC Address", res.staMacAddress],
-        [
-          "AP Address",
-          res.apAddress
-            ? m("a", { href: `http://${res.apAddress}` }, res.apAddress)
-            : "-",
-        ],
-        ["AP MAC Address", res.apMacAddress],
-        ["Firmware Version", res.firmwareVersion],
-      ];
+      state.data = res;
       m.redraw();
     });
   };
@@ -164,13 +137,70 @@ const HomeView = (() => {
       if (state.loading) {
         return vic.getLoading();
       }
+      const d = state.data;
       return [
         vic.getNav(),
         m("h3", "Home"),
         m("p", [
           vic.mTable({
-            header: null,
-            rows: state.rows,
+            header: ["Status", ""],
+            rows: [
+              ["Boot", d.running],
+              ["Reset Reason", d.resetReason],
+              ["Free Heap", d.freeHeap],
+              ["Free Stack", d.freeStack],
+              ["Heap Fragmentation", d.heapFragmentation],
+              ["Max Free Block Size", d.maxFreeBlockSize],
+            ],
+          }),
+          vic.mTable({
+            header: ["WiFi", ""],
+            rows: [
+              [
+                "Local Host",
+                d.localHost
+                  ? m("a", { href: `http://${d.localHost}.local` }, d.localHost)
+                  : "",
+              ],
+              ["Mode", d.wifiMode],
+              ["Joined", d.joined ? d.joined : "-"],
+              [
+                "STA IP",
+                d.staAddress
+                  ? m("a", { href: `http://${d.staAddress}` }, d.staAddress)
+                  : "-",
+              ],
+              ["STA MAC", d.staMacAddress],
+              [
+                "AP IP",
+                d.apAddress
+                  ? m("a", { href: `http://${d.apAddress}` }, d.apAddress)
+                  : "-",
+              ],
+              ["AP MAC", d.apMacAddress],
+            ],
+          }),
+          vic.mTable({
+            header: ["Hardware", ""],
+            rows: [
+              ["Chip ID", d.chipId],
+              ["CPU Freq", `${d.cupFreqMHz}MHz`],
+              ["Flash ID", d.flashId],
+              ["Flash Size", vic.bytes(d.flashSize)],
+              ["Flash Size (Real)", vic.bytes(d.flashSizeReal)],
+              ["Flash Speed", `${d.flashSpeedHz}Hz`],
+            ],
+          }),
+          vic.mTable({
+            header: ["Software", ""],
+            rows: [
+              ["Sketch MD5", res.sketchMD5],
+              ["Sketch Size", d.sketchSize],
+              ["Sketch Free Space", d.sketchFreeSpace],
+              ["SDK Version", d.sdkVersion],
+              ["Core Version", d.coreVersion],
+              ["Firmware Version", d.firmwareVersion],
+            ],
           }),
         ]),
       ];
@@ -192,8 +222,8 @@ const FileSystemView = (() => {
     }).then((res) => {
       state.loading = false;
       state.infos = [
-        ["Total Bytes", res.totalBytes],
-        ["Used Bytes", res.usedBytes],
+        ["Total", vic.bytes(res.totalBytes)],
+        ["Used", vic.bytes(res.usedBytes)],
         ["Max Path Length", res.maxPathLength],
         ["Max Open Files", res.maxOpenFiles],
         ["Block Size", res.blockSize],
@@ -220,7 +250,7 @@ const FileSystemView = (() => {
         ]),
         m("p", [
           vic.mTable({
-            header: ["Files", "Bytes"],
+            header: ["Files", ""],
             rows: Object.keys(state.files).map((path) => [
               m(
                 m.route.Link,
@@ -229,7 +259,7 @@ const FileSystemView = (() => {
                 },
                 path
               ),
-              state.files[path],
+              vic.bytes(state.files[path]),
             ]),
           }),
         ]),
@@ -415,12 +445,10 @@ const OtaView = (() => {
       state.newVersion = res.otaNewVersion;
       state.overTheWeb = res.overTheWeb;
       state.rows = [
-        ["Chip ID", res.chipId],
-        ["Chip Size", res.chipSize],
+        ["Flash Size", vic.bytes(res.flashSize)],
+        ["Flash Size (Real)", vic.bytes(res.flashSizeReal)],
         ["Sketch Size", res.sketchSize],
         ["Sketch Free Space", res.sketchFreeSpace],
-        ["Sketch MD5", res.sketchMD5],
-        ["SDK Version", res.sdkVersion],
       ];
       m.redraw();
     });
@@ -532,7 +560,7 @@ const ResetView = (() => {
               { value: "EspRestart", text: "ESP Restart" },
               { value: "EspReset", text: "ESP Reset" },
               { value: "EspEraseCfg", text: "ESP Erase Config" },
-              { value: "WifiReset", text: "Reset Wifi" },
+              { value: "WifiReset", text: "Reset WiFi" },
             ]
           ),
           m("p", [m("button.btn", { onclick: reset }, "Submit")]),
@@ -552,7 +580,7 @@ vic.appendNav((items) =>
   items.concat([
     vic.navItem("/", "Home"),
     m("span", " | "),
-    vic.navItem("/wifi", "Wifi"),
+    vic.navItem("/wifi", "WiFi"),
     m("span", " | "),
     vic.navItem("/fs", "File System"),
     m("span", " | "),

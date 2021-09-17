@@ -7,6 +7,7 @@
     "espressif",
     "littlefs",
     "gpio",
+    "millis",
     "println",
     "wifi",
     "ssid",

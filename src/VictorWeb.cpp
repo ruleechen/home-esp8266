@@ -132,22 +132,36 @@ namespace Victor::Components {
       }
     }
     // res
-    DynamicJsonDocument res(512);
+    DynamicJsonDocument res(1024);
     // status
+    res[F("millis")] = millis();
     res[F("running")] = GlobalHelpers::timeSince(0);
+    res[F("resetReason")] = ESP.getResetReason();
     res[F("freeHeap")] = ESP.getFreeHeap();
-    res[F("chipSize")] = ESP.getFlashChipRealSize();
-    res[F("sketchSize")] = ESP.getSketchSize();
-    res[F("sketchFreeSpace")] = ESP.getFreeSketchSpace();
-    res[F("localHost")] = VictorWifi::getLocalHostName();
+    res[F("freeStack")] = ESP.getFreeContStack();
+    res[F("heapFragmentation")] = ESP.getHeapFragmentation();
+    res[F("maxFreeBlockSize")] = ESP.getMaxFreeBlockSize();
     // wifi
+    res[F("localHost")] = VictorWifi::getLocalHostName();
     res[F("wifiMode")] = strWifiMode;
     res[F("joined")] = ssidJoined;
     res[F("staAddress")] = staAddress;
     res[F("staMacAddress")] = staMacAddress;
     res[F("apAddress")] = apAddress;
     res[F("apMacAddress")] = apMacAddress;
+    // hardware
+    res[F("chipId")] = ESP.getChipId();
+    res[F("cupFreqMHz")] = ESP.getCpuFreqMHz();
+    res[F("flashId")] = ESP.getFlashChipId();
+    res[F("flashSize")] = ESP.getFlashChipSize(); // Sketch thinks Flash RAM size is
+    res[F("flashSizeReal")] = ESP.getFlashChipRealSize(); // Actual size based on chip Id
+    res[F("flashSpeedHz")] = ESP.getFlashChipSpeed();
     // software
+    res[F("sketchMD5")] = ESP.getSketchMD5();
+    res[F("sketchSize")] = ESP.getSketchSize();
+    res[F("sketchFreeSpace")] = ESP.getFreeSketchSpace();
+    res[F("sdkVersion")] = ESP.getSdkVersion();
+    res[F("coreVersion")] = ESP.getCoreVersion();
     res[F("firmwareVersion")] = FirmwareVersion;
     // end
     _sendJson(res);
@@ -271,7 +285,7 @@ namespace Victor::Components {
     } else {
       VictorWifi::join(ssid, password, true);
       auto isConnected = WiFi.status() == WL_CONNECTED;
-      console.log(F("[Wifi] connected > ") + String(isConnected));
+      console.log(F("[WiFi] connected > ") + String(isConnected));
       if (isConnected) {
         res[F("ip")] = WiFi.localIP().toString();
       } else {
@@ -285,12 +299,10 @@ namespace Victor::Components {
   void VictorWeb::_handleOta() {
     _dispatchRequestStart();
     DynamicJsonDocument res(512);
-    res[F("chipId")] = ESP.getChipId();
-    res[F("chipSize")] = ESP.getFlashChipRealSize();
+    res[F("flashSize")] = ESP.getFlashChipSize(); // Sketch thinks Flash RAM size is
+    res[F("flashSizeReal")] = ESP.getFlashChipRealSize(); // Actual size based on chip Id
     res[F("sketchSize")] = ESP.getSketchSize();
     res[F("sketchFreeSpace")] = ESP.getFreeSketchSpace();
-    res[F("sketchMD5")] = ESP.getSketchMD5();
-    res[F("sdkVersion")] = ESP.getSdkVersion();
     res[F("otaVersion")] = VictorOTA::getCurrentVersion();
     res[F("otaNewVersion")] = VictorOTA::checkNewVersion();
     res[F("overTheWeb")] = _httpUpdater != NULL;
