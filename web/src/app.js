@@ -19,7 +19,7 @@
 vic.query = (selector) => document.querySelector(selector);
 vic.queryAll = (selector) => Array.from(document.querySelectorAll(selector));
 vic.bytes = (bytes) =>
-  bytes > 1024 ? (bytes / 1024).toFixed(2) + "KB" : `${bytes}B`;
+  bytes > 1024 ? (bytes / 1024).toFixed(2) + "KB" : `${bytes}Bytes`;
 
 vic._navFns = [];
 vic.appendNav = (fn) => vic._navFns.push(fn);

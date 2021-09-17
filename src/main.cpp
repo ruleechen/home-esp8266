@@ -1,15 +1,15 @@
 #include <Arduino.h>
+#include <Ticker.h>
 
 #include "BuiltinLed.h"
 #include "VictorOTA.h"
 #include "VictorWifi.h"
 #include "VictorWeb.h"
-#include "Timer.h"
 
 using namespace Victor;
-using namespace Victor::Events;
 using namespace Victor::Components;
 
+Ticker ticker;
 BuiltinLed* builtinLed;
 VictorWeb webPortal(80);
 
@@ -29,13 +29,12 @@ void setup(void) {
   webPortal.onRequestEnd = []() { builtinLed->turnOff(); };
   webPortal.setup();
 
-  timer.setInterval(1 * 1000, []() { console.log("heartbeat"); });
+  ticker.attach(1, []() { console.log("heartbeat"); });
 
   console.log(F("setup complete"));
   builtinLed->flash();
 }
 
 void loop(void) {
-  timer.loop();
   webPortal.loop();
 }
