@@ -19,7 +19,7 @@
 vic.query = (selector) => document.querySelector(selector);
 vic.queryAll = (selector) => Array.from(document.querySelectorAll(selector));
 vic.bytes = (bytes) =>
-  bytes > 1024 ? (bytes / 1024).toFixed(2) + "KB" : `${bytes}Bytes`;
+  bytes > 1024 ? (bytes / 1024).toFixed(2) + " KB" : `${bytes} Bytes`;
 
 vic._navFns = [];
 vic.appendNav = (fn) => vic._navFns.push(fn);
@@ -147,10 +147,10 @@ const HomeView = (() => {
             rows: [
               ["Boot", d.running],
               ["Reset Reason", d.resetReason],
-              ["Free Heap", d.freeHeap],
-              ["Free Stack", d.freeStack],
+              ["Free Stack", vic.bytes(d.freeStack)],
+              ["Free Heap", vic.bytes(d.freeHeap)],
+              ["Max Free Block Size", vic.bytes(d.maxFreeBlockSize)],
               ["Heap Fragmentation", d.heapFragmentation],
-              ["Max Free Block Size", d.maxFreeBlockSize],
             ],
           }),
           vic.mTable({
@@ -184,19 +184,19 @@ const HomeView = (() => {
             header: ["Hardware", ""],
             rows: [
               ["Chip ID", d.chipId],
-              ["CPU Freq", `${d.cupFreqMHz}MHz`],
+              ["CPU Freq", `${d.cupFreqMHz} MHz`],
               ["Flash ID", d.flashId],
               ["Flash Size", vic.bytes(d.flashSize)],
               ["Flash Size (Real)", vic.bytes(d.flashSizeReal)],
-              ["Flash Speed", `${d.flashSpeedHz}Hz`],
+              ["Flash Speed", `${d.flashSpeedMHz} MHz`],
             ],
           }),
           vic.mTable({
             header: ["Software", ""],
             rows: [
-              ["Sketch MD5", res.sketchMD5],
-              ["Sketch Size", d.sketchSize],
-              ["Sketch Free Space", d.sketchFreeSpace],
+              ["Sketch MD5", d.sketchMD5],
+              ["Sketch Size", vic.bytes(d.sketchSize)],
+              ["Sketch Free Space", vic.bytes(d.sketchFreeSpace)],
               ["SDK Version", d.sdkVersion],
               ["Core Version", d.coreVersion],
               ["Firmware Version", d.firmwareVersion],
@@ -226,8 +226,8 @@ const FileSystemView = (() => {
         ["Used", vic.bytes(res.usedBytes)],
         ["Max Path Length", res.maxPathLength],
         ["Max Open Files", res.maxOpenFiles],
-        ["Block Size", res.blockSize],
-        ["Page Size", res.pageSize],
+        ["Block Size", vic.bytes(res.blockSize)],
+        ["Page Size", vic.bytes(res.pageSize)],
       ];
       state.files = res.files;
       m.redraw();
@@ -415,9 +415,7 @@ const WifiView = (() => {
 const OtaView = (() => {
   const state = {
     loading: true,
-    version: null,
-    newVersion: null,
-    rows: [],
+    data: {},
   };
   const fire = () => {
     const version = "";
@@ -441,15 +439,7 @@ const OtaView = (() => {
       url: "/ota",
     }).then((res) => {
       state.loading = false;
-      state.version = res.otaVersion;
-      state.newVersion = res.otaNewVersion;
-      state.overTheWeb = res.overTheWeb;
-      state.rows = [
-        ["Flash Size", vic.bytes(res.flashSize)],
-        ["Flash Size (Real)", vic.bytes(res.flashSizeReal)],
-        ["Sketch Size", res.sketchSize],
-        ["Sketch Free Space", res.sketchFreeSpace],
-      ];
+      state.data = res;
       m.redraw();
     });
   };
@@ -459,10 +449,11 @@ const OtaView = (() => {
       if (state.loading) {
         return vic.getLoading();
       }
+      const d = state.data;
       return [
         vic.getNav(),
         m("h3", "OTA"),
-        state.overTheWeb
+        d.overTheWeb
           ? m("p", [
               m(m.route.Link, { href: "/ota/otw" }, "Update - Over The Web"),
             ])
@@ -470,12 +461,16 @@ const OtaView = (() => {
         m("div.form", [
           m("p", [
             vic.mTable({
-              header: ["ESP", ""],
-              rows: state.rows,
+              rows: [
+                ["Flash Size", vic.bytes(d.flashSize)],
+                ["Flash Size (Real)", vic.bytes(d.flashSizeReal)],
+                ["Sketch Size", vic.bytes(d.sketchSize)],
+                ["Sketch Free Space", vic.bytes(d.sketchFreeSpace)],
+                ["Remote Latest", d.otaNewVersion],
+                ["Local Firmware", d.otaVersion],
+              ],
             }),
           ]),
-          m("p", "Remote Latest: " + state.newVersion),
-          m("p", "Local Firmware: " + state.version),
           vic.mRadioList(
             "OtaType",
             ["sketch"],
@@ -489,7 +484,7 @@ const OtaView = (() => {
             m(
               "button.btn",
               { onclick: fire },
-              "Load + Burn " + state.newVersion
+              "Load + Burn " + d.otaNewVersion
             ),
           ]),
         ]),

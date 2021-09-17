@@ -17,7 +17,7 @@ namespace Victor::Components {
   }
 
   String VictorOTA::checkNewVersion() {
-    return F("999999");
+    return F("99.4.99");
   }
 
   void VictorOTA::update(String version, VOtaType type) {

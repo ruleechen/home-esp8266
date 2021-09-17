@@ -137,10 +137,10 @@ namespace Victor::Components {
     res[F("millis")] = millis();
     res[F("running")] = GlobalHelpers::timeSince(0);
     res[F("resetReason")] = ESP.getResetReason();
-    res[F("freeHeap")] = ESP.getFreeHeap();
     res[F("freeStack")] = ESP.getFreeContStack();
-    res[F("heapFragmentation")] = ESP.getHeapFragmentation();
+    res[F("freeHeap")] = ESP.getFreeHeap();
     res[F("maxFreeBlockSize")] = ESP.getMaxFreeBlockSize();
+    res[F("heapFragmentation")] = ESP.getHeapFragmentation();
     // wifi
     res[F("localHost")] = VictorWifi::getLocalHostName();
     res[F("wifiMode")] = strWifiMode;
@@ -155,7 +155,7 @@ namespace Victor::Components {
     res[F("flashId")] = ESP.getFlashChipId();
     res[F("flashSize")] = ESP.getFlashChipSize(); // Sketch thinks Flash RAM size is
     res[F("flashSizeReal")] = ESP.getFlashChipRealSize(); // Actual size based on chip Id
-    res[F("flashSpeedHz")] = ESP.getFlashChipSpeed();
+    res[F("flashSpeedMHz")] = ESP.getFlashChipSpeed() / 1000000;
     // software
     res[F("sketchMD5")] = ESP.getSketchMD5();
     res[F("sketchSize")] = ESP.getSketchSize();
