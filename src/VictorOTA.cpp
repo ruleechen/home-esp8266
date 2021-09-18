@@ -57,6 +57,10 @@ namespace Victor::Components {
     }
   }
 
+  Console VictorOTA::_log() {
+    return console.log().type("VictorOTA");
+  }
+
   void VictorOTA::_updateSketch() {
     WiFiClient client;
     auto currentVersion = getCurrentVersion();
@@ -70,20 +74,20 @@ namespace Victor::Components {
   }
 
   void VictorOTA::_onStart() {
-    console.log(F("[VictorOTA] start updating"));
+    _log().write(F("start updating")).newline();
   }
 
   void VictorOTA::_onEnd() {
-    console.log(F("[VictorOTA] update finished"));
+    _log().write(F("update finished")).newline();
   }
 
   void VictorOTA::_onProgress(int progress, int total) {
-    console.log().write(F("[VictorOTA] progress ")).write(String(progress / (total / 100))).write(F("%")).newline();
+    _log().write(F("progress ")).write(String(progress / (total / 100))).write(F("%")).newline();
   }
 
   void VictorOTA::_onError(int error) {
     auto message = ESPhttpUpdate.getLastErrorString();
-    console.error().write(F("[VictorOTA] error ")).write(String(error)).write(F(", message ")).write(message).newline();
+    _log().write(F("error ")).write(String(error)).write(F(", message ")).write(message).newline();
   }
 
 } // namespace Victor::Components

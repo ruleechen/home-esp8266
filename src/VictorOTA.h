@@ -15,6 +15,7 @@ namespace Victor::Components {
     static void trigger(VOtaType type);
 
    private:
+    static Console _log();
     static void _updateSketch();
     static void _updateFileSystem();
     static void _onStart();

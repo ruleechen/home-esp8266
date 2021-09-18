@@ -20,7 +20,7 @@ namespace Victor::Components {
       WiFi.softAP(hostName); // name which is displayed on AP list
       auto currentApIp = WiFi.softAPIP();
       if (currentApIp) {
-        console.log().write(F("[WiFi] AP Address > ")).write(currentApIp.toString()).newline();
+        _log().write(F("AP Address > ")).write(currentApIp.toString()).newline();
       }
     }
 
@@ -36,12 +36,12 @@ namespace Victor::Components {
     // wifi_config_reset();
     WiFi.disconnect(true);
     WiFi.mode(WIFI_AP_STA);
-    console.log(F("[WiFi] mode > WIFI_AP_STA"));
+    _log().write(F("mode > WIFI_AP_STA")).newline();
   }
 
   void VictorWifi::join(String ssid, String password, bool waitForConnecting) {
-    console.log().write(F("[WiFi] ssid > ")).write(ssid).newline();
-    console.log().write(F("[WiFi] password > ")).write(password).newline();
+    _log().write(F("ssid > ")).write(ssid).newline();
+    _log().write(F("password > ")).write(password).newline();
     WiFi.persistent(true);
     WiFi.begin(ssid, password);
     if (waitForConnecting) {
@@ -89,26 +89,30 @@ namespace Victor::Components {
     return hostName;
   }
 
+  Console VictorWifi::_log() {
+    return console.log().type(F("WiFi"));
+  }
+
   void VictorWifi::_onWifiEvent(WiFiEvent_t event) {
     switch (event) {
       case WiFiEvent::WIFI_EVENT_STAMODE_CONNECTED: {
-        console.log(F("[WiFi] event > STA connected"));
+        _log().write(F("STA connected")).newline();
         break;
       }
       case WiFiEvent::WIFI_EVENT_STAMODE_DISCONNECTED: {
-        console.log(F("[WiFi] event > STA disconnected"));
+        _log().write(F("STA disconnected")).newline();
         break;
       }
       case WiFiEvent::WIFI_EVENT_STAMODE_GOT_IP: {
-        console.log(F("[WiFi] event > STA got ip"));
+        _log().write(F("STA got ip")).newline();
         break;
       }
       case WiFiEvent::WIFI_EVENT_SOFTAPMODE_STACONNECTED: {
-        console.log(F("[WiFi] event > AP connected"));
+        _log().write(F("AP connected")).newline();
         break;
       }
       case WiFiEvent::WIFI_EVENT_SOFTAPMODE_STADISCONNECTED: {
-        console.log(F("[WiFi] event > AP disconnected"));
+        _log().write(F("AP disconnected")).newline();
         break;
       }
       default: {

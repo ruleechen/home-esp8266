@@ -19,7 +19,11 @@
 vic.query = (selector) => document.querySelector(selector);
 vic.queryAll = (selector) => Array.from(document.querySelectorAll(selector));
 vic.bytes = (bytes) =>
-  bytes > 1024 ? (bytes / 1024).toFixed(2) + " KB" : `${bytes} Bytes`;
+  bytes >= 1024 * 1024
+    ? (bytes / 1024 / 1024).toFixed(2) + " MB"
+    : bytes >= 1024
+    ? (bytes / 1024).toFixed(2) + " KB"
+    : `${bytes} BY`;
 
 vic._navFns = [];
 vic.appendNav = (fn) => vic._navFns.push(fn);
@@ -73,15 +77,20 @@ vic.mSelect = (name, value, options) => {
 
 vic.mTable = (data) => {
   let rows = [];
+  let cols = 0;
   if (data.header && data.header.length > 0) {
+    cols = data.header.length;
     rows.push(
       m(
         "tr",
-        data.header.map((c) => m("th.lt", [c]))
+        data.header.map((c) => m("th", [c]))
       )
     );
   }
   if (data.rows && data.rows.length > 0) {
+    if (cols === 0) {
+      cols = data.rows[0].length;
+    }
     rows = rows.concat(
       data.rows.map((row) =>
         m(
@@ -91,7 +100,7 @@ vic.mTable = (data) => {
       )
     );
   }
-  return m("table", rows);
+  return m(`table.cols${cols}`, rows);
 };
 
 const mSelectionList = (type, name, values, list) => {
@@ -194,7 +203,10 @@ const HomeView = (() => {
           vic.mTable({
             header: ["Software", ""],
             rows: [
-              ["Sketch MD5", d.sketchMD5],
+              [
+                "Sketch MD5",
+                m("p.ellipsis", { title: d.sketchMD5 }, d.sketchMD5),
+              ],
               ["Sketch Size", vic.bytes(d.sketchSize)],
               ["Sketch Free Space", vic.bytes(d.sketchFreeSpace)],
               ["SDK Version", d.sdkVersion],
@@ -577,7 +589,7 @@ vic.appendNav((items) =>
     m("span", " | "),
     vic.navItem("/wifi", "WiFi"),
     m("span", " | "),
-    vic.navItem("/fs", "File System"),
+    vic.navItem("/fs", "FS"),
     m("span", " | "),
     vic.navItem("/ota", "OTA"),
     m("span", " | "),

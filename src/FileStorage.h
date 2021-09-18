@@ -22,6 +22,7 @@ namespace Victor::Components {
    protected:
     String _filePath;
     size_t _maxSize = DEFAULT_FILE_SIZE;
+    Console _error();
     virtual void _serializeTo(const TModel& model, DynamicJsonDocument& doc);
     virtual void _deserializeFrom(TModel& model, const DynamicJsonDocument& doc);
   };
@@ -58,16 +59,16 @@ namespace Victor::Components {
             // convert
             _deserializeFrom(model, doc);
           } else {
-            console.error().write(F("failed to parse config file ")).write(error.f_str()).newline();
+            _error().write(F("parse failed ")).write(error.f_str()).newline();
           }
         } else {
-          console.error(F("config file size is too large"));
+          _error().write(F("file too large")).newline();
         }
       } else {
-        console.error(F("failed to open config file"));
+        _error().write(F("open failed")).newline();
       }
     } else {
-      console.error().write(F("file notfound ")).write(_filePath).newline();
+      _error().write(F("file notfound ")).write(_filePath).newline();
     }
     return model;
   }
@@ -88,9 +89,14 @@ namespace Victor::Components {
       file.close();
       success = true;
     } else {
-      console.error(F("failed to open config file for writing"));
+      _error().write(F("open write failed")).newline();
     }
     return success;
+  }
+
+  template <class TModel>
+  Console FileStorage<TModel>::_error() {
+    return console.error().type(F("FileStorage"));
   }
 
   template <class TModel>

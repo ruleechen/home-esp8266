@@ -15,7 +15,7 @@ WebPortal webPortal(80);
 void setup(void) {
   console.begin(115200);
   if (!LittleFS.begin()) {
-    console.error(F("LittleFS mount failed"));
+    console.error(F("[LittleFS] mount failed"));
   }
 
   builtinLed = new BuiltinLed();
@@ -28,7 +28,7 @@ void setup(void) {
   webPortal.onRequestEnd = []() { builtinLed->turnOff(); };
   webPortal.setup();
 
-  console.log(F("setup complete"));
+  console.log(F("[setup] complete"));
   builtinLed->flash();
 }
 

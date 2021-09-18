@@ -199,7 +199,7 @@ namespace Victor::Components {
     } else {
       auto error = String(F("read fs info failed"));
       res[F("error")] = error;
-      console.error(error);
+      console.error().type(F("fs")).write(error).newline();
     }
     _sendJson(res);
     _dispatchRequestEnd();
@@ -216,9 +216,9 @@ namespace Victor::Components {
       res[F("content")] = file.readString();
       file.close();
     } else {
-      auto error = String(F("failed to open file"));
+      auto error = String(F("[fs] failed to open file"));
       res[F("error")] = error;
-      console.error(error);
+      console.error().type(F("fs")).write(error).newline();
     }
     _sendJson(res);
     _dispatchRequestEnd();
@@ -285,7 +285,7 @@ namespace Victor::Components {
     } else {
       VictorWifi::join(ssid, password, true);
       auto isConnected = WiFi.status() == WL_CONNECTED;
-      console.log(F("[WiFi] connected > ") + String(isConnected));
+      console.log().type(F("WiFi")).write(F("connected > ") + String(isConnected));
       if (isConnected) {
         res[F("ip")] = WiFi.localIP().toString();
       } else {

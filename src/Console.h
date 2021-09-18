@@ -16,7 +16,7 @@ namespace Victor {
     Console debug(const String& message);
     Console ts();
     Console newline();
-    Console writeType(const String& type);
+    Console type(const String& type);
     Console write(const String& message);
   };
 

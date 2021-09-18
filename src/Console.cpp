@@ -9,7 +9,7 @@ namespace Victor {
   }
 
   Console Console::log() {
-    ts().writeType(F("log"));
+    ts().type(F("log"));
     return console;
   }
 
@@ -19,7 +19,7 @@ namespace Victor {
   }
 
   Console Console::error() {
-    ts().writeType(F("error"));
+    ts().type(F("error"));
     return console;
   }
 
@@ -29,7 +29,7 @@ namespace Victor {
   }
 
   Console Console::debug() {
-    ts().writeType(F("debug"));
+    ts().type(F("debug"));
     return console;
   }
 
@@ -51,7 +51,7 @@ namespace Victor {
     return console;
   }
 
-  Console Console::writeType(const String& type) {
+  Console Console::type(const String& type) {
     write(F("["));
     write(type);
     write(F("]"));
