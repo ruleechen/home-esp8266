@@ -18,12 +18,52 @@
 
 vic.query = (selector) => document.querySelector(selector);
 vic.queryAll = (selector) => Array.from(document.querySelectorAll(selector));
+
 vic.bytes = (bytes) =>
   bytes >= 1024 * 1024
     ? (bytes / 1024 / 1024).toFixed(2) + " MB"
     : bytes >= 1024
     ? (bytes / 1024).toFixed(2) + " KB"
     : `${bytes} BY`;
+
+vic.ago = (millis, timestamp) => {
+  const pad = (n) => `${n}`.padStart(2, "0");
+  let span = (millis - timestamp) / 1000;
+  let str = "";
+  // d
+  const oneDay = 86400;
+  let days = span / oneDay;
+  if (days > 1) {
+    days = Math.floor(days);
+    span -= days * oneDay;
+    str += `${days}x24 `;
+  }
+  // h
+  const oneHour = 3600;
+  let hours = span / oneHour;
+  if (hours > 1) {
+    hours = Math.floor(hours);
+    span -= hours * oneHour;
+  } else {
+    hours = 0;
+  }
+  str += pad(hours);
+  // m
+  const oneMinute = 60;
+  let minutes = span / oneMinute;
+  if (minutes > 1) {
+    minutes = Math.floor(minutes);
+    span -= minutes * oneMinute;
+  } else {
+    minutes = 0;
+  }
+  str += ":" + pad(minutes);
+  // s
+  const seconds = Math.floor(span);
+  str += ":" + pad(seconds);
+  // ret
+  return str;
+};
 
 vic._navFns = [];
 vic.appendNav = (fn) => vic._navFns.push(fn);
@@ -154,7 +194,7 @@ const HomeView = (() => {
           vic.mTable({
             header: ["Status", ""],
             rows: [
-              ["Boot", d.running],
+              ["Boot", vic.ago(d.millis, 0)],
               ["Reset Reason", d.resetReason],
               ["Free Stack", vic.bytes(d.freeStack)],
               ["Free Heap", vic.bytes(d.freeHeap)],

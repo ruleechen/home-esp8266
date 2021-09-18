@@ -7,11 +7,6 @@
 
 namespace Victor {
 
-  enum VEnvironment {
-    VTest,
-    VProd,
-  };
-
   enum VOtaType {
     VOta_All = 0,
     VOta_Sketch = 1,
@@ -33,15 +28,6 @@ namespace Victor {
     uint8_t ledOnValue = 0; // 0 ~ 256 LOW
     bool overTheWeb = false;
   };
-
-  // const uint8_t led = LED_BUILTIN;
-  const uint8_t V_GPIO0 = 0; // GPIO-0
-  const uint8_t V_GPIO2 = 2; // GPIO-2 (Led Builtin)
-  const uint8_t V_TXD = 1;   // TXD (Transmitter)
-  const uint8_t V_RXD = 3;   // RXD (Receiver)
-
-  // globals
-  const VEnvironment VEnv = VTest;
 
 } // namespace Victor
 

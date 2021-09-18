@@ -8,6 +8,7 @@
     "littlefs",
     "gpio",
     "millis",
+    "timespan",
     "println",
     "wifi",
     "ssid",

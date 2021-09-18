@@ -135,7 +135,6 @@ namespace Victor::Components {
     DynamicJsonDocument res(1024);
     // status
     res[F("millis")] = millis();
-    res[F("running")] = GlobalHelpers::timeSince(0);
     res[F("resetReason")] = ESP.getResetReason();
     res[F("freeStack")] = ESP.getFreeContStack();
     res[F("freeHeap")] = ESP.getFreeHeap();

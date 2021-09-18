@@ -17,7 +17,7 @@ namespace Victor::Components {
     static String getHostName(bool includeVersion = true);
 
    private:
-   static Console _log();
+    static Console _log();
     static void _onWifiEvent(WiFiEvent_t event);
   };
 } // namespace Victor::Components
