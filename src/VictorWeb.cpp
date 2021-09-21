@@ -190,7 +190,7 @@ namespace Victor::Components {
 
   void VictorWeb::_handleFiles() {
     _dispatchRequestStart();
-    DynamicJsonDocument res(512);
+    DynamicJsonDocument res(1024);
     // load files
     // https://arduino-esp8266.readthedocs.io/en/latest/filesystem.html
     JsonArray filesArr = res.createNestedArray(F("files"));
