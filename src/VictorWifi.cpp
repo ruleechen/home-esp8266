@@ -39,24 +39,23 @@ namespace Victor::Components {
     _log().write(F("mode > WIFI_AP_STA")).newline();
   }
 
-  void VictorWifi::join(String ssid, String password, bool waitForConnecting) {
+  void VictorWifi::join(String ssid, String password, int32_t channel, uint8_t* bssid) {
     _log().write(F("ssid > ")).write(ssid).newline();
     _log().write(F("password > ")).write(password).newline();
     WiFi.persistent(true);
-    WiFi.begin(ssid, password);
-    if (waitForConnecting) {
-      auto checkTimes = 60;
-      while (WiFi.status() != WL_CONNECTED) {
-        delay(500);
-        console.write(F("."));
-        if (checkTimes == 0) {
-          break;
-        } else {
-          checkTimes--;
-        }
+    WiFi.begin(ssid, password, channel, bssid, true);
+    // wait for connecting
+    auto checkTimes = 60;
+    while (WiFi.status() != WL_CONNECTED) {
+      delay(500);
+      console.write(F("."));
+      if (checkTimes == 0) {
+        break;
+      } else {
+        checkTimes--;
       }
-      console.newline();
     }
+    console.newline();
   }
 
   String VictorWifi::getHostId() {

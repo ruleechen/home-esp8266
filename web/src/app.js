@@ -389,8 +389,8 @@ const FileItemView = (() => {
 const WifiView = (() => {
   const state = {
     loading: true,
-    connected: null,
-    founds: [{ ssid: "", rssi: 10 }],
+    bssid: null,
+    founds: [{ bssid: "", ssid: "", channel: 0, rssi: 10 }],
     password: "",
   };
   const scan = () => {
@@ -398,16 +398,17 @@ const WifiView = (() => {
     oninit();
   };
   const join = () => {
-    const ssidEl = vic.query("input[type=radio]:checked");
-    if (!ssidEl) {
+    const bssidEl = vic.query("input[type=radio]:checked");
+    if (!bssidEl) {
       alert("Please select wifi to join");
       return;
     }
     const passEl = vic.query("#txtPassword");
+    const ap = state.founds.find((x) => x.bssid === bssidEl.value);
     m.request({
       method: "POST",
       url: "/wifi/join",
-      body: { ssid: ssidEl.value, password: passEl.value },
+      body: Object.assign({}, { password: passEl.value }, ap),
     }).then((res) => {
       if (res.error) {
         alert(res.error);
@@ -438,14 +439,20 @@ const WifiView = (() => {
         vic.getNav(),
         m("h3", "Join WiFi"),
         m("div.form", [
-          vic.mRadioList(
-            "ssid",
-            [state.connected],
-            state.founds.map((x) => ({
-              value: x.ssid,
-              text: `${x.ssid} (${-x.rssi}%)`,
-            }))
-          ),
+          vic.mTable({
+            rows: state.founds.map((x) => [
+              m("input", {
+                type: "radio",
+                name: "bssid",
+                id: x.bssid,
+                value: x.bssid,
+                checked: x.bssid === state.bssid,
+              }),
+              m("label", { for: x.bssid }, x.ssid),
+              m("label", { for: x.bssid }, x.bssid),
+              m("label", { for: x.bssid }, `${100+x.rssi}%`), // the closer the value is to 0, the stronger the received signal has been.
+            ]),
+          }),
           m("p", [
             m("label", { for: "txtPassword" }, "Password"),
             m("input[type=text]", {

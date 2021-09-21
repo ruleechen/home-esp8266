@@ -11,7 +11,7 @@ namespace Victor::Components {
    public:
     static void setup();
     static void reset();
-    static void join(String ssid, String password, bool waitForConnecting = true);
+    static void join(String ssid, String password = emptyString, int32_t channel = 0, uint8_t* bssid = NULL);
     static String getHostId();
     static String getLocalHostName();
     static String getHostName(bool includeVersion = true);

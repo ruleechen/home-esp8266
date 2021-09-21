@@ -256,13 +256,15 @@ namespace Victor::Components {
   void VictorWeb::_handleWifi() {
     _dispatchRequestStart();
     DynamicJsonDocument res(1024);
-    res[F("connected")] = WiFi.SSID();
+    res[F("bssid")] = WiFi.BSSIDstr();
     JsonArray apArr = res.createNestedArray(F("founds"));
     auto count = WiFi.scanNetworks();
     for (int8_t i = 0; i < count; ++i) {
       JsonObject apObj = apArr.createNestedObject();
-      apObj[F("ssid")] = WiFi.SSID(i);
-      apObj[F("rssi")] = WiFi.RSSI(i);
+      apObj[F("bssid")] = WiFi.BSSIDstr(i); // Basic Service Set Identifiers (a MAC)
+      apObj[F("ssid")] = WiFi.SSID(i); // Service Set Identifier
+      apObj[F("rssi")] = WiFi.RSSI(i); // Received Signal Strength Indicator
+      apObj[F("channel")] = WiFi.channel(i);
     }
     _sendJson(res);
     _dispatchRequestEnd();
@@ -275,14 +277,16 @@ namespace Victor::Components {
     DynamicJsonDocument payload(128);
     deserializeJson(payload, payloadJson);
     // read
+    auto bssid = String(payload[F("bssid")]);
     auto ssid = String(payload[F("ssid")]);
     auto password = String(payload[F("password")]);
+    int32_t channel = payload[F("channel")];
     // res
     DynamicJsonDocument res(64);
     if (!ssid || ssid == "") {
       res[F("error")] = String(F("Please select wifi to join"));
     } else {
-      VictorWifi::join(ssid, password, true);
+      VictorWifi::join(ssid, password, channel, (uint8_t*)bssid.c_str());
       auto isConnected = WiFi.status() == WL_CONNECTED;
       console.log().type(F("WiFi")).write(F("connected > ") + String(isConnected));
       if (isConnected) {
