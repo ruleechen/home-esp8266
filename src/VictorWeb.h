@@ -34,9 +34,10 @@ namespace Victor::Components {
     void _sendJson(DynamicJsonDocument doc);
     void _dispatchRequestStart();
     void _dispatchRequestEnd();
-    void _handleIndex();
-    void _handleHome();
+    void _handleIndexPage();
+    void _handleStatus();
     void _handleFileSystem();
+    void _handleFiles();
     void _handleFileGet();
     void _handleFileSave();
     void _handleFileDelete();

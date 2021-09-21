@@ -29,7 +29,7 @@ void setup(void) {
   webPortal.onRequestEnd = []() { builtinLed->turnOff(); };
   webPortal.setup();
 
-  ticker.attach(1, []() { console.log("[ticker] heartbeat"); });
+  ticker.attach(10, []() { console.log("[ticker] heartbeat"); });
 
   console.log(F("[setup] complete"));
   builtinLed->flash();

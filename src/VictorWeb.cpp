@@ -36,9 +36,10 @@ namespace Victor::Components {
     _server->serveStatic("/style.min.css", LittleFS, "/web/style.min.css", "max-age=43200");
     _server->serveStatic("/mithril.min.js", LittleFS, "/web/mithril.min.js", "max-age=43200");
     _server->serveStatic("/app.min.js", LittleFS, "/web/app.min.js");
-    _server->on(F("/"), HTTP_GET, std::bind(&VictorWeb::_handleIndex, this));
-    _server->on(F("/home"), HTTP_GET, std::bind(&VictorWeb::_handleHome, this));
+    _server->on(F("/"), HTTP_GET, std::bind(&VictorWeb::_handleIndexPage, this));
+    _server->on(F("/status"), HTTP_GET, std::bind(&VictorWeb::_handleStatus, this));
     _server->on(F("/fs"), HTTP_GET, std::bind(&VictorWeb::_handleFileSystem, this));
+    _server->on(F("/files"), HTTP_GET, std::bind(&VictorWeb::_handleFiles, this));
     _server->on(F("/file"), HTTP_GET, std::bind(&VictorWeb::_handleFileGet, this));
     _server->on(F("/file"), HTTP_POST, std::bind(&VictorWeb::_handleFileSave, this));
     _server->on(F("/file"), HTTP_DELETE, std::bind(&VictorWeb::_handleFileDelete, this));
@@ -84,7 +85,7 @@ namespace Victor::Components {
     }
   }
 
-  void VictorWeb::_handleIndex() {
+  void VictorWeb::_handleIndexPage() {
     _dispatchRequestStart();
     auto path = String(F("/web/index.htm"));
     auto file = LittleFS.open(path, "r");
@@ -98,7 +99,7 @@ namespace Victor::Components {
     _dispatchRequestEnd();
   }
 
-  void VictorWeb::_handleHome() {
+  void VictorWeb::_handleStatus() {
     _dispatchRequestStart();
     // wifi
     auto ssidJoined = WiFi.SSID();
@@ -178,28 +179,37 @@ namespace Victor::Components {
       res[F("maxOpenFiles")] = fsInfo.maxOpenFiles;
       res[F("blockSize")] = fsInfo.blockSize;
       res[F("pageSize")] = fsInfo.pageSize;
-      // files
-      // https://arduino-esp8266.readthedocs.io/en/latest/filesystem.html
-      JsonObject filesObj = res.createNestedObject(F("files"));
-      std::function<void(String)> loopFile;
-      loopFile = [&](String path)->void {
-        Dir dir = LittleFS.openDir(path);
-        while(dir.next()) {
-          if (dir.isDirectory()) {
-            loopFile(path + dir.fileName() + F("/"));
-          } else if (dir.isFile()) {
-            auto fullName = path + dir.fileName();
-            auto size = dir.fileSize();
-            filesObj[fullName] = size;
-          }
-        }
-      };
-      loopFile(F("/"));
     } else {
       auto error = String(F("read fs info failed"));
       res[F("error")] = error;
       console.error().type(F("fs")).write(error).newline();
     }
+    _sendJson(res);
+    _dispatchRequestEnd();
+  }
+
+  void VictorWeb::_handleFiles() {
+    _dispatchRequestStart();
+    DynamicJsonDocument res(512);
+    // load files
+    // https://arduino-esp8266.readthedocs.io/en/latest/filesystem.html
+    JsonArray filesArr = res.createNestedArray(F("files"));
+    std::function<void(String)> loopFile;
+    loopFile = [&](String path)->void {
+      Dir dir = LittleFS.openDir(path);
+      while(dir.next()) {
+        auto fullName = path + dir.fileName();
+        if (dir.isDirectory()) {
+          loopFile(fullName + F("/"));
+        } else if (dir.isFile()) {
+          JsonObject fileObj = filesArr.createNestedObject();
+          fileObj[F("path")] = fullName;
+          fileObj[F("size")] = dir.fileSize();
+        }
+      }
+    };
+    loopFile(F("/"));
+    // send
     _sendJson(res);
     _dispatchRequestEnd();
   }

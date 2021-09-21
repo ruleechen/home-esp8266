@@ -173,7 +173,7 @@ const HomeView = (() => {
     state.loading = true;
     m.request({
       method: "GET",
-      url: "/home",
+      url: "/status",
     }).then((res) => {
       state.loading = false;
       state.data = res;
@@ -263,8 +263,7 @@ const HomeView = (() => {
 const FileSystemView = (() => {
   const state = {
     loading: true,
-    infos: [],
-    files: [],
+    data: {},
   };
   const oninit = () => {
     state.loading = true;
@@ -273,14 +272,50 @@ const FileSystemView = (() => {
       url: "/fs",
     }).then((res) => {
       state.loading = false;
-      state.infos = [
-        ["Total", vic.bytes(res.totalBytes)],
-        ["Used", vic.bytes(res.usedBytes)],
-        ["Max Path Length", res.maxPathLength],
-        ["Max Open Files", res.maxOpenFiles],
-        ["Block Size", vic.bytes(res.blockSize)],
-        ["Page Size", vic.bytes(res.pageSize)],
+      state.data = res;
+      m.redraw();
+    });
+  };
+  return {
+    oninit,
+    view() {
+      if (state.loading) {
+        return vic.getLoading();
+      }
+      const d = state.data;
+      return [
+        vic.getNav(),
+        m("h3", "File System"),
+        m("p", [m(m.route.Link, { href: "/fs/files" }, "Files")]),
+        m("p", [
+          vic.mTable({
+            rows: [
+              ["Total", vic.bytes(d.totalBytes)],
+              ["Used", vic.bytes(d.usedBytes)],
+              ["Max Path Length", d.maxPathLength],
+              ["Max Open Files", d.maxOpenFiles],
+              ["Block Size", vic.bytes(d.blockSize)],
+              ["Page Size", vic.bytes(d.pageSize)],
+            ],
+          }),
+        ]),
       ];
+    },
+  };
+})();
+
+const FileListView = (() => {
+  const state = {
+    loading: true,
+    files: [],
+  };
+  const oninit = () => {
+    state.loading = true;
+    m.request({
+      method: "GET",
+      url: "/files",
+    }).then((res) => {
+      state.loading = false;
       state.files = res.files;
       m.redraw();
     });
@@ -293,25 +328,19 @@ const FileSystemView = (() => {
       }
       return [
         vic.getNav(),
-        m("h3", "File System"),
+        m("h3", "Files"),
+        m("p", [m(m.route.Link, { href: "/fs" }, "< FS")]),
         m("p", [
           vic.mTable({
-            header: ["Storage", ""],
-            rows: state.infos,
-          }),
-        ]),
-        m("p", [
-          vic.mTable({
-            header: ["Files", ""],
-            rows: Object.keys(state.files).map((path) => [
+            rows: state.files.map(({ path, size }) => [
               m(
                 m.route.Link,
                 {
-                  href: m.buildPathname("/fs/file/:path", { path }),
+                  href: m.buildPathname("/fs/files/:path", { path }),
                 },
                 path
               ),
-              vic.bytes(state.files[path]),
+              vic.bytes(size),
             ]),
           }),
         ]),
@@ -352,7 +381,7 @@ const FileItemView = (() => {
           alert(res.error);
           return;
         }
-        m.route.set("/fs");
+        m.route.set("/fs/files");
       });
     }
   };
@@ -373,7 +402,7 @@ const FileItemView = (() => {
       return [
         vic.getNav(),
         m("h3", `${state.file.name} (${state.file.size} bytes)`),
-        m("p", [m(m.route.Link, { href: "/fs" }, "< Files")]),
+        m("p", [m(m.route.Link, { href: "/fs/files" }, "< Files")]),
         m("div.form", [
           m("p", [m("textarea", { cols: 50, rows: 10 }, state.file.content)]),
           m("p", [
@@ -450,7 +479,7 @@ const WifiView = (() => {
               }),
               m("label", { for: x.bssid }, x.ssid),
               m("label", { for: x.bssid }, x.bssid),
-              m("label", { for: x.bssid }, `${100+x.rssi}%`), // the closer the value is to 0, the stronger the received signal has been.
+              m("label", { for: x.bssid }, `${100 + x.rssi}%`), // the closer the value is to 0, the stronger the received signal has been.
             ]),
           }),
           m("p", [
@@ -649,7 +678,8 @@ vic.appendRoute((config) =>
     "/": HomeView,
     "/wifi": WifiView,
     "/fs": FileSystemView,
-    "/fs/file/:path": FileItemView,
+    "/fs/files": FileListView,
+    "/fs/files/:path": FileItemView,
     "/ota": OtaView,
     "/ota/otw": OtaOtwView,
     "/reset": ResetView,
