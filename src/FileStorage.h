@@ -8,7 +8,7 @@
 
 // https://arduinojson.org/v6/assistant/
 // https://cpp4arduino.com/2018/11/06/what-is-heap-fragmentation.html
-#define DEFAULT_FILE_SIZE 2048 // block siz 4096
+#define DEFAULT_FILE_SIZE 2048 // block size 4096
 
 namespace Victor::Components {
 
