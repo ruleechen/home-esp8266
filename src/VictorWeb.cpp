@@ -194,13 +194,13 @@ namespace Victor::Components {
     // load files
     // https://arduino-esp8266.readthedocs.io/en/latest/filesystem.html
     JsonArray filesArr = res.createNestedArray(F("files"));
-    std::function<void(String)> loopFile;
-    loopFile = [&](String path)->void {
+    std::function<void(String)> loopFiles;
+    loopFiles = [&](String path)->void {
       Dir dir = LittleFS.openDir(path);
       while(dir.next()) {
         auto fullName = path + dir.fileName();
         if (dir.isDirectory()) {
-          loopFile(fullName + F("/"));
+          loopFiles(fullName + F("/"));
         } else if (dir.isFile()) {
           JsonObject fileObj = filesArr.createNestedObject();
           fileObj[F("path")] = fullName;
@@ -208,7 +208,7 @@ namespace Victor::Components {
         }
       }
     };
-    loopFile(F("/"));
+    loopFiles(F("/"));
     // send
     _sendJson(res);
     _dispatchRequestEnd();

@@ -245,7 +245,7 @@ const HomeView = (() => {
             rows: [
               [
                 "Sketch MD5",
-                m("p.ellipsis", { title: d.sketchMD5 }, d.sketchMD5),
+                m("span.ellipsis", { title: d.sketchMD5 }, d.sketchMD5),
               ],
               ["Sketch Size", vic.bytes(d.sketchSize)],
               ["Sketch Free Space", vic.bytes(d.sketchFreeSpace)],
