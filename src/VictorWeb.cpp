@@ -54,6 +54,7 @@ namespace Victor::Components {
   void VictorWeb::_solvePageTokens(String& html) {
     auto productName = FirmwareName;
     html.replace(F("{productName}"), productName);
+    html.replace(F("{version}"), String(UnixTime));
   }
 
   void VictorWeb::_sendHtml(const String& html) {
@@ -92,8 +93,6 @@ namespace Victor::Components {
     auto html = file.readString();
     file.close();
     _solvePageTokens(html);
-    html.replace(F("{version}"), String(UnixTime));
-    html.replace(F("{productName}"), "");
     html.replace(F("{appendHead}"), "");
     html.replace(F("{appendBody}"), "");
     _sendHtml(html);
