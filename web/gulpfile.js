@@ -6,8 +6,8 @@ const rename = require("gulp-rename");
 
 const resource = {
   css: ["src/*.css"],
-  js: ["src/*.js", "!src/mithril.min.js"],
-  copy: ["src/*.htm", "src/mithril.min.js"],
+  js: ["src/*.js", "!src/*.min.js"],
+  copy: ["src/*.htm", "src/*.min.js"],
 };
 
 const paths = {
