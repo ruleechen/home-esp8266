@@ -104,7 +104,7 @@ namespace Victor::Components {
   void VictorWeb::_handleStatus() {
     _dispatchRequestStart();
     // res
-    DynamicJsonDocument res(512);
+    DynamicJsonDocument res(1024);
     // status
     res[F("millis")] = millis();
     res[F("resetReason")] = ESP.getResetReason();
