@@ -44,6 +44,7 @@ namespace Victor::Components {
     void _handleWifi();
     void _handleWifiList();
     void _handleWifiJoin();
+    void _handleWifiMode();
     void _handleOta();
     void _handleOtaFire();
     void _handleReset();

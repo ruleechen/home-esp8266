@@ -46,6 +46,7 @@ namespace Victor::Components {
     _server->on(F("/wifi"), HTTP_GET, std::bind(&VictorWeb::_handleWifi, this));
     _server->on(F("/wifi/list"), HTTP_GET, std::bind(&VictorWeb::_handleWifiList, this));
     _server->on(F("/wifi/join"), HTTP_POST, std::bind(&VictorWeb::_handleWifiJoin, this));
+    _server->on(F("/wifi/mode"), HTTP_POST, std::bind(&VictorWeb::_handleWifiMode, this));
     _server->on(F("/ota"), HTTP_GET, std::bind(&VictorWeb::_handleOta, this));
     _server->on(F("/ota/fire"), HTTP_POST, std::bind(&VictorWeb::_handleOtaFire, this));
     _server->on(F("/reset"), HTTP_POST, std::bind(&VictorWeb::_handleReset, this));
@@ -230,13 +231,13 @@ namespace Victor::Components {
     // wifi
     auto ssidJoined = WiFi.SSID();
     auto wifiMode = WiFi.getMode();
-    auto strWifiMode = String(F("WIFI_OFF"));
+    auto strWifiMode = String(F("OFF"));
     if (wifiMode == WIFI_STA) {
-      strWifiMode = F("WIFI_STA");
+      strWifiMode = F("STA");
     } else if (wifiMode == WIFI_AP) {
-      strWifiMode = F("WIFI_AP");
+      strWifiMode = F("AP");
     } else if (wifiMode == WIFI_AP_STA) {
-      strWifiMode = F("WIFI_AP_STA");
+      strWifiMode = F("AP_STA");
     }
     // station
     auto staAddress = String("");
@@ -315,6 +316,29 @@ namespace Victor::Components {
         res[F("error")] = String(F("failed"));
       }
     }
+    _sendJson(res);
+    _dispatchRequestEnd();
+  }
+
+  void VictorWeb::_handleWifiMode() {
+    _dispatchRequestStart();
+    // payload
+    auto payloadJson = _server->arg(F("plain"));
+    DynamicJsonDocument payload(128);
+    deserializeJson(payload, payloadJson);
+    // read
+    auto mode = String(payload[F("mode")]);
+    // set
+    if (mode == "STA") {
+      WiFi.mode(WIFI_STA);
+    } else if (mode == "AP") {
+      WiFi.mode(WIFI_AP);
+    } else if (mode == "AP_STA") {
+      WiFi.mode(WIFI_AP_STA);
+    }
+    // res
+    DynamicJsonDocument res(64);
+    res[F("message")] = String(F("success"));
     _sendJson(res);
     _dispatchRequestEnd();
   }

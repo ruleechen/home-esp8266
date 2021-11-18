@@ -404,6 +404,16 @@ const WifiView = (() => {
       m.redraw();
     });
   };
+  const setMode = () => {
+    const modeEl = vic.query("input[type=radio]:checked");
+    m.request({
+      method: "POST",
+      url: "/wifi/mode",
+      body: { mode: modeEl.value },
+    }).then(() => {
+      oninit();
+    });
+  };
   return {
     oninit,
     view() {
@@ -442,6 +452,20 @@ const WifiView = (() => {
               ["AP MAC", d.apMacAddress],
             ],
           }),
+        ]),
+        m("h3", "WiFi Mode"),
+        m("div.form", [
+          vic.mRadioList(
+            "WifiMode",
+            [d.wifiMode],
+            [
+              { value: "AP_STA", text: "AP+STA" },
+              { value: "STA", text: "STA" },
+              { value: "AP", text: "AP" },
+              { value: "OFF", text: "OFF" },
+            ]
+          ),
+          m("p", [m("button.btn", { onclick: setMode }, "Submit")]),
         ]),
       ];
     },
@@ -500,6 +524,7 @@ const WifiListView = (() => {
       return [
         vic.getNav(),
         m("h3", "Join WiFi"),
+        m("p", [m(m.route.Link, { href: "/wifi" }, "< WiFi")]),
         m("div.form", [
           vic.mTable({
             rows: state.founds.map((x) => [
