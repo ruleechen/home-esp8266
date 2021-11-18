@@ -29,6 +29,7 @@ namespace Victor {
     bool overTheWeb = false;
     String wifiSsid;
     String wifiPass;
+    bool autoMode = true;
   };
 
 } // namespace Victor

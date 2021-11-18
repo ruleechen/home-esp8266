@@ -14,6 +14,7 @@ namespace Victor::Components {
     doc[F("otw")] = model.overTheWeb ? 1 : 0;
     doc[F("wifi")][0] = model.wifiSsid;
     doc[F("wifi")][1] = model.wifiPass;
+    doc[F("wifi")][2] = model.autoMode ? 1 : 0;
   }
 
   void AppStorage::_deserializeFrom(AppModel& model, const DynamicJsonDocument& doc) {
@@ -24,6 +25,7 @@ namespace Victor::Components {
     model.overTheWeb = doc[F("otw")] == 1;
     model.wifiSsid = String(doc[F("wifi")][0]);
     model.wifiPass = String(doc[F("wifi")][1]);
+    model.autoMode = doc[F("wifi")][2] == 1;
   }
 
   // global

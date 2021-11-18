@@ -106,10 +106,24 @@ namespace Victor::Components {
       }
       case WiFiEvent::WIFI_EVENT_STAMODE_DISCONNECTED: {
         _log().write(F("STA disconnected")).newline();
+        auto model = appStorage.load();
+        if (model.autoMode) {
+          auto wifiMode = WiFi.getMode();
+          if (wifiMode != WIFI_AP_STA) {
+            WiFi.mode(WIFI_AP_STA);
+          }
+        }
         break;
       }
       case WiFiEvent::WIFI_EVENT_STAMODE_GOT_IP: {
         _log().write(F("STA got ip")).newline();
+        auto model = appStorage.load();
+        if (model.autoMode) {
+          auto wifiMode = WiFi.getMode();
+          if (wifiMode != WIFI_STA) {
+            WiFi.mode(WIFI_STA);
+          }
+        }
         break;
       }
       case WiFiEvent::WIFI_EVENT_SOFTAPMODE_STACONNECTED: {
