@@ -24,12 +24,18 @@ namespace Victor::Components {
       }
     }
 
+    WiFi.onEvent(VictorWifi::_onWifiEvent, WiFiEvent::WIFI_EVENT_ANY);
     WiFi.hostname(hostName); // name which is displayed on router
     WiFi.setAutoConnect(true);
     WiFi.setAutoReconnect(true);
     WiFi.persistent(true);
-    WiFi.begin();
-    WiFi.onEvent(VictorWifi::_onWifiEvent, WiFiEvent::WIFI_EVENT_ANY);
+    auto ssidJoined = WiFi.SSID();
+    if (!ssidJoined || ssidJoined == "") {
+      auto model = appStorage.load();
+      WiFi.begin(model.wifiSsid, model.wifiPass);
+    } else {
+      WiFi.begin();
+    }
   }
 
   void VictorWifi::reset() {

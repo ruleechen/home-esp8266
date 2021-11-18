@@ -12,6 +12,8 @@ namespace Victor::Components {
     doc[F("led")][0] = model.ledPin;
     doc[F("led")][1] = model.ledOnValue;
     doc[F("otw")] = model.overTheWeb ? 1 : 0;
+    doc[F("wifi")][0] = model.wifiSsid;
+    doc[F("wifi")][1] = model.wifiPass;
   }
 
   void AppStorage::_deserializeFrom(AppModel& model, const DynamicJsonDocument& doc) {
@@ -20,6 +22,8 @@ namespace Victor::Components {
     model.ledPin = doc[F("led")][0];
     model.ledOnValue = doc[F("led")][1];
     model.overTheWeb = doc[F("otw")] == 1;
+    model.wifiSsid = String(doc[F("wifi")][0]);
+    model.wifiPass = String(doc[F("wifi")][1]);
   }
 
   // global

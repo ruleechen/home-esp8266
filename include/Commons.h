@@ -27,6 +27,8 @@ namespace Victor {
     int8_t ledPin = 2;      // -128 ~ 127
     uint8_t ledOnValue = 0; // 0 ~ 256 LOW
     bool overTheWeb = false;
+    String wifiSsid;
+    String wifiPass;
   };
 
 } // namespace Victor
