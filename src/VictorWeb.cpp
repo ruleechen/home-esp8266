@@ -44,6 +44,7 @@ namespace Victor::Components {
     _server->on(F("/file"), HTTP_POST, std::bind(&VictorWeb::_handleFileSave, this));
     _server->on(F("/file"), HTTP_DELETE, std::bind(&VictorWeb::_handleFileDelete, this));
     _server->on(F("/wifi"), HTTP_GET, std::bind(&VictorWeb::_handleWifi, this));
+    _server->on(F("/wifi/list"), HTTP_GET, std::bind(&VictorWeb::_handleWifiList, this));
     _server->on(F("/wifi/join"), HTTP_POST, std::bind(&VictorWeb::_handleWifiJoin, this));
     _server->on(F("/ota"), HTTP_GET, std::bind(&VictorWeb::_handleOta, this));
     _server->on(F("/ota/fire"), HTTP_POST, std::bind(&VictorWeb::_handleOtaFire, this));
@@ -101,39 +102,8 @@ namespace Victor::Components {
 
   void VictorWeb::_handleStatus() {
     _dispatchRequestStart();
-    // wifi
-    auto ssidJoined = WiFi.SSID();
-    auto wifiMode = WiFi.getMode();
-    auto strWifiMode = String(F("WIFI_OFF"));
-    if (wifiMode == WIFI_STA) {
-      strWifiMode = F("WIFI_STA");
-    } else if (wifiMode == WIFI_AP) {
-      strWifiMode = F("WIFI_AP");
-    } else if (wifiMode == WIFI_AP_STA) {
-      strWifiMode = F("WIFI_AP_STA");
-    }
-    // station
-    auto staAddress = String("");
-    auto staMacAddress = WiFi.macAddress();
-    auto isStaEnabled = ((wifiMode & WIFI_STA) != 0);
-    if (isStaEnabled) {
-      IPAddress localIP = WiFi.localIP();
-      if (localIP) {
-        staAddress = localIP.toString();
-      }
-    }
-    // access point
-    auto apAddress = String("");
-    auto apMacAddress = WiFi.softAPmacAddress();
-    auto isApEnabled = ((wifiMode & WIFI_AP) != 0);
-    if (isApEnabled) {
-      IPAddress apIP = WiFi.softAPIP();
-      if (apIP) {
-        apAddress = apIP.toString();
-      }
-    }
     // res
-    DynamicJsonDocument res(1024);
+    DynamicJsonDocument res(512);
     // status
     res[F("millis")] = millis();
     res[F("resetReason")] = ESP.getResetReason();
@@ -141,14 +111,6 @@ namespace Victor::Components {
     res[F("freeHeap")] = ESP.getFreeHeap();
     res[F("maxFreeBlockSize")] = ESP.getMaxFreeBlockSize();
     res[F("heapFragmentation")] = ESP.getHeapFragmentation();
-    // wifi
-    res[F("localHost")] = VictorWifi::getLocalHostName();
-    res[F("wifiMode")] = strWifiMode;
-    res[F("joined")] = ssidJoined;
-    res[F("staAddress")] = staAddress;
-    res[F("staMacAddress")] = staMacAddress;
-    res[F("apAddress")] = apAddress;
-    res[F("apMacAddress")] = apMacAddress;
     // hardware
     res[F("chipId")] = ESP.getChipId();
     res[F("cupFreqMHz")] = ESP.getCpuFreqMHz();
@@ -264,6 +226,54 @@ namespace Victor::Components {
   }
 
   void VictorWeb::_handleWifi() {
+    _dispatchRequestStart();
+    // wifi
+    auto ssidJoined = WiFi.SSID();
+    auto wifiMode = WiFi.getMode();
+    auto strWifiMode = String(F("WIFI_OFF"));
+    if (wifiMode == WIFI_STA) {
+      strWifiMode = F("WIFI_STA");
+    } else if (wifiMode == WIFI_AP) {
+      strWifiMode = F("WIFI_AP");
+    } else if (wifiMode == WIFI_AP_STA) {
+      strWifiMode = F("WIFI_AP_STA");
+    }
+    // station
+    auto staAddress = String("");
+    auto staMacAddress = WiFi.macAddress();
+    auto isStaEnabled = ((wifiMode & WIFI_STA) != 0);
+    if (isStaEnabled) {
+      IPAddress localIP = WiFi.localIP();
+      if (localIP) {
+        staAddress = localIP.toString();
+      }
+    }
+    // access point
+    auto apAddress = String("");
+    auto apMacAddress = WiFi.softAPmacAddress();
+    auto isApEnabled = ((wifiMode & WIFI_AP) != 0);
+    if (isApEnabled) {
+      IPAddress apIP = WiFi.softAPIP();
+      if (apIP) {
+        apAddress = apIP.toString();
+      }
+    }
+    // res
+    DynamicJsonDocument res(512);
+    // wifi
+    res[F("localHost")] = VictorWifi::getLocalHostName();
+    res[F("wifiMode")] = strWifiMode;
+    res[F("joined")] = ssidJoined;
+    res[F("staAddress")] = staAddress;
+    res[F("staMacAddress")] = staMacAddress;
+    res[F("apAddress")] = apAddress;
+    res[F("apMacAddress")] = apMacAddress;
+    // end
+    _sendJson(res);
+    _dispatchRequestEnd();
+  }
+
+  void VictorWeb::_handleWifiList() {
     _dispatchRequestStart();
     DynamicJsonDocument res(1024);
     res[F("bssid")] = WiFi.BSSIDstr();

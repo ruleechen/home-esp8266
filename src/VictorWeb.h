@@ -42,6 +42,7 @@ namespace Victor::Components {
     void _handleFileSave();
     void _handleFileDelete();
     void _handleWifi();
+    void _handleWifiList();
     void _handleWifiJoin();
     void _handleOta();
     void _handleOtaFire();

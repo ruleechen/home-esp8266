@@ -203,33 +203,6 @@ const HomeView = (() => {
             ],
           }),
           vic.mTable({
-            header: ["WiFi", ""],
-            rows: [
-              [
-                "Local Host",
-                d.localHost
-                  ? m("a", { href: `http://${d.localHost}.local` }, d.localHost)
-                  : "",
-              ],
-              ["Mode", d.wifiMode],
-              ["Joined", d.joined ? d.joined : "-"],
-              [
-                "STA IP",
-                d.staAddress
-                  ? m("a", { href: `http://${d.staAddress}` }, d.staAddress)
-                  : "-",
-              ],
-              ["STA MAC", d.staMacAddress],
-              [
-                "AP IP",
-                d.apAddress
-                  ? m("a", { href: `http://${d.apAddress}` }, d.apAddress)
-                  : "-",
-              ],
-              ["AP MAC", d.apMacAddress],
-            ],
-          }),
-          vic.mTable({
             header: ["Hardware", ""],
             rows: [
               ["Chip ID", d.chipId],
@@ -418,6 +391,66 @@ const FileItemView = (() => {
 const WifiView = (() => {
   const state = {
     loading: true,
+    data: {},
+  };
+  const oninit = () => {
+    state.loading = true;
+    m.request({
+      method: "GET",
+      url: "/wifi",
+    }).then((res) => {
+      state.loading = false;
+      state.data = res;
+      m.redraw();
+    });
+  };
+  return {
+    oninit,
+    view() {
+      if (state.loading) {
+        return vic.getLoading();
+      }
+      const d = state.data;
+      return [
+        vic.getNav(),
+        m("h3", "WiFi"),
+        m("p", [m(m.route.Link, { href: "/wifi/list" }, "Join Wifi")]),
+        m("p", [
+          vic.mTable({
+            rows: [
+              [
+                "Local Host",
+                d.localHost
+                  ? m("a", { href: `http://${d.localHost}.local` }, d.localHost)
+                  : "",
+              ],
+              ["Mode", d.wifiMode],
+              ["Joined", d.joined ? d.joined : "-"],
+              [
+                "STA IP",
+                d.staAddress
+                  ? m("a", { href: `http://${d.staAddress}` }, d.staAddress)
+                  : "-",
+              ],
+              ["STA MAC", d.staMacAddress],
+              [
+                "AP IP",
+                d.apAddress
+                  ? m("a", { href: `http://${d.apAddress}` }, d.apAddress)
+                  : "-",
+              ],
+              ["AP MAC", d.apMacAddress],
+            ],
+          }),
+        ]),
+      ];
+    },
+  };
+})();
+
+const WifiListView = (() => {
+  const state = {
+    loading: true,
     bssid: null,
     founds: [{ bssid: "", ssid: "", channel: 0, rssi: 10 }],
     password: "",
@@ -451,7 +484,7 @@ const WifiView = (() => {
     state.loading = true;
     m.request({
       method: "GET",
-      url: "/wifi",
+      url: "/wifi/list",
     }).then((res) => {
       state.loading = false;
       Object.assign(state, res);
@@ -677,6 +710,7 @@ vic.appendRoute((config) =>
   Object.assign(config, {
     "/": HomeView,
     "/wifi": WifiView,
+    "/wifi/list": WifiListView,
     "/fs": FileSystemView,
     "/fs/files": FileListView,
     "/fs/files/:path": FileItemView,
