@@ -35,4 +35,11 @@ namespace Victor::Components {
     turnOff();
   }
 
+  void BuiltinLed::toggle() {
+    if (_outputPin) {
+      auto value = _outputPin->getValue();
+      _outputPin->setValue(!value);
+    }
+  }
+
 } // namespace Victor::Components

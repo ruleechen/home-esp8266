@@ -9,8 +9,13 @@ namespace Victor::Components {
   }
 
   void DigitalOutput::setValue(bool value) {
+    _currentValue = value;
     auto falseValue = _trueValue == LOW ? HIGH : LOW;
     digitalWrite(_pin, value ? _trueValue : falseValue);
+  }
+
+  bool DigitalOutput::getValue() {
+    return _currentValue;
   }
 
 } // namespace Victor::Components

@@ -13,6 +13,7 @@ namespace Victor::Components {
     void turnOn();
     void turnOff();
     void flash();
+    void toggle();
 
    private:
     DigitalOutput* _outputPin;
