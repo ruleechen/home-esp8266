@@ -19,10 +19,10 @@ namespace Victor::Components {
     Console _log();
     void _updateSketch();
     void _updateFileSystem();
-    void _onStart();
-    void _onEnd();
-    void _onProgress(int progress, int total);
-    void _onError(int error);
+    void _handleStart();
+    void _handleEnd();
+    void _handleProgress(int progress, int total);
+    void _handleError(int error);
   };
 
   // global

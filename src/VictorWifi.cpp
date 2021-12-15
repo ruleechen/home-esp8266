@@ -24,7 +24,9 @@ namespace Victor::Components {
       }
     }
 
-    WiFi.onEvent(VictorWifi::_onWifiEvent, WiFiEvent::WIFI_EVENT_ANY);
+    WiFi.onStationModeGotIP(std::bind(&VictorWifi::_handleStationModeGotIP, this, std::placeholders::_1));
+    WiFi.onStationModeDisconnected(std::bind(&VictorWifi::_handleStationModeDisconnected, this, std::placeholders::_1));
+
     WiFi.hostname(hostName); // name which is displayed on router
     WiFi.setAutoConnect(true);
     WiFi.setAutoReconnect(true);
@@ -98,46 +100,29 @@ namespace Victor::Components {
     return console.log().type(F("WiFi"));
   }
 
-  void VictorWifi::_onWifiEvent(WiFiEvent_t event) {
-    switch (event) {
-      case WiFiEvent::WIFI_EVENT_STAMODE_CONNECTED: {
-        _log().write(F("STA connected")).newline();
-        break;
-      }
-      case WiFiEvent::WIFI_EVENT_STAMODE_DISCONNECTED: {
-        _log().write(F("STA disconnected")).newline();
-        auto model = appStorage.load();
-        if (model.autoMode) {
-          auto wifiMode = WiFi.getMode();
-          if (wifiMode != WIFI_AP_STA) {
-            WiFi.mode(WIFI_AP_STA);
-          }
-        }
-        break;
-      }
-      case WiFiEvent::WIFI_EVENT_STAMODE_GOT_IP: {
-        _log().write(F("STA got ip")).newline();
-        auto model = appStorage.load();
-        if (model.autoMode) {
-          auto wifiMode = WiFi.getMode();
-          if (wifiMode != WIFI_STA) {
-            WiFi.mode(WIFI_STA);
-          }
-        }
-        break;
-      }
-      case WiFiEvent::WIFI_EVENT_SOFTAPMODE_STACONNECTED: {
-        _log().write(F("AP connected")).newline();
-        break;
-      }
-      case WiFiEvent::WIFI_EVENT_SOFTAPMODE_STADISCONNECTED: {
-        _log().write(F("AP disconnected")).newline();
-        break;
-      }
-      default: {
-        break;
+  void VictorWifi::_handleStationModeGotIP(const WiFiEventStationModeGotIP& args) {
+    _log().write(F("station mode got ip")).newline();
+    auto model = appStorage.load();
+    if (model.autoMode) {
+      auto wifiMode = WiFi.getMode();
+      if (wifiMode != WIFI_STA) {
+        WiFi.mode(WIFI_STA);
       }
     }
   }
+
+  void VictorWifi::_handleStationModeDisconnected(const WiFiEventStationModeDisconnected& args) {
+    _log().write(F("station mode disconnected")).newline();
+    auto model = appStorage.load();
+    if (model.autoMode) {
+      auto wifiMode = WiFi.getMode();
+      if (wifiMode != WIFI_AP_STA) {
+        WiFi.mode(WIFI_AP_STA);
+      }
+    }
+  }
+
+  // global
+  VictorWifi victorWifi;
 
 } // namespace Victor::Components

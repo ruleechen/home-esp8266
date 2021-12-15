@@ -6,10 +6,10 @@ namespace Victor::Components {
     // ESPhttpUpdate.setAuthorization(user, password);
     ESPhttpUpdate.setLedPin(LED_BUILTIN, LOW);
     // hook events
-    ESPhttpUpdate.onStart(std::bind(&VictorOTA::_onStart, this));
-    ESPhttpUpdate.onEnd(std::bind(&VictorOTA::_onEnd, this));
-    ESPhttpUpdate.onProgress(std::bind(&VictorOTA::_onProgress, this, std::placeholders::_1, std::placeholders::_2));
-    ESPhttpUpdate.onError(std::bind(&VictorOTA::_onError, this, std::placeholders::_1));
+    ESPhttpUpdate.onStart(std::bind(&VictorOTA::_handleStart, this));
+    ESPhttpUpdate.onEnd(std::bind(&VictorOTA::_handleEnd, this));
+    ESPhttpUpdate.onProgress(std::bind(&VictorOTA::_handleProgress, this, std::placeholders::_1, std::placeholders::_2));
+    ESPhttpUpdate.onError(std::bind(&VictorOTA::_handleError, this, std::placeholders::_1));
   }
 
   String VictorOTA::getCurrentVersion() {
@@ -73,19 +73,19 @@ namespace Victor::Components {
     ESPhttpUpdate.updateFS(client, F("http://wwww.rulee.cn/esp8266/littlefs.bin"), currentVersion);
   }
 
-  void VictorOTA::_onStart() {
+  void VictorOTA::_handleStart() {
     _log().write(F("start updating")).newline();
   }
 
-  void VictorOTA::_onEnd() {
+  void VictorOTA::_handleEnd() {
     _log().write(F("update finished")).newline();
   }
 
-  void VictorOTA::_onProgress(int progress, int total) {
+  void VictorOTA::_handleProgress(int progress, int total) {
     _log().write(F("progress ")).write(String(progress / (total / 100))).write(F("%")).newline();
   }
 
-  void VictorOTA::_onError(int error) {
+  void VictorOTA::_handleError(int error) {
     auto message = ESPhttpUpdate.getLastErrorString();
     _log().write(F("error ")).write(String(error)).write(F(", message ")).write(message).newline();
   }

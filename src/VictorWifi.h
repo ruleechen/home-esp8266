@@ -9,17 +9,22 @@
 namespace Victor::Components {
   class VictorWifi {
    public:
-    static void setup();
-    static void reset();
-    static void join(String ssid, String password = emptyString, int32_t channel = 0, uint8_t* bssid = NULL);
-    static String getHostId();
-    static String getLocalHostName();
-    static String getHostName(bool includeVersion = true);
+    void setup();
+    void reset();
+    void join(String ssid, String password = emptyString, int32_t channel = 0, uint8_t* bssid = NULL);
+    String getHostId();
+    String getLocalHostName();
+    String getHostName(bool includeVersion = true);
 
    private:
-    static Console _log();
-    static void _onWifiEvent(WiFiEvent_t event);
+    Console _log();
+    void _handleStationModeGotIP(const WiFiEventStationModeGotIP& args);
+    void _handleStationModeDisconnected(const WiFiEventStationModeDisconnected& args);
   };
+
+  // global
+  extern VictorWifi victorWifi;
+
 } // namespace Victor::Components
 
 #endif // VictorWifi_h

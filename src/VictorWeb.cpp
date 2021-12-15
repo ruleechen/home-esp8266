@@ -262,7 +262,7 @@ namespace Victor::Components {
     // res
     DynamicJsonDocument res(512);
     // wifi
-    res[F("localHost")] = VictorWifi::getLocalHostName();
+    res[F("localHost")] = victorWifi.getLocalHostName();
     res[F("wifiMode")] = strWifiMode;
     res[F("joined")] = ssidJoined;
     res[F("staAddress")] = staAddress;
@@ -307,7 +307,7 @@ namespace Victor::Components {
     if (!ssid || ssid == "") {
       res[F("error")] = String(F("Please select wifi to join"));
     } else {
-      VictorWifi::join(ssid, password, channel, (uint8_t*)bssid.c_str());
+      victorWifi.join(ssid, password, channel, (uint8_t*)bssid.c_str());
       auto isConnected = WiFi.status() == WL_CONNECTED;
       console.log().type(F("WiFi")).write(F("connected > ") + String(isConnected));
       if (isConnected) {
@@ -399,7 +399,7 @@ namespace Victor::Components {
       ESP.eraseConfig();
     }
     if (values.indexOf(F("WifiReset")) >= 0) {
-      VictorWifi::reset();
+      victorWifi.reset();
     }
     DynamicJsonDocument res(64);
     res[F("message")] = String(F("success"));
