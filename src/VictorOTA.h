@@ -1,6 +1,7 @@
 #ifndef VictorOTA_h
 #define VictorOTA_h
 
+#include <functional>
 #include <Arduino.h>
 #include <ESP8266httpUpdate.h>
 #include "Commons.h"
@@ -8,21 +9,25 @@
 namespace Victor::Components {
   class VictorOTA {
    public:
-    static void setup();
-    static String getCurrentVersion();
-    static String checkNewVersion();
-    static void update(String version, VOtaType type);
-    static void trigger(VOtaType type);
+    void setup();
+    String getCurrentVersion();
+    String checkNewVersion();
+    void update(String version, VOtaType type);
+    void trigger(VOtaType type);
 
    private:
-    static Console _log();
-    static void _updateSketch();
-    static void _updateFileSystem();
-    static void _onStart();
-    static void _onEnd();
-    static void _onProgress(int progress, int total);
-    static void _onError(int error);
+    Console _log();
+    void _updateSketch();
+    void _updateFileSystem();
+    void _onStart();
+    void _onEnd();
+    void _onProgress(int progress, int total);
+    void _onError(int error);
   };
+
+  // global
+  extern VictorOTA victorOTA;
+
 } // namespace Victor::Components
 
 #endif // VictorOTA_h

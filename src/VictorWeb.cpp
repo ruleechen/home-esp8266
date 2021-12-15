@@ -350,8 +350,8 @@ namespace Victor::Components {
     res[F("flashSizeReal")] = ESP.getFlashChipRealSize(); // Actual size based on chip Id
     res[F("sketchSize")] = ESP.getSketchSize();
     res[F("sketchFreeSpace")] = ESP.getFreeSketchSpace();
-    res[F("otaVersion")] = VictorOTA::getCurrentVersion();
-    res[F("otaNewVersion")] = VictorOTA::checkNewVersion();
+    res[F("otaVersion")] = victorOTA.getCurrentVersion();
+    res[F("otaNewVersion")] = victorOTA.checkNewVersion();
     res[F("overTheWeb")] = _httpUpdater != NULL;
     _sendJson(res);
     _dispatchRequestEnd();
@@ -371,7 +371,7 @@ namespace Victor::Components {
       otaType == F("fs") ? VOta_FileSystem :
       otaType == F("sketch") ? VOta_Sketch : VOta_Sketch;
     // update
-    VictorOTA::update(version, type);
+    victorOTA.update(version, type);
     // res
     DynamicJsonDocument res(64);
     res[F("message")] = String(F("success"));

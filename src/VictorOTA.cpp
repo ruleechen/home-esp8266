@@ -6,10 +6,10 @@ namespace Victor::Components {
     // ESPhttpUpdate.setAuthorization(user, password);
     ESPhttpUpdate.setLedPin(LED_BUILTIN, LOW);
     // hook events
-    ESPhttpUpdate.onStart(VictorOTA::_onStart);
-    ESPhttpUpdate.onEnd(VictorOTA::_onEnd);
-    ESPhttpUpdate.onProgress(VictorOTA::_onProgress);
-    ESPhttpUpdate.onError(VictorOTA::_onError);
+    ESPhttpUpdate.onStart(std::bind(&VictorOTA::_onStart, this));
+    ESPhttpUpdate.onEnd(std::bind(&VictorOTA::_onEnd, this));
+    ESPhttpUpdate.onProgress(std::bind(&VictorOTA::_onProgress, this, std::placeholders::_1, std::placeholders::_2));
+    ESPhttpUpdate.onError(std::bind(&VictorOTA::_onError, this, std::placeholders::_1));
   }
 
   String VictorOTA::getCurrentVersion() {
@@ -89,5 +89,8 @@ namespace Victor::Components {
     auto message = ESPhttpUpdate.getLastErrorString();
     _log().write(F("error ")).write(String(error)).write(F(", message ")).write(message).newline();
   }
+
+  // global
+  VictorOTA victorOTA;
 
 } // namespace Victor::Components
