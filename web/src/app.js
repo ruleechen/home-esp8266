@@ -717,6 +717,525 @@ const NotfoundView = {
   },
 };
 
+const RadioView = (() => {
+  const state = {
+    loading: true,
+    millis: 0,
+    inputPin: -1,
+    lastReceived: {
+      value: "",
+      channel: 0,
+      timestamp: 1,
+    },
+  };
+  const save = () => {
+    const inputPin = vic.query("#txtInputPin").value;
+    const outputPin = vic.query("#txtOutputPin").value;
+    m.request({
+      method: "POST",
+      url: "/radio",
+      body: { inputPin, outputPin },
+    }).then((res) => {
+      if (res.error) {
+        alert(res.error);
+      } else {
+        oninit();
+      }
+    });
+  };
+  const oninit = () => {
+    state.loading = true;
+    m.request({
+      method: "GET",
+      url: "/radio",
+    }).then((res) => {
+      state.loading = false;
+      state.millis = res.millis;
+      state.inputPin = res.inputPin;
+      state.outputPin = res.outputPin;
+      state.lastReceived = res.lastReceived;
+      m.redraw();
+    });
+  };
+  return {
+    oninit,
+    view() {
+      if (state.loading) {
+        return vic.getLoading();
+      }
+      return [
+        vic.getNav(),
+        m("h3", "Radio"),
+        m("p", [
+          m(m.route.Link, { href: "/radio/emit" }, "Emits"),
+          m("span", " | "),
+          m(m.route.Link, { href: "/radio/rule" }, "Rules"),
+          m("span", " | "),
+          m(m.route.Link, { href: "/radio/command" }, "Commands"),
+        ]),
+        vic.mTable({
+          header: null,
+          rows: [
+            [
+              "Last Received",
+              state.lastReceived.value
+                ? vic.ago(state.millis, state.lastReceived.timestamp) + " ago"
+                : "-",
+            ],
+            [
+              "Value",
+              state.lastReceived.value ? state.lastReceived.value : "-",
+            ],
+            [
+              "Channel",
+              state.lastReceived.value ? state.lastReceived.channel : "-",
+            ],
+          ],
+        }),
+        m("div.form", [
+          m("p", [
+            m("label", { for: "txtInputPin" }, "Input Pin"),
+            m("input[type=number]", {
+              id: "txtInputPin",
+              min: -1,
+              max: 100,
+              value: state.inputPin,
+            }),
+          ]),
+          m("p", [
+            m("label", { for: "txtOutputPin" }, "Output Pin"),
+            m("input[type=number]", {
+              id: "txtOutputPin",
+              min: -1,
+              max: 100,
+              value: state.outputPin,
+            }),
+          ]),
+          m("p", [m("button.btn", { onclick: save }, "Save")]),
+        ]),
+      ];
+    },
+  };
+})();
+
+const RadioEmitView = (() => {
+  const state = {
+    loading: true,
+    emits: [{ name: "", value: "", channel: 0, press: 1 }],
+    lastReceived: { value: "", channel: 0 },
+    pressOptions: [
+      [1, "Click"],
+      [2, "Double Click"],
+      [3, "Long Press"],
+    ],
+  };
+  const add = () => {
+    state.emits.push({
+      name: "",
+      value: state.lastReceived.value,
+      channel: state.lastReceived.channel,
+      press: state.pressOptions[0][0],
+    });
+    m.redraw();
+  };
+  const remove = (ev) => {
+    if (vic.confirm()) {
+      const index = parseInt(ev.target.value, 10);
+      state.emits.splice(index, 1);
+      m.redraw();
+    }
+  };
+  const save = () => {
+    const nameEls = vic.queryAll("input[name=Name]");
+    const valueEls = vic.queryAll("input[name=Value]");
+    const channelEls = vic.queryAll("input[name=Channel]");
+    const pressIdEls = vic.queryAll("select[name=PressId]");
+    const emits = nameEls.map((nameEl, i) => ({
+      name: nameEl.value,
+      value: valueEls[i].value,
+      channel: channelEls[i].value,
+      press: pressIdEls[i].value,
+    }));
+    m.request({
+      method: "POST",
+      url: "/radio/emit",
+      body: { emits },
+    }).then((res) => {
+      if (res.error) {
+        alert(res.error);
+      } else {
+        oninit();
+      }
+    });
+  };
+  const send = (ev) => {
+    state.loading = true;
+    const index = parseInt(ev.target.value, 10);
+    m.request({
+      method: "POST",
+      url: "/radio/emit/send",
+      body: { index },
+    }).then((res) => {
+      if (res.error) {
+        alert(res.error);
+      }
+      state.loading = false;
+      m.redraw();
+    });
+  };
+  const oninit = () => {
+    state.loading = true;
+    m.request({
+      method: "GET",
+      url: "/radio/emit",
+    }).then((res) => {
+      state.loading = false;
+      state.emits = res.emits;
+      state.lastReceived = res.lastReceived;
+      m.redraw();
+    });
+  };
+  return {
+    oninit,
+    view() {
+      if (state.loading) {
+        return vic.getLoading();
+      }
+      return [
+        vic.getNav(),
+        m("h3", "Radio Emits"),
+        m("p", [m(m.route.Link, { href: "/radio" }, "< Radio")]),
+        m("div.form", [
+          vic.mTable({
+            header: ["", "", "Name", "Value", "Channel", "Press"],
+            rows: state.emits.map((emit, index) => [
+              m(
+                "button.btn.weak",
+                {
+                  name: "Remove",
+                  value: index,
+                  onclick: remove,
+                },
+                "Remove"
+              ),
+              m(
+                "button.btn",
+                { name: "Send", value: index, onclick: send },
+                "Send"
+              ),
+              m("input[type=text]", {
+                name: "Name",
+                value: emit.name,
+                maxLength: 8,
+                style: { width: "40px" },
+              }),
+              m("input[type=text]", {
+                name: "Value",
+                value: emit.value,
+                maxLength: 8,
+                style: { width: "60px" },
+              }),
+              m("input[type=number]", {
+                name: "Channel",
+                value: emit.channel,
+                min: -1,
+                max: 100,
+              }),
+              vic.mSelect(
+                "PressId",
+                emit.press,
+                state.pressOptions.map((x) => ({
+                  value: x[0],
+                  text: x[1],
+                }))
+              ),
+            ]),
+          }),
+          m("p", [
+            m("button.btn", { onclick: add }, "Add+"),
+            m("button.btn", { onclick: save }, "Save"),
+          ]),
+        ]),
+      ];
+    },
+  };
+})();
+
+const RadioRuleView = (() => {
+  const state = {
+    loading: true,
+    rules: [{ value: "", channel: 0, press: 1, action: 1, serviceId: "" }],
+    lastReceived: { value: "", channel: 0 },
+    pressOptions: [
+      [1, "Click"],
+      [2, "Double Click"],
+      [3, "Long Press"],
+    ],
+    actionOptions: [
+      [0, "None"],
+      [1, "True"],
+      [2, "False"],
+      [3, "Toggle"],
+      [4, "WiFi STA"],
+      [5, "WiFi STA+AP"],
+      [6, "WiFi Reset"],
+      [7, "ESP Restart"],
+    ],
+  };
+  const add = () => {
+    state.rules.push({
+      value: state.lastReceived.value,
+      channel: state.lastReceived.channel,
+      press: state.pressOptions[0][0],
+      action: state.actionOptions[0][0],
+      serviceId: "",
+    });
+    m.redraw();
+  };
+  const remove = (ev) => {
+    if (vic.confirm()) {
+      const index = parseInt(ev.target.value, 10);
+      state.rules.splice(index, 1);
+      m.redraw();
+    }
+  };
+  const save = () => {
+    const valueEls = vic.queryAll("input[name=Value]");
+    const channelEls = vic.queryAll("input[name=Channel]");
+    const pressIdEls = vic.queryAll("select[name=PressId]");
+    const actionIdEls = vic.queryAll("select[name=ActionId]");
+    const serviceIdEls = vic.queryAll("select[name=ServiceId]");
+    const rules = valueEls.map((valueEl, i) => ({
+      value: valueEl.value,
+      channel: channelEls[i].value,
+      press: pressIdEls[i].value,
+      action: actionIdEls[i].value,
+      serviceId: serviceIdEls[i].value,
+    }));
+    m.request({
+      method: "POST",
+      url: "/radio/rule",
+      body: { rules },
+    }).then((res) => {
+      if (res.error) {
+        alert(res.error);
+      } else {
+        oninit();
+      }
+    });
+  };
+  const oninit = () => {
+    state.loading = true;
+    m.request({
+      method: "GET",
+      url: "/radio/rule",
+    }).then((res) => {
+      state.loading = false;
+      state.rules = res.rules;
+      state.lastReceived = res.lastReceived;
+      m.redraw();
+    });
+  };
+  return {
+    oninit,
+    view() {
+      if (state.loading) {
+        return vic.getLoading();
+      }
+      return [
+        vic.getNav(),
+        m("h3", "Radio Rules"),
+        m("p", [m(m.route.Link, { href: "/radio" }, "< Radio")]),
+        m("div.form", [
+          vic.mTable({
+            header: ["", "Value", "Channel", "Press", "Action", "Service"],
+            rows: state.rules.map((rule, index) => [
+              m(
+                "button.btn.weak",
+                {
+                  name: "Remove",
+                  value: index,
+                  onclick: remove,
+                },
+                "Remove"
+              ),
+              m("input[type=text]", {
+                name: "Value",
+                value: rule.value,
+                maxLength: 8,
+                style: { width: "60px" },
+              }),
+              m("input[type=number]", {
+                name: "Channel",
+                value: rule.channel,
+                min: -1,
+                max: 100,
+              }),
+              vic.mSelect(
+                "PressId",
+                rule.press,
+                state.pressOptions.map((x) => ({
+                  value: x[0],
+                  text: x[1],
+                }))
+              ),
+              vic.mSelect(
+                "ActionId",
+                rule.action,
+                state.actionOptions.map((x) => ({
+                  value: x[0],
+                  text: x[1],
+                }))
+              ),
+              m("input[type=text]", {
+                name: "ServiceId",
+                value: rule.serviceId,
+                maxLength: 8,
+                style: { width: "60px" },
+              }),
+            ]),
+          }),
+          m("p", [
+            m("button.btn", { onclick: add }, "Add+"),
+            m("button.btn", { onclick: save }, "Save"),
+          ]),
+        ]),
+      ];
+    },
+  };
+})();
+
+const RadioCommandView = (() => {
+  const state = {
+    loading: true,
+    commands: [{ entry: 1, action: 1, press: 1, serviceId: "" }],
+    entryActionOptions: [
+      ["0-0", "None"],
+      ["1-1", "wifi-join"],
+      ["1-2", "wifi-mode"],
+      ["1-3", "wifi-reset"],
+      ["2-1", "app-name"],
+      ["2-2", "app-ota"],
+      ["3-1", "esp-restart"],
+      ["4-1", "boolean-set"],
+      ["4-2", "boolean-toggle"],
+    ],
+    pressOptions: [
+      [1, "Click"],
+      [2, "Double Click"],
+      [3, "Long Press"],
+    ],
+  };
+  const add = () => {
+    const entryAction = state.entryActionOptions[0][0].split("-");
+    state.commands.push({
+      entry: entryAction[0],
+      action: entryAction[1],
+      press: state.pressOptions[0][0],
+      serviceId: "",
+    });
+    m.redraw();
+  };
+  const remove = (ev) => {
+    if (vic.confirm()) {
+      const index = parseInt(ev.target.value, 10);
+      state.commands.splice(index, 1);
+      m.redraw();
+    }
+  };
+  const save = () => {
+    const entryActionEls = vic.queryAll("select[name=EntryAction]");
+    const pressIdEls = vic.queryAll("select[name=PressId]");
+    const serviceIdEls = vic.queryAll("select[name=ServiceId]");
+    const commands = entryActionEls.map((el, i) => {
+      const entryAction = el.value.split("-");
+      return {
+        entry: entryAction[0],
+        action: entryAction[1],
+        press: pressIdEls[i].value,
+        serviceId: serviceIdEls[i].value,
+      };
+    });
+    m.request({
+      method: "POST",
+      url: "/radio/command",
+      body: { commands },
+    }).then((res) => {
+      if (res.error) {
+        alert(res.error);
+      } else {
+        oninit();
+      }
+    });
+  };
+  const oninit = () => {
+    state.loading = true;
+    m.request({
+      method: "GET",
+      url: "/radio/command",
+    }).then((res) => {
+      state.loading = false;
+      state.commands = res.commands;
+      m.redraw();
+    });
+  };
+  return {
+    oninit,
+    view() {
+      if (state.loading) {
+        return vic.getLoading();
+      }
+      return [
+        vic.getNav(),
+        m("h3", "Radio Commands"),
+        m("p", [m(m.route.Link, { href: "/radio" }, "< Radio")]),
+        m("div.form", [
+          vic.mTable({
+            header: ["", "Entry", "Press", "Service"],
+            rows: state.commands.map((command, index) => [
+              m(
+                "button.btn.weak",
+                {
+                  name: "Remove",
+                  value: index,
+                  onclick: remove,
+                },
+                "Remove"
+              ),
+              vic.mSelect(
+                "EntryAction",
+                "" + command.entry + "-" + command.action,
+                state.entryActionOptions.map((x) => ({
+                  value: x[0],
+                  text: x[1],
+                }))
+              ),
+              vic.mSelect(
+                "PressId",
+                command.press,
+                state.pressOptions.map((x) => ({
+                  value: x[0],
+                  text: x[1],
+                }))
+              ),
+              m("input[type=text]", {
+                name: "ServiceId",
+                value: command.serviceId,
+                maxLength: 8,
+                style: { width: "60px" },
+              }),
+            ]),
+          }),
+          m("p", [
+            m("button.btn", { onclick: add }, "Add+"),
+            m("button.btn", { onclick: save }, "Save"),
+          ]),
+        ]),
+      ];
+    },
+  };
+})();
+
 vic.appendNav((items) =>
   items.concat([
     vic.navItem("/", "Home"),
@@ -728,6 +1247,8 @@ vic.appendNav((items) =>
     vic.navItem("/ota", "OTA"),
     m("span", " | "),
     vic.navItem("/reset", "Reset"),
+    m("span", " | "),
+    vic.navItem("/radio", "Radio"),
   ])
 );
 
@@ -743,6 +1264,10 @@ vic.appendRoute((config) =>
     "/ota/otw": OtaOtwView,
     "/reset": ResetView,
     "/404": NotfoundView,
+    "/radio": RadioView,
+    "/radio/emit": RadioEmitView,
+    "/radio/rule": RadioRuleView,
+    "/radio/command": RadioCommandView,
   })
 );
 

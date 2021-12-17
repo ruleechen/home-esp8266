@@ -10,6 +10,7 @@
 #include <ESP8266HTTPUpdateServer.h>
 #include "Commons.h"
 #include "AppStorage.h"
+#include "RadioStorage.h"
 #include "VictorOTA.h"
 #include "VictorWifi.h"
 
@@ -21,9 +22,12 @@ namespace Victor::Components {
     void setup();
     void loop();
     // server events
-    typedef std::function<void()> TServerEventHandler;
-    TServerEventHandler onRequestStart;
-    TServerEventHandler onRequestEnd;
+    typedef std::function<void()> TServerEvent;
+    TServerEvent onRequestStart;
+    TServerEvent onRequestEnd;
+    // radio events
+    typedef std::function<void(int index)> TRadioEmit;
+    TRadioEmit onRadioEmit;
 
    protected:
     ESP8266WebServer* _server = NULL;
@@ -49,6 +53,15 @@ namespace Victor::Components {
     void _handleOtaFire();
     void _handleReset();
     void _handleNotFound();
+    void _handleRadioGet();
+    void _handleRadioSave();
+    void _handleRadioEmitGet();
+    void _handleRadioEmitSave();
+    void _handleRadioEmitSend();
+    void _handleRadioRuleGet();
+    void _handleRadioRuleSave();
+    void _handleRadioCommandGet();
+    void _handleRadioCommandSave();
   };
 } // namespace Victor::Components
 

@@ -51,6 +51,15 @@ namespace Victor::Components {
     _server->on(F("/ota/fire"), HTTP_POST, std::bind(&VictorWeb::_handleOtaFire, this));
     _server->on(F("/reset"), HTTP_POST, std::bind(&VictorWeb::_handleReset, this));
     _server->onNotFound(std::bind(&VictorWeb::_handleNotFound, this));
+    _server->on(F("/radio"), HTTP_GET, std::bind(&VictorWeb::_handleRadioGet, this));
+    _server->on(F("/radio"), HTTP_POST, std::bind(&VictorWeb::_handleRadioSave, this));
+    _server->on(F("/radio/emit"), HTTP_GET, std::bind(&VictorWeb::_handleRadioEmitGet, this));
+    _server->on(F("/radio/emit"), HTTP_POST, std::bind(&VictorWeb::_handleRadioEmitSave, this));
+    _server->on(F("/radio/emit/send"), HTTP_POST, std::bind(&VictorWeb::_handleRadioEmitSend, this));
+    _server->on(F("/radio/rule"), HTTP_GET, std::bind(&VictorWeb::_handleRadioRuleGet, this));
+    _server->on(F("/radio/rule"), HTTP_POST, std::bind(&VictorWeb::_handleRadioRuleSave, this));
+    _server->on(F("/radio/command"), HTTP_GET, std::bind(&VictorWeb::_handleRadioCommandGet, this));
+    _server->on(F("/radio/command"), HTTP_POST, std::bind(&VictorWeb::_handleRadioCommandSave, this));
   }
 
   void VictorWeb::_solvePageTokens(String& html) {
@@ -413,6 +422,214 @@ namespace Victor::Components {
     res[F("method")] = (_server->method() == HTTP_GET) ? String(F("GET")) : String(F("POST"));
     res[F("uri")] = _server->uri();
     res[F("error")] = String(F("Resource Not Found"));
+    _sendJson(res);
+    _dispatchRequestEnd();
+  }
+
+  void VictorWeb::_handleRadioGet() {
+    _dispatchRequestStart();
+    DynamicJsonDocument res(512);
+    auto model = radioStorage.load();
+    res[F("millis")] = millis();
+    res[F("inputPin")] = model.inputPin;
+    res[F("outputPin")] = model.outputPin;
+    // last received
+    auto lastReceived = radioStorage.getLastReceived();
+    JsonObject lastReceivedObj = res.createNestedObject(F("lastReceived"));
+    lastReceivedObj[F("value")] = lastReceived.value;
+    lastReceivedObj[F("channel")] = lastReceived.channel;
+    lastReceivedObj[F("timestamp")] = lastReceived.timestamp;
+    // end
+    _sendJson(res);
+    _dispatchRequestEnd();
+  }
+
+  void VictorWeb::_handleRadioSave() {
+    _dispatchRequestStart();
+    // payload
+    auto payloadJson = _server->arg(F("plain"));
+    DynamicJsonDocument payload(64);
+    deserializeJson(payload, payloadJson);
+    // read
+    auto inputPin = String(payload[F("inputPin")]);
+    auto outputPin = String(payload[F("outputPin")]);
+    // action
+    auto model = radioStorage.load();
+    model.inputPin = inputPin.toInt();
+    model.outputPin = outputPin.toInt();
+    radioStorage.save(model);
+    // res
+    DynamicJsonDocument res(64);
+    res[F("message")] = String(F("success"));
+    _sendJson(res);
+    _dispatchRequestEnd();
+  }
+
+  void VictorWeb::_handleRadioEmitGet() {
+    _dispatchRequestStart();
+    DynamicJsonDocument res(1024 + 512);
+    // emits
+    auto model = radioStorage.load();
+    JsonArray emitArr = res.createNestedArray(F("emits"));
+    for (const auto& emit : model.emits) {
+      JsonObject emitObj = emitArr.createNestedObject();
+      emitObj[F("name")] = emit.name;
+      emitObj[F("value")] = emit.value;
+      emitObj[F("channel")] = emit.channel;
+      emitObj[F("press")] = emit.press;
+    }
+    // last received
+    auto lastReceived = radioStorage.getLastReceived();
+    JsonObject lastReceivedObj = res.createNestedObject(F("lastReceived"));
+    lastReceivedObj[F("value")] = lastReceived.value;
+    lastReceivedObj[F("channel")] = lastReceived.channel;
+    // end
+    _sendJson(res);
+    _dispatchRequestEnd();
+  }
+
+  void VictorWeb::_handleRadioEmitSave() {
+    _dispatchRequestStart();
+    // payload
+    auto payloadJson = _server->arg(F("plain"));
+    DynamicJsonDocument payload(1024 + 512);
+    deserializeJson(payload, payloadJson);
+    // read
+    auto emitItems = payload[F("emits")];
+    // save
+    auto model = radioStorage.load();
+    model.emits.clear();
+    for (size_t i = 0; i < emitItems.size(); i++) {
+      auto item = emitItems[i];
+      model.emits.push_back({
+        .name = String(item[F("name")]),
+        .value = String(item[F("value")]),
+        .channel = strtoul(item[F("channel")], NULL, 10),
+        .press = RadioPressState(String(item[F("press")]).toInt()),
+      });
+    }
+    radioStorage.save(model);
+    // res
+    DynamicJsonDocument res(64);
+    res[F("message")] = String(F("success"));
+    _sendJson(res);
+    _dispatchRequestEnd();
+  }
+
+  void VictorWeb::_handleRadioEmitSend() {
+    _dispatchRequestEnd();
+    // payload
+    auto payloadJson = _server->arg(F("plain"));
+    DynamicJsonDocument payload(64);
+    deserializeJson(payload, payloadJson);
+    // read
+    auto index = String(payload[F("index")]);
+    DynamicJsonDocument res(64);
+    if (onRadioEmit) {
+      onRadioEmit(index.toInt());
+      res[F("message")] = String(F("success"));
+    } else {
+      res[F("error")] = String(F("onRadioEmit is required"));
+    }
+    _sendJson(res);
+    _dispatchRequestEnd();
+  }
+
+  void VictorWeb::_handleRadioRuleGet() {
+    _dispatchRequestStart();
+    DynamicJsonDocument res(1024 + 512);
+    // rules
+    auto model = radioStorage.load();
+    JsonArray ruleArr = res.createNestedArray(F("rules"));
+    for (const auto& rule : model.rules) {
+      JsonObject ruleObj = ruleArr.createNestedObject();
+      ruleObj[F("value")] = rule.value;
+      ruleObj[F("channel")] = rule.channel;
+      ruleObj[F("press")] = rule.press;
+      ruleObj[F("action")] = rule.action;
+      ruleObj[F("serviceId")] = rule.serviceId;
+    }
+    // last received
+    auto lastReceived = radioStorage.getLastReceived();
+    JsonObject lastReceivedObj = res.createNestedObject(F("lastReceived"));
+    lastReceivedObj[F("value")] = lastReceived.value;
+    lastReceivedObj[F("channel")] = lastReceived.channel;
+    // end
+    _sendJson(res);
+    _dispatchRequestEnd();
+  }
+
+  void VictorWeb::_handleRadioRuleSave() {
+    _dispatchRequestStart();
+    // payload
+    auto payloadJson = _server->arg(F("plain"));
+    DynamicJsonDocument payload(1024 + 512);
+    deserializeJson(payload, payloadJson);
+    // read
+    auto ruleItems = payload["rules"];
+    // save
+    auto model = radioStorage.load();
+    model.rules.clear();
+    for (size_t i = 0; i < ruleItems.size(); i++) {
+      auto item = ruleItems[i];
+      model.rules.push_back({
+        .value = String(item[F("value")]),
+        .channel = strtoul(item[F("channel")], NULL, 10),
+        .press = RadioPressState(String(item[F("press")]).toInt()),
+        .action = RadioAction(String(item[F("action")]).toInt()),
+        .serviceId = String(item[F("serviceId")]),
+      });
+    }
+    radioStorage.save(model);
+    // res
+    DynamicJsonDocument res(64);
+    res[F("message")] = String(F("success"));
+    _sendJson(res);
+    _dispatchRequestEnd();
+  }
+
+  void VictorWeb::_handleRadioCommandGet() {
+    _dispatchRequestStart();
+    DynamicJsonDocument res(1024 + 512);
+    // commands
+    auto model = radioStorage.load();
+    JsonArray commandArr = res.createNestedArray(F("commands"));
+    for (const auto& command : model.commands) {
+      JsonObject commandObj = commandArr.createNestedObject();
+      commandObj[F("entry")] = command.entry;
+      commandObj[F("action")] = command.action;
+      commandObj[F("press")] = command.press;
+      commandObj[F("serviceId")] = command.serviceId;
+    }
+    // end
+    _sendJson(res);
+    _dispatchRequestEnd();
+  }
+
+  void VictorWeb::_handleRadioCommandSave() {
+    _dispatchRequestStart();
+    // payload
+    auto payloadJson = _server->arg(F("plain"));
+    DynamicJsonDocument payload(1024 + 512);
+    deserializeJson(payload, payloadJson);
+    // read
+    auto commandItems = payload["commands"];
+    // save
+    auto model = radioStorage.load();
+    model.commands.clear();
+    for (size_t i = 0; i < commandItems.size(); i++) {
+      auto item = commandItems[i];
+      model.commands.push_back({
+        .entry = RadioCommandEntry(String(item[F("entry")]).toInt()),
+        .action = String(item[F("action")]).toInt(),
+        .press = RadioPressState(String(item[F("press")]).toInt()),
+        .serviceId = String(item[F("serviceId")]),
+      });
+    }
+    radioStorage.save(model);
+    // res
+    DynamicJsonDocument res(64);
+    res[F("message")] = String(F("success"));
     _sendJson(res);
     _dispatchRequestEnd();
   }
