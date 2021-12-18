@@ -9,15 +9,16 @@ namespace Victor {
     Console();
     void begin(unsigned long baud);
     Console log();
-    Console log(const String& message);
+    Console log(const String& msg);
     Console error();
-    Console error(const String& message);
+    Console error(const String& msg);
     Console debug();
-    Console debug(const String& message);
+    Console debug(const String& msg);
     Console ts();
+    Console bracket(const String& msg);
+    Console section(const String& msg);
+    Console write(const String& msg);
     Console newline();
-    Console type(const String& type);
-    Console write(const String& message);
   };
 
   // global

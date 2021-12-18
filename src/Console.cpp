@@ -9,57 +9,48 @@ namespace Victor {
   }
 
   Console Console::log() {
-    ts().type(F("log"));
-    return console;
+    return ts().bracket(F("log"));
   }
 
-  Console Console::log(const String& message) {
-    log().write(message).newline();
-    return console;
+  Console Console::log(const String& msg) {
+    return log().section(msg);
   }
 
   Console Console::error() {
-    ts().type(F("error"));
-    return console;
+    return ts().bracket(F("error"));
   }
 
-  Console Console::error(const String& message) {
-    error().write(message).newline();
-    return console;
+  Console Console::error(const String& msg) {
+    return error().section(msg);
   }
 
   Console Console::debug() {
-    ts().type(F("debug"));
-    return console;
+    return ts().bracket(F("debug"));
   }
 
-  Console Console::debug(const String& message) {
-    debug().write(message).newline();
-    return console;
+  Console Console::debug(const String& msg) {
+    return debug().section(msg);
   }
 
   Console Console::ts() {
-    auto now = millis();
-    write(F("["));
-    write(String(now));
-    write(F("]"));
+    return newline().bracket(String(millis()));
+  }
+
+  Console Console::bracket(const String& msg) {
+    return write(F("[") + msg + F("]"));
+  }
+
+  Console Console::section(const String& msg) {
+    return write(F(" ") + msg);
+  }
+
+  Console Console::write(const String& msg) {
+    Serial.print(msg);
     return console;
   }
 
   Console Console::newline() {
     Serial.println(F(""));
-    return console;
-  }
-
-  Console Console::type(const String& type) {
-    write(F("["));
-    write(type);
-    write(F("]"));
-    return console;
-  }
-
-  Console Console::write(const String& message) {
-    Serial.print(message);
     return console;
   }
 

@@ -20,7 +20,7 @@ namespace Victor::Components {
       WiFi.softAP(hostName); // name which is displayed on AP list
       auto currentApIp = WiFi.softAPIP();
       if (currentApIp) {
-        _log().write(F("AP Address > ")).write(currentApIp.toString()).newline();
+        _log().section(F("ap address")).section(currentApIp.toString());
       }
     }
 
@@ -44,15 +44,15 @@ namespace Victor::Components {
     // wifi_config_reset();
     WiFi.disconnect(true);
     WiFi.mode(WIFI_AP_STA);
-    _log().write(F("mode > WIFI_AP_STA")).newline();
+    _log().section(F("mode")).section(F("WIFI_AP_STA"));
   }
 
   void VictorWifi::join(String ssid, String password, int32_t channel, uint8_t* bssid) {
-    _log().write(F("ssid > ")).write(ssid).newline();
-    _log().write(F("password > ")).write(password).newline();
+    _log().section(F("joining")).section(ssid);
     WiFi.persistent(true);
     WiFi.begin(ssid, password, channel, bssid, true);
     // wait for connecting
+    console.newline();
     auto checkTimes = 60;
     while (WiFi.status() != WL_CONNECTED) {
       delay(500);
@@ -63,7 +63,6 @@ namespace Victor::Components {
         checkTimes--;
       }
     }
-    console.newline();
   }
 
   String VictorWifi::getHostId() {
@@ -97,11 +96,11 @@ namespace Victor::Components {
   }
 
   Console VictorWifi::_log() {
-    return console.log().type(F("WiFi"));
+    return console.log().bracket(F("wifi"));
   }
 
   void VictorWifi::_handleStationModeGotIP(const WiFiEventStationModeGotIP& args) {
-    _log().write(F("station mode got ip")).newline();
+    _log().section(F("station mode")).section(F("got ip"));
     auto model = appStorage.load();
     if (model.autoMode) {
       auto wifiMode = WiFi.getMode();
@@ -112,7 +111,7 @@ namespace Victor::Components {
   }
 
   void VictorWifi::_handleStationModeDisconnected(const WiFiEventStationModeDisconnected& args) {
-    _log().write(F("station mode disconnected")).newline();
+    _log().section(F("station mode")).section(F("disconnected"));
     auto model = appStorage.load();
     if (model.autoMode) {
       auto wifiMode = WiFi.getMode();

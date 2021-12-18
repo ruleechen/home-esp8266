@@ -64,16 +64,16 @@ namespace Victor::Components {
             // convert
             _deserializeFrom(model, doc);
           } else {
-            _error().write(F("parse failed ")).write(error.f_str()).newline();
+            _error().section(F("parse failed")).section(error.f_str());
           }
         } else {
-          _error().write(F("file too large")).newline();
+          _error().section(F("file too large"));
         }
       } else {
-        _error().write(F("open failed")).newline();
+        _error().section(F("open failed"));
       }
     } else {
-      _error().write(F("file notfound ")).write(_filePath).newline();
+      _error().section(F("file notfound")).section(_filePath);
     }
     if (_userCache) {
       _cache = &model;
@@ -98,14 +98,14 @@ namespace Victor::Components {
       file.close();
       success = true;
     } else {
-      _error().write(F("open write failed")).newline();
+      _error().section(F("open write failed"));
     }
     return success;
   }
 
   template <class TModel>
   Console FileStorage<TModel>::_error() {
-    return console.error().type(F("FileStorage"));
+    return console.error().bracket(F("storage"));
   }
 
   template <class TModel>

@@ -58,7 +58,7 @@ namespace Victor::Components {
   }
 
   Console VictorOTA::_log() {
-    return console.log().type("VictorOTA");
+    return console.log().bracket("ota");
   }
 
   void VictorOTA::_updateSketch() {
@@ -74,20 +74,20 @@ namespace Victor::Components {
   }
 
   void VictorOTA::_handleStart() {
-    _log().write(F("start updating")).newline();
+    _log().section(F("start updating"));
   }
 
   void VictorOTA::_handleEnd() {
-    _log().write(F("update finished")).newline();
+    _log().section(F("update finished"));
   }
 
   void VictorOTA::_handleProgress(int progress, int total) {
-    _log().write(F("progress ")).write(String(progress / (total / 100))).write(F("%")).newline();
+    _log().section(F("progress")).section(String(progress / (total / 100)) + F("%"));
   }
 
   void VictorOTA::_handleError(int error) {
     auto message = ESPhttpUpdate.getLastErrorString();
-    _log().write(F("error ")).write(String(error)).write(F(", message ")).write(message).newline();
+    _log().bracket(String(error)).section(F("last error:")).section(message);
   }
 
   // global

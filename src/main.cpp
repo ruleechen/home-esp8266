@@ -18,7 +18,7 @@ VictorRadio radioPortal(&ticker);
 void setup(void) {
   console.begin(115200);
   if (!LittleFS.begin()) {
-    console.error(F("[LittleFS] mount failed"));
+    console.error(F("fs mount failed"));
   }
 
   builtinLed = new BuiltinLed();
@@ -29,9 +29,9 @@ void setup(void) {
 
   radioPortal.onEmit = [](const RadioEmit& emit) {
     builtinLed->flash();
-    console.log().type(F("Radio"))
-      .write(F(" sent [")).write(emit.value).write(F("]"))
-      .write(F(" via channel [")).write(String(emit.channel)).write(F("]")).newline();
+    console.log().bracket(F("radio"))
+      .write(F(" sent ")).bracket(emit.value)
+      .write(F(" via channel ")).bracket(String(emit.channel));
   };
 
   webPortal.onRequestStart = []() { builtinLed->turnOn(); };
@@ -39,9 +39,9 @@ void setup(void) {
   webPortal.onRadioEmit = [](int index) { radioPortal.emit(index); };
   webPortal.setup();
 
-  ticker.attach(10, []() { console.log("[ticker] heartbeat"); });
+  ticker.attach(10, []() { console.log("heartbeat"); });
 
-  console.log(F("[setup] complete"));
+  console.log(F("setup complete"));
   builtinLed->flash();
 }
 
@@ -51,9 +51,9 @@ void loop(void) {
     String value = "";
     int channel = 1;
     radioPortal.receive(value, channel);
-    console.log().type(F("Radio"))
-      .write(F(" received [")).write(value).write(F("]"))
-      .write(F(" from channel [")).write(String(channel)).write(F("]")).newline();
+    console.log().bracket(F("radio"))
+      .write(F(" received ")).bracket(value)
+      .write(F(" from channel ")).bracket(String(channel));
     builtinLed->flash();
   }
 }
