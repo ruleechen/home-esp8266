@@ -13,7 +13,7 @@ using namespace Victor::Components;
 Ticker ticker;
 BuiltinLed* builtinLed;
 VictorWeb webPortal(80);
-VictorRadio radioPortal;
+VictorRadio radioPortal(&ticker);
 
 void setup(void) {
   console.begin(115200);

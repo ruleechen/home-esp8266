@@ -23,7 +23,7 @@ namespace Victor::Components {
     typedef std::function<bool(const RadioCommandParsed&)> TRadioCommand;
 
    public:
-    VictorRadio();
+    VictorRadio(Ticker* ticker = NULL);
     ~VictorRadio();
     void emit(String name);
     void emit(uint8_t index);
@@ -33,7 +33,7 @@ namespace Victor::Components {
     TRadioCommand onCommand;
 
    private:
-    Ticker* _ticker;
+    Ticker* _ticker = NULL;
     RadioEmit _lastEmitted = {};
     RadioMessage _lastReceived = {};
     RadioPressState _lastPressState = PressStateAwait;

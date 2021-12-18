@@ -504,7 +504,7 @@ namespace Victor::Components {
       model.emits.push_back({
         .name = String(item[F("name")]),
         .value = String(item[F("value")]),
-        .channel = strtoul(item[F("channel")], NULL, 10),
+        .channel = String(item[F("channel")]).toInt(),
         .press = RadioPressState(String(item[F("press")]).toInt()),
       });
     }
@@ -574,7 +574,7 @@ namespace Victor::Components {
       auto item = ruleItems[i];
       model.rules.push_back({
         .value = String(item[F("value")]),
-        .channel = strtoul(item[F("channel")], NULL, 10),
+        .channel = String(item[F("channel")]).toInt(),
         .press = RadioPressState(String(item[F("press")]).toInt()),
         .action = RadioAction(String(item[F("action")]).toInt()),
         .serviceId = String(item[F("serviceId")]),

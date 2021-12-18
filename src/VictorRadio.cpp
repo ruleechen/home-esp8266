@@ -2,8 +2,12 @@
 
 namespace Victor::Components {
 
-  VictorRadio::VictorRadio() {
-    _ticker = new Ticker();
+  VictorRadio::VictorRadio(Ticker* ticker) {
+    if (ticker == NULL) {
+      _ticker = new Ticker();
+    } else {
+      _ticker = ticker;
+    }
   }
 
   VictorRadio::~VictorRadio() {

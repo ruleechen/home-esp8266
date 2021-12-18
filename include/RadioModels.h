@@ -9,7 +9,7 @@ namespace Victor {
   struct RadioMessage {
     String id;
     String value;
-    unsigned int channel = 0;
+    int channel = 0;
     unsigned long timestamp = 0;
   };
 
@@ -34,13 +34,13 @@ namespace Victor {
   struct RadioEmit {
     String name;
     String value;
-    unsigned int channel = 0;
+    int channel = 0;
     RadioPressState press = PressStateClick;
   };
 
   struct RadioRule {
     String value;
-    unsigned int channel = 0;
+    int channel = 0;
     RadioPressState press = PressStateClick;
     RadioAction action = RadioActionNone;
     String serviceId;

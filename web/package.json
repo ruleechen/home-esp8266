@@ -7,7 +7,14 @@
     "build": "gulp build",
     "watch": "gulp watch"
   },
-  "author": "Rulee Chen",
+  "author": {
+    "email": "rulee@live.cn",
+    "name": "Rulee Chen"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ruleechen/home-esp8266.git"
+  },
   "license": "MIT",
   "devDependencies": {
     "del": "^6.0.0",
