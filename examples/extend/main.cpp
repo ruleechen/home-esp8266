@@ -21,8 +21,8 @@ void setup(void) {
   builtinLed = new BuiltinLed();
   builtinLed->turnOn();
 
-  VictorOTA::setup();
-  VictorWifi::setup();
+  victorOTA.setup();
+  victorWifi.setup();
 
   webPortal.onRequestStart = []() { builtinLed->turnOn(); };
   webPortal.onRequestEnd = []() { builtinLed->turnOff(); };

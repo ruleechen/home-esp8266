@@ -26,8 +26,15 @@
   "platforms": "espressif8266",
   "examples": [
     {
-      "name": "web",
-      "base": "examples/web",
+      "name": "standard",
+      "base": "examples/standard",
+      "files": [
+        "main.cpp"
+      ]
+    },
+    {
+      "name": "extend",
+      "base": "examples/extend",
       "files": [
         "WebPortal.h",
         "WebPortal.cpp",
