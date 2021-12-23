@@ -11,13 +11,13 @@ namespace Victor::Components {
       wifiMode = WIFI_AP_STA;
     }
 
-    auto hostName = getHostName();
     auto isApEnabled = ((wifiMode & WIFI_AP) != 0);
     if (isApEnabled) {
       // IPAddress apIp(192, 168, 1, 33);
       // IPAddress apSubnet(255, 255, 255, 0);
       // WiFi.softAPConfig(apIp, apIp, apSubnet);
-      WiFi.softAP(hostName); // name which is displayed on AP list
+      auto apName = getApName();
+      WiFi.softAP(apName); // name which is displayed on AP list
       auto currentApIp = WiFi.softAPIP();
       if (currentApIp) {
         _log().section(F("ap address")).section(currentApIp.toString());
@@ -27,10 +27,11 @@ namespace Victor::Components {
     WiFi.onStationModeGotIP(std::bind(&VictorWifi::_handleStationModeGotIP, this, std::placeholders::_1));
     WiFi.onStationModeDisconnected(std::bind(&VictorWifi::_handleStationModeDisconnected, this, std::placeholders::_1));
 
-    WiFi.hostname(hostName); // name which is displayed on router
+    WiFi.hostname(getHostName()); // name which is displayed on router
     WiFi.setAutoConnect(true);
     WiFi.setAutoReconnect(true);
     WiFi.persistent(true);
+
     auto ssidJoined = WiFi.SSID();
     if (!ssidJoined || ssidJoined == "") {
       auto model = appStorage.load();
@@ -73,26 +74,20 @@ namespace Victor::Components {
     return id;
   }
 
-  String VictorWifi::getLocalHostName() {
-    return getHostName(false);
-  }
-
-  String VictorWifi::getHostName(bool includeVersion) {
+  String VictorWifi::getHostName() {
     auto id = getHostId();
-
-    auto version = String(FirmwareVersion);
-    version.replace(F("."), F(""));
-
     auto model = appStorage.load();
     auto productName = model.name.length() > 0
       ? model.name
       : FirmwareName;
+    return productName + F("-") + id;
+  }
 
-    auto hostName = includeVersion
-      ? productName + F("-") + id + F("-") + version
-      : productName + F("-") + id;
-
-    return hostName;
+  String VictorWifi::getApName() {
+    auto host = getHostName();
+    auto version = FirmwareVersion;
+    version.replace(F("."), F(""));
+    return host + F("-") + version;
   }
 
   Console VictorWifi::_log() {

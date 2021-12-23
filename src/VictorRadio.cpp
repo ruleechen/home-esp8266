@@ -43,8 +43,8 @@ namespace Victor::Components {
     }
     auto id = GlobalHelpers::randomString(4);
     _lastEmitted = {
-      .name = emit.name,
-      .value = id + F("!") + emit.value,
+      .name = id,
+      .value = emit.value,
       .channel = emit.channel,
       .press = emit.press,
     };

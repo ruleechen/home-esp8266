@@ -14,8 +14,8 @@ namespace Victor::Components {
     void reset();
     void join(String ssid, String password = emptyString, int32_t channel = 0, uint8_t* bssid = NULL);
     String getHostId();
-    String getLocalHostName();
-    String getHostName(bool includeVersion = true);
+    String getHostName();
+    String getApName();
 
    private:
     Console _log();

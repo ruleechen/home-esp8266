@@ -430,8 +430,8 @@ const WifiView = (() => {
             rows: [
               [
                 "Local Host",
-                d.localHost
-                  ? m("a", { href: `http://${d.localHost}.local` }, d.localHost)
+                d.hostName
+                  ? m("a", { href: `http://${d.hostName}.local` }, d.hostName)
                   : "",
               ],
               ["Mode", d.wifiMode],
