@@ -40,6 +40,10 @@ namespace Victor {
     return write(F("[") + msg + F("]"));
   }
 
+  Console Console::section(const String& key, const String& val) {
+    return section(key + F(": ") + val);
+  }
+
   Console Console::section(const String& msg) {
     return write(F(" ") + msg);
   }

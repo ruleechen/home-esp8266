@@ -64,7 +64,7 @@ namespace Victor::Components {
             // convert
             _deserializeFrom(model, doc);
           } else {
-            _error().section(F("parse failed")).section(error.f_str());
+            _error().section(F("parse failed"), error.f_str());
           }
         } else {
           _error().section(F("file too large"));
@@ -73,7 +73,7 @@ namespace Victor::Components {
         _error().section(F("open failed"));
       }
     } else {
-      _error().section(F("file notfound")).section(_filePath);
+      _error().section(F("file notfound"), _filePath);
     }
     if (_userCache) {
       _cache = &model;

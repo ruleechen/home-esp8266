@@ -123,7 +123,7 @@ namespace Victor::Components {
     // log states
     _lastReceived = message;
     _lastPressState = press;
-    console.log().bracket(F("radio")).section(F("detected pressed")).section(String(press));
+    console.log().bracket(F("radio")).section(F("detected pressed"), String(press));
     // check rules
     auto model = radioStorage.load();
     for (const auto& rule : model.rules) {

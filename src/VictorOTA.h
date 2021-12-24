@@ -16,13 +16,13 @@ namespace Victor::Components {
     void trigger(VOtaType type);
 
    private:
-    Console _log();
     void _updateSketch();
     void _updateFileSystem();
     void _handleStart();
     void _handleEnd();
     void _handleProgress(int progress, int total);
     void _handleError(int error);
+    static Console _log();
   };
 
   // global

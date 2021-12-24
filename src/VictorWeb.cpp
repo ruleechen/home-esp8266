@@ -318,7 +318,7 @@ namespace Victor::Components {
     } else {
       victorWifi.join(ssid, password, channel, (uint8_t*)bssid.c_str());
       auto isConnected = WiFi.status() == WL_CONNECTED;
-      console.log().bracket(F("wifi")).section(F("connected")).section(String(isConnected));
+      console.log().bracket(F("wifi")).section(F("connected"), String(isConnected));
       if (isConnected) {
         res[F("ip")] = WiFi.localIP().toString();
       } else {
