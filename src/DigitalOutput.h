@@ -8,12 +8,12 @@ namespace Victor::Components {
    public:
     DigitalOutput(uint8_t pin, uint8_t trueValue);
     void setValue(bool value);
-    bool getValue();
+    bool lastValue();
 
    private:
     uint8_t _pin;
     uint8_t _trueValue;
-    bool _currentValue = false;
+    bool _lastValue = false;
   };
 
 } // namespace Victor::Components

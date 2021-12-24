@@ -37,7 +37,7 @@ namespace Victor::Components {
 
   void BuiltinLed::toggle() {
     if (_outputPin) {
-      auto value = _outputPin->getValue();
+      auto value = _outputPin->lastValue();
       _outputPin->setValue(!value);
     }
   }
