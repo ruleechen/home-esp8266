@@ -18,9 +18,10 @@ namespace Victor::Components {
     String getApName();
 
    private:
-    Console _log();
     void _handleStationModeGotIP(const WiFiEventStationModeGotIP& args);
     void _handleStationModeDisconnected(const WiFiEventStationModeDisconnected& args);
+    static void _onWifiEvent(WiFiEvent_t event);
+    static Console _log();
   };
 
   // global
