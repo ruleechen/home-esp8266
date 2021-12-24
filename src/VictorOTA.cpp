@@ -12,7 +12,7 @@ namespace Victor::Components {
     ESPhttpUpdate.onError(std::bind(&VictorOTA::_handleError, this, std::placeholders::_1));
   }
 
-  String VictorOTA::getCurrentVersion() {
+  String VictorOTA::getCurrentVersion() const {
     return FirmwareVersion;
   }
 
@@ -59,13 +59,13 @@ namespace Victor::Components {
 
   void VictorOTA::_updateSketch() {
     WiFiClient client;
-    auto currentVersion = getCurrentVersion();
+    const auto currentVersion = getCurrentVersion();
     ESPhttpUpdate.update(client, F("http://wwww.rulee.cn/esp8266/firmware.bin"), currentVersion);
   }
 
   void VictorOTA::_updateFileSystem() {
     WiFiClient client;
-    auto currentVersion = getCurrentVersion();
+    const auto currentVersion = getCurrentVersion();
     ESPhttpUpdate.updateFS(client, F("http://wwww.rulee.cn/esp8266/littlefs.bin"), currentVersion);
   }
 
@@ -82,7 +82,7 @@ namespace Victor::Components {
   }
 
   void VictorOTA::_handleError(int error) {
-    auto message = ESPhttpUpdate.getLastErrorString();
+    const auto message = ESPhttpUpdate.getLastErrorString();
     _log().bracket(String(error)).section(F("last error"), message);
   }
 

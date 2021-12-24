@@ -3,9 +3,9 @@
 namespace Victor::Components {
 
   BuiltinLed::BuiltinLed() {
-    auto model = appStorage.load();
+    const auto model = appStorage.load();
     if (model.ledPin > -1) {
-      auto trueValue = model.ledOnValue == 0 ? LOW : HIGH;
+      const auto trueValue = model.ledOnValue == 0 ? LOW : HIGH;
       _outputPin = new DigitalOutput(model.ledPin, trueValue);
     }
   }
@@ -37,7 +37,7 @@ namespace Victor::Components {
 
   void BuiltinLed::toggle() {
     if (_outputPin) {
-      auto value = _outputPin->lastValue();
+      const auto value = _outputPin->lastValue();
       _outputPin->setValue(!value);
     }
   }

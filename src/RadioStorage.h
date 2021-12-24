@@ -8,7 +8,7 @@ namespace Victor::Components {
    public:
     RadioStorage();
     void broadcast(RadioMessage message); // message object should be copied
-    RadioMessage getLastReceived();
+    RadioMessage getLastReceived() const;
 
    protected:
     RadioMessage _lastReceived;

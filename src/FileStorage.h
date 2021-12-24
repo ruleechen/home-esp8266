@@ -45,7 +45,7 @@ namespace Victor::Components {
       auto file = LittleFS.open(_filePath, "r");
       if (file) {
         // validate size
-        auto size = file.size();
+        const auto size = file.size();
         // read file
         // Allocate a buffer to store contents of the file.
         char buffer[size];
@@ -59,7 +59,7 @@ namespace Victor::Components {
         if (size <= _maxSize) {
           DynamicJsonDocument doc(_maxSize); // Store data in the heap - Dynamic Memory Allocation
           // StaticJsonDocument<DEFAULT_FILE_SIZE> doc; // Store data in the stack - Fixed Memory Allocation
-          auto error = deserializeJson(doc, buffer);
+          const auto error = deserializeJson(doc, buffer);
           if (!error) {
             // convert
             _deserializeFrom(model, doc);

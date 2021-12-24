@@ -4,15 +4,15 @@ namespace Victor::Components {
 
   void VictorWifi::setup() {
     auto wifiMode = WiFi.getMode();
-    auto apEnabled = ((wifiMode & WIFI_AP) != 0);
-    auto staEnabled = ((wifiMode & WIFI_STA) != 0);
+    const auto apEnabled = ((wifiMode & WIFI_AP) != 0);
+    const auto staEnabled = ((wifiMode & WIFI_STA) != 0);
     if (!apEnabled && !staEnabled) {
       WiFi.mode(WIFI_AP_STA);
       wifiMode = WIFI_AP_STA;
     }
 
-    auto apName = getApName();
-    auto isApEnabled = ((wifiMode & WIFI_AP) != 0);
+    const auto apName = getApName();
+    const auto isApEnabled = ((wifiMode & WIFI_AP) != 0);
     if (isApEnabled) {
       // IPAddress apIp(192, 168, 1, 33);
       // IPAddress apSubnet(255, 255, 255, 0);
@@ -32,9 +32,9 @@ namespace Victor::Components {
     WiFi.setAutoReconnect(true);
     WiFi.persistent(true);
 
-    auto ssidJoined = WiFi.SSID();
+    const auto ssidJoined = WiFi.SSID();
     if (!ssidJoined || ssidJoined == "") {
-      auto model = appStorage.load();
+      const auto model = appStorage.load();
       WiFi.begin(model.wifiSsid, model.wifiPass);
     } else {
       WiFi.begin();
@@ -78,16 +78,16 @@ namespace Victor::Components {
   }
 
   String VictorWifi::getHostName() {
-    auto id = getHostId();
-    auto model = appStorage.load();
-    auto productName = model.name.length() > 0
+    const auto id = getHostId();
+    const auto model = appStorage.load();
+    const auto productName = model.name.length() > 0
       ? model.name
       : FirmwareName;
     return productName + F("-") + id;
   }
 
   String VictorWifi::getApName() {
-    auto host = getHostName();
+    const auto host = getHostName();
     auto version = FirmwareVersion;
     version.replace(F("."), F(""));
     return host + F("-") + version;
@@ -95,9 +95,9 @@ namespace Victor::Components {
 
   void VictorWifi::_handleStationModeGotIP(const WiFiEventStationModeGotIP& args) {
     _log().section(F("station")).section(F("got ip"), WiFi.localIP().toString());
-    auto model = appStorage.load();
+    const auto model = appStorage.load();
     if (model.autoMode) {
-      auto wifiMode = WiFi.getMode();
+      const auto wifiMode = WiFi.getMode();
       if (wifiMode != WIFI_STA) {
         WiFi.mode(WIFI_STA);
       }
@@ -106,9 +106,9 @@ namespace Victor::Components {
 
   void VictorWifi::_handleStationModeDisconnected(const WiFiEventStationModeDisconnected& args) {
     _log().section(F("station"), F("disconnected"));
-    auto model = appStorage.load();
+    const auto model = appStorage.load();
     if (model.autoMode) {
-      auto wifiMode = WiFi.getMode();
+      const auto wifiMode = WiFi.getMode();
       if (wifiMode != WIFI_AP_STA) {
         WiFi.mode(WIFI_AP_STA);
       }
@@ -123,9 +123,9 @@ namespace Victor::Components {
       }
       case WiFiEvent::WIFI_EVENT_STAMODE_DISCONNECTED: {
         _log().section(F("station"), F("disconnected"));
-        auto model = appStorage.load();
+        const auto model = appStorage.load();
         if (model.autoMode) {
-          auto wifiMode = WiFi.getMode();
+          const auto wifiMode = WiFi.getMode();
           if (wifiMode != WIFI_AP_STA) {
             WiFi.mode(WIFI_AP_STA);
           }
@@ -134,9 +134,9 @@ namespace Victor::Components {
       }
       case WiFiEvent::WIFI_EVENT_STAMODE_GOT_IP: {
         _log().section(F("station")).section(F("got ip"), WiFi.localIP().toString());
-        auto model = appStorage.load();
+        const auto model = appStorage.load();
         if (model.autoMode) {
-          auto wifiMode = WiFi.getMode();
+          const auto wifiMode = WiFi.getMode();
           if (wifiMode != WIFI_STA) {
             WiFi.mode(WIFI_STA);
           }

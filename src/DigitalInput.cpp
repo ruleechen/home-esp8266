@@ -9,7 +9,7 @@ namespace Victor::Components {
   }
 
   bool DigitalInput::getValue() {
-    auto value = digitalRead(_pin);
+    const auto value = digitalRead(_pin);
     return value == _trueValue;
   }
 

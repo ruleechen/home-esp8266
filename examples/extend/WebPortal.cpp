@@ -26,8 +26,8 @@ namespace Victor::Components {
   void WebPortal::_handleServiceList() {
     _dispatchRequestStart();
     DynamicJsonDocument res(512);
-    JsonArray serviceArr = res.createNestedArray(F("services"));
-    JsonObject serviceObj = serviceArr.createNestedObject();
+    const JsonArray serviceArr = res.createNestedArray(F("services"));
+    const JsonObject serviceObj = serviceArr.createNestedObject();
     serviceObj[F("id")] = "abcd";
     serviceObj[F("name")] = "Test";
     _sendJson(res);
@@ -37,11 +37,11 @@ namespace Victor::Components {
   void WebPortal::_handleServiceSave() {
     _dispatchRequestStart();
       // payload
-      auto payloadJson = _server->arg(F("plain"));
+      const auto payloadJson = _server->arg(F("plain"));
       DynamicJsonDocument payload(512);
       deserializeJson(payload, payloadJson);
       // read
-      auto ruleItems = payload["rules"];
+      const auto ruleItems = payload["rules"];
       // ...
       // res
       DynamicJsonDocument res(64);

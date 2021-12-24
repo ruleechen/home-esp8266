@@ -18,7 +18,7 @@ namespace Victor::Components {
   }
 
   void VictorRadio::emit(String name) {
-    auto model = radioStorage.load();
+    const auto model = radioStorage.load();
     if (model.outputPin > -1) {
       for (const auto& emit : model.emits) {
         if (emit.name == name) {
@@ -30,18 +30,18 @@ namespace Victor::Components {
   }
 
   void VictorRadio::emit(uint8_t index) {
-    auto model = radioStorage.load();
+    const auto model = radioStorage.load();
     if (model.outputPin > -1 && index < model.emits.size()) {
-      auto emit = model.emits[index];
+      const auto emit = model.emits[index];
       _handleEmit(emit);
     }
   }
 
-  void VictorRadio::_handleEmit(RadioEmit emit) {
+  void VictorRadio::_handleEmit(const RadioEmit& emit) {
     if (!onEmit) {
       return;
     }
-    auto id = GlobalHelpers::randomString(4);
+    const auto id = GlobalHelpers::randomString(4);
     _lastEmitted = {
       .name = id,
       .value = emit.value,
@@ -82,7 +82,7 @@ namespace Victor::Components {
       value = value.substring(5);
     }
     // message
-    RadioMessage message = {
+    const RadioMessage message = {
       .id = id,
       .value = value,
       .channel = channel,
@@ -91,7 +91,7 @@ namespace Victor::Components {
     // broadcase state
     radioStorage.broadcast(message);
     // press
-    auto timespan = message.timestamp - _lastReceived.timestamp;
+    const auto timespan = message.timestamp - _lastReceived.timestamp;
     if (
       _lastReceived.id != message.id  ||
       timespan > RESET_PRESS_TIMESPAN
@@ -125,7 +125,7 @@ namespace Victor::Components {
     _lastPressState = press;
     console.log().bracket(F("radio")).section(F("detected pressed"), String(press));
     // check rules
-    auto model = radioStorage.load();
+    const auto model = radioStorage.load();
     for (const auto& rule : model.rules) {
       if (
         rule.value == message.value &&
@@ -151,7 +151,7 @@ namespace Victor::Components {
 
   void VictorRadio::_proceedAction(const RadioRule& rule) {
     if (onAction) {
-      auto handled = onAction(rule);
+      const auto handled = onAction(rule);
       if (handled) {
         return;
       }
@@ -181,7 +181,7 @@ namespace Victor::Components {
 
   void VictorRadio::_proceedCommand(const RadioCommandParsed& command) {
     if (onCommand) {
-      auto handled = onCommand(command);
+      const auto handled = onCommand(command);
       if (handled) {
         return;
       }
@@ -190,18 +190,18 @@ namespace Victor::Components {
       case EntryWifi: {
         switch (command.action) {
           case EntryWifiJoin: {
-            auto credential = GlobalHelpers::splitString(command.parameters, F("/"));
+            const auto credential = GlobalHelpers::splitString(command.parameters, F("/"));
             if (credential.size() == 2) {
-              auto ssid = credential[0];
-              auto password = credential[1];
+              const auto ssid = credential[0];
+              const auto password = credential[1];
               victorWifi.join(ssid, password, false);
             }
             break;
           }
           case EntryWifiMode: {
-            auto hasAP = command.parameters.indexOf(F("ap")) > -1;
-            auto hasSTA = command.parameters.indexOf(F("sta")) > -1;
-            auto isOff = command.parameters == F("off");
+            const auto hasAP = command.parameters.indexOf(F("ap")) > -1;
+            const auto hasSTA = command.parameters.indexOf(F("sta")) > -1;
+            const auto isOff = command.parameters == F("off");
             if (hasAP && hasSTA) { WiFi.mode(WIFI_AP_STA); }
             else if (hasAP) { WiFi.mode(WIFI_AP); }
             else if (hasSTA) { WiFi.mode(WIFI_STA); }
@@ -229,7 +229,7 @@ namespace Victor::Components {
             break;
           }
           case EntryAppOTA: {
-            auto otaType =
+            const auto otaType =
               command.parameters == F("all") ? VOta_All :
               command.parameters == F("fs") ? VOta_FileSystem :
               command.parameters == F("sketch") ? VOta_Sketch : VOta_Sketch;
@@ -269,10 +269,10 @@ namespace Victor::Components {
     RadioCommandParsed command;
     auto value = String(message.value); // clone
     value.replace(F(":"), F("-"));
-    auto parts = GlobalHelpers::splitString(value, F("-"));
+    const auto parts = GlobalHelpers::splitString(value, F("-"));
     if (parts.size() >= 2) {
-      auto entry = parts[0];
-      auto action = parts[1];
+      const auto entry = parts[0];
+      const auto action = parts[1];
       if (entry == F("wifi")) {
         command.entry = EntryWifi;
         if (action == F("join")) {
@@ -303,7 +303,7 @@ namespace Victor::Components {
         }
       }
       if (parts.size() >= 3) {
-        auto parameters = parts[2];
+        const auto parameters = parts[2];
         command.parameters = parameters;
       }
     }

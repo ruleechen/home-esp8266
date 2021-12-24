@@ -23,9 +23,9 @@ namespace Victor::Events {
 
   void Timer::loop() {
     std::vector<unsigned int> hitIds;
-    auto now = millis();
+    const auto now = millis();
     for (const auto& item : _configs) {
-      Config config = item.second;
+      const Config config = item.second;
       if (now - config.timestamp > config.timespan) {
         hitIds.push_back(item.first);
       }
@@ -44,7 +44,7 @@ namespace Victor::Events {
   }
 
   unsigned int Timer::_addConfig(bool repeat, unsigned long timespan, TCallback callback) {
-    Config config = {
+    const Config config = {
       .repeat = repeat,
       .timespan = timespan,
       .callback = callback,

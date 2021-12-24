@@ -13,7 +13,7 @@ namespace Victor {
       int generated = 0;
       while (generated < length) {
         // .platformio/packages/framework-arduinoespressif8266/cores/esp8266/WMath.cpp
-        byte randomValue = random(0, 26);
+        const byte randomValue = random(0, 26);
         char letter = randomValue + 'a';
         if (randomValue > 26) {
           letter = (randomValue - 26);
@@ -26,10 +26,10 @@ namespace Victor {
 
     static std::vector<String> splitString(const String& str, const String& delimiter) {
       std::vector<String> parts;
-      auto delimiterLength = delimiter.length();
+      const auto delimiterLength = delimiter.length();
       auto searchFrom = 0;
       while (true) {
-        auto index = str.indexOf(delimiter, searchFrom);
+        const auto index = str.indexOf(delimiter, searchFrom);
         if (index == -1) {
           parts.push_back(str.substring(searchFrom));
           break;

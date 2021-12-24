@@ -10,7 +10,7 @@ namespace Victor::Components {
   class VictorOTA {
    public:
     void setup();
-    String getCurrentVersion();
+    String getCurrentVersion() const;
     String checkNewVersion();
     void update(String version, VOtaType type);
     void trigger(VOtaType type);

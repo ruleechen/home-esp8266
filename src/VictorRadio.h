@@ -37,7 +37,7 @@ namespace Victor::Components {
     RadioEmit _lastEmitted = {};
     RadioMessage _lastReceived = {};
     RadioPressState _lastPressState = PressStateAwait;
-    void _handleEmit(RadioEmit emit);
+    void _handleEmit(const RadioEmit& emit);
     void _handleReceived(const RadioMessage& message, RadioPressState press);
     void _proceedAction(const RadioRule& rule);
     void _proceedCommand(const RadioCommandParsed& command);

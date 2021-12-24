@@ -20,7 +20,7 @@ namespace Victor::Components {
 
   void VictorWeb::setup() {
     _registerHandlers();
-    auto model = appStorage.load();
+    const auto model = appStorage.load();
     if (model.overTheWeb) {
       _httpUpdater = new ESP8266HTTPUpdateServer();
       _httpUpdater->setup(_server, F("/update"));
@@ -63,7 +63,7 @@ namespace Victor::Components {
   }
 
   void VictorWeb::_solvePageTokens(String& html) {
-    auto productName = FirmwareName;
+    const auto productName = FirmwareName;
     html.replace(F("{productName}"), productName);
     html.replace(F("{version}"), String(UnixTime));
   }
@@ -99,7 +99,7 @@ namespace Victor::Components {
 
   void VictorWeb::_handleIndexPage() {
     _dispatchRequestStart();
-    auto path = String(F("/web/index.htm"));
+    const auto path = String(F("/web/index.htm"));
     auto file = LittleFS.open(path, "r");
     auto html = file.readString();
     file.close();
@@ -152,7 +152,7 @@ namespace Victor::Components {
       res[F("blockSize")] = fsInfo.blockSize;
       res[F("pageSize")] = fsInfo.pageSize;
     } else {
-      auto error = String(F("read fs info failed"));
+      const auto error = String(F("read fs info failed"));
       res[F("error")] = error;
       console.error().bracket(F("fs")).section(error);
     }
@@ -165,16 +165,16 @@ namespace Victor::Components {
     DynamicJsonDocument res(1024);
     // load files
     // https://arduino-esp8266.readthedocs.io/en/latest/filesystem.html
-    JsonArray filesArr = res.createNestedArray(F("files"));
+    const JsonArray filesArr = res.createNestedArray(F("files"));
     std::function<void(String)> loopFiles;
     loopFiles = [&](String path)->void {
       Dir dir = LittleFS.openDir(path);
       while(dir.next()) {
-        auto fullName = path + dir.fileName();
+        const auto fullName = path + dir.fileName();
         if (dir.isDirectory()) {
           loopFiles(fullName + F("/"));
         } else if (dir.isFile()) {
-          JsonObject fileObj = filesArr.createNestedObject();
+          const JsonObject fileObj = filesArr.createNestedObject();
           fileObj[F("path")] = fullName;
           fileObj[F("size")] = dir.fileSize();
         }
@@ -189,7 +189,7 @@ namespace Victor::Components {
   void VictorWeb::_handleFileGet() {
     _dispatchRequestStart();
     DynamicJsonDocument res(2048); // 2k
-    auto path = _server->arg(F("path"));
+    const auto path = _server->arg(F("path"));
     auto file = LittleFS.open(path, "r");
     if (file) {
       res[F("size")] = file.size();
@@ -197,7 +197,7 @@ namespace Victor::Components {
       res[F("content")] = file.readString();
       file.close();
     } else {
-      auto error = String(F("failed to open file"));
+      const auto error = String(F("failed to open file"));
       res[F("error")] = error;
       console.error().bracket(F("fs")).section(error);
     }
@@ -208,15 +208,15 @@ namespace Victor::Components {
   void VictorWeb::_handleFileSave() {
     _dispatchRequestStart();
     // payload
-    auto payloadJson = _server->arg(F("plain"));
+    const auto payloadJson = _server->arg(F("plain"));
     DynamicJsonDocument payload(2048); // 2k
     deserializeJson(payload, payloadJson);
     // write
     DynamicJsonDocument res(64);
-    auto path = _server->arg(F("path"));
+    const auto path = _server->arg(F("path"));
     auto file = LittleFS.open(path, "w");
     if (file) {
-      auto content = String(payload[F("content")]);
+      const auto content = String(payload[F("content")]);
       file.print(content);
       file.close();
       res[F("message")] = String(F("success"));
@@ -227,7 +227,7 @@ namespace Victor::Components {
 
   void VictorWeb::_handleFileDelete() {
     _dispatchRequestStart();
-    auto path = _server->arg(F("path"));
+    const auto path = _server->arg(F("path"));
     LittleFS.remove(path);
     DynamicJsonDocument res(64);
     res[F("message")] = String(F("success"));
@@ -238,8 +238,8 @@ namespace Victor::Components {
   void VictorWeb::_handleWifi() {
     _dispatchRequestStart();
     // wifi
-    auto ssidJoined = WiFi.SSID();
-    auto wifiMode = WiFi.getMode();
+    const auto ssidJoined = WiFi.SSID();
+    const auto wifiMode = WiFi.getMode();
     auto strWifiMode = String(F("OFF"));
     if (wifiMode == WIFI_STA) {
       strWifiMode = F("STA");
@@ -249,9 +249,9 @@ namespace Victor::Components {
       strWifiMode = F("AP_STA");
     }
     // station
+    const auto staMacAddress = WiFi.macAddress();
+    const auto isStaEnabled = ((wifiMode & WIFI_STA) != 0);
     auto staAddress = String("");
-    auto staMacAddress = WiFi.macAddress();
-    auto isStaEnabled = ((wifiMode & WIFI_STA) != 0);
     if (isStaEnabled) {
       IPAddress localIP = WiFi.localIP();
       if (localIP) {
@@ -259,9 +259,9 @@ namespace Victor::Components {
       }
     }
     // access point
+    const auto apMacAddress = WiFi.softAPmacAddress();
+    const auto isApEnabled = ((wifiMode & WIFI_AP) != 0);
     auto apAddress = String("");
-    auto apMacAddress = WiFi.softAPmacAddress();
-    auto isApEnabled = ((wifiMode & WIFI_AP) != 0);
     if (isApEnabled) {
       IPAddress apIP = WiFi.softAPIP();
       if (apIP) {
@@ -287,10 +287,10 @@ namespace Victor::Components {
     _dispatchRequestStart();
     DynamicJsonDocument res(1024);
     res[F("bssid")] = WiFi.BSSIDstr();
-    JsonArray apArr = res.createNestedArray(F("founds"));
-    auto count = WiFi.scanNetworks();
+    const JsonArray apArr = res.createNestedArray(F("founds"));
+    const auto count = WiFi.scanNetworks();
     for (int8_t i = 0; i < count; ++i) {
-      JsonObject apObj = apArr.createNestedObject();
+      const JsonObject apObj = apArr.createNestedObject();
       apObj[F("bssid")] = WiFi.BSSIDstr(i); // Basic Service Set Identifiers (a MAC)
       apObj[F("ssid")] = WiFi.SSID(i); // Service Set Identifier
       apObj[F("rssi")] = WiFi.RSSI(i); // Received Signal Strength Indicator
@@ -303,21 +303,21 @@ namespace Victor::Components {
   void VictorWeb::_handleWifiJoin() {
     _dispatchRequestStart();
     // payload
-    auto payloadJson = _server->arg(F("plain"));
+    const auto payloadJson = _server->arg(F("plain"));
     DynamicJsonDocument payload(128);
     deserializeJson(payload, payloadJson);
     // read
-    auto bssid = String(payload[F("bssid")]);
-    auto ssid = String(payload[F("ssid")]);
-    auto password = String(payload[F("password")]);
-    int32_t channel = payload[F("channel")];
+    const auto bssid = String(payload[F("bssid")]);
+    const auto ssid = String(payload[F("ssid")]);
+    const auto password = String(payload[F("password")]);
+    const int32_t channel = payload[F("channel")];
     // res
     DynamicJsonDocument res(64);
     if (!ssid || ssid == "") {
       res[F("error")] = String(F("Please select wifi to join"));
     } else {
       victorWifi.join(ssid, password, channel, (uint8_t*)bssid.c_str());
-      auto isConnected = WiFi.status() == WL_CONNECTED;
+      const auto isConnected = WiFi.status() == WL_CONNECTED;
       console.log().bracket(F("wifi")).section(F("connected"), String(isConnected));
       if (isConnected) {
         res[F("ip")] = WiFi.localIP().toString();
@@ -332,11 +332,11 @@ namespace Victor::Components {
   void VictorWeb::_handleWifiMode() {
     _dispatchRequestStart();
     // payload
-    auto payloadJson = _server->arg(F("plain"));
+    const auto payloadJson = _server->arg(F("plain"));
     DynamicJsonDocument payload(128);
     deserializeJson(payload, payloadJson);
     // read
-    auto mode = String(payload[F("mode")]);
+    const auto mode = String(payload[F("mode")]);
     // set
     if (mode == "STA") {
       WiFi.mode(WIFI_STA);
@@ -369,13 +369,13 @@ namespace Victor::Components {
   void VictorWeb::_handleOtaFire() {
     _dispatchRequestStart();
     // payload
-    auto payloadJson = _server->arg(F("plain"));
+    const auto payloadJson = _server->arg(F("plain"));
     DynamicJsonDocument payload(64);
     deserializeJson(payload, payloadJson);
     // read
-    auto version = String(payload[F("version")]);
-    auto otaType = String(payload[F("otaType")]);
-    auto type =
+    const auto version = String(payload[F("version")]);
+    const auto otaType = String(payload[F("otaType")]);
+    const auto type =
       otaType == F("all") ? VOta_All :
       otaType == F("fs") ? VOta_FileSystem :
       otaType == F("sketch") ? VOta_Sketch : VOta_Sketch;
@@ -391,11 +391,11 @@ namespace Victor::Components {
   void VictorWeb::_handleReset() {
     _dispatchRequestStart();
     // payload
-    auto payloadJson = _server->arg(F("plain"));
+    const auto payloadJson = _server->arg(F("plain"));
     DynamicJsonDocument payload(64);
     deserializeJson(payload, payloadJson);
     // read
-    auto values = String(payload[F("values")]);
+    const auto values = String(payload[F("values")]);
     // action
     if (values.indexOf(F("EspRestart")) >= 0) {
       // sdk_system_restart();
@@ -429,13 +429,13 @@ namespace Victor::Components {
   void VictorWeb::_handleRadioGet() {
     _dispatchRequestStart();
     DynamicJsonDocument res(512);
-    auto model = radioStorage.load();
+    const auto model = radioStorage.load();
     res[F("millis")] = millis();
     res[F("inputPin")] = model.inputPin;
     res[F("outputPin")] = model.outputPin;
     // last received
-    auto lastReceived = radioStorage.getLastReceived();
-    JsonObject lastReceivedObj = res.createNestedObject(F("lastReceived"));
+    const auto lastReceived = radioStorage.getLastReceived();
+    const JsonObject lastReceivedObj = res.createNestedObject(F("lastReceived"));
     lastReceivedObj[F("value")] = lastReceived.value;
     lastReceivedObj[F("channel")] = lastReceived.channel;
     lastReceivedObj[F("timestamp")] = lastReceived.timestamp;
@@ -447,12 +447,12 @@ namespace Victor::Components {
   void VictorWeb::_handleRadioSave() {
     _dispatchRequestStart();
     // payload
-    auto payloadJson = _server->arg(F("plain"));
+    const auto payloadJson = _server->arg(F("plain"));
     DynamicJsonDocument payload(64);
     deserializeJson(payload, payloadJson);
     // read
-    auto inputPin = String(payload[F("inputPin")]);
-    auto outputPin = String(payload[F("outputPin")]);
+    const auto inputPin = String(payload[F("inputPin")]);
+    const auto outputPin = String(payload[F("outputPin")]);
     // action
     auto model = radioStorage.load();
     model.inputPin = inputPin.toInt();
@@ -469,18 +469,18 @@ namespace Victor::Components {
     _dispatchRequestStart();
     DynamicJsonDocument res(1024 + 512);
     // emits
-    auto model = radioStorage.load();
-    JsonArray emitArr = res.createNestedArray(F("emits"));
+    const auto model = radioStorage.load();
+    const JsonArray emitArr = res.createNestedArray(F("emits"));
     for (const auto& emit : model.emits) {
-      JsonObject emitObj = emitArr.createNestedObject();
+      const JsonObject emitObj = emitArr.createNestedObject();
       emitObj[F("name")] = emit.name;
       emitObj[F("value")] = emit.value;
       emitObj[F("channel")] = emit.channel;
       emitObj[F("press")] = emit.press;
     }
     // last received
-    auto lastReceived = radioStorage.getLastReceived();
-    JsonObject lastReceivedObj = res.createNestedObject(F("lastReceived"));
+    const auto lastReceived = radioStorage.getLastReceived();
+    const JsonObject lastReceivedObj = res.createNestedObject(F("lastReceived"));
     lastReceivedObj[F("value")] = lastReceived.value;
     lastReceivedObj[F("channel")] = lastReceived.channel;
     // end
@@ -491,16 +491,16 @@ namespace Victor::Components {
   void VictorWeb::_handleRadioEmitSave() {
     _dispatchRequestStart();
     // payload
-    auto payloadJson = _server->arg(F("plain"));
+    const auto payloadJson = _server->arg(F("plain"));
     DynamicJsonDocument payload(1024 + 512);
     deserializeJson(payload, payloadJson);
     // read
-    auto emitItems = payload[F("emits")];
+    const auto emitItems = payload[F("emits")];
     // save
     auto model = radioStorage.load();
     model.emits.clear();
     for (size_t i = 0; i < emitItems.size(); i++) {
-      auto item = emitItems[i];
+      const auto item = emitItems[i];
       model.emits.push_back({
         .name = String(item[F("name")]),
         .value = String(item[F("value")]),
@@ -519,11 +519,11 @@ namespace Victor::Components {
   void VictorWeb::_handleRadioEmitSend() {
     _dispatchRequestEnd();
     // payload
-    auto payloadJson = _server->arg(F("plain"));
+    const auto payloadJson = _server->arg(F("plain"));
     DynamicJsonDocument payload(64);
     deserializeJson(payload, payloadJson);
     // read
-    auto index = String(payload[F("index")]);
+    const auto index = String(payload[F("index")]);
     DynamicJsonDocument res(64);
     if (onRadioEmit) {
       onRadioEmit(index.toInt());
@@ -539,10 +539,10 @@ namespace Victor::Components {
     _dispatchRequestStart();
     DynamicJsonDocument res(1024 + 512);
     // rules
-    auto model = radioStorage.load();
-    JsonArray ruleArr = res.createNestedArray(F("rules"));
+    const auto model = radioStorage.load();
+    const JsonArray ruleArr = res.createNestedArray(F("rules"));
     for (const auto& rule : model.rules) {
-      JsonObject ruleObj = ruleArr.createNestedObject();
+      const JsonObject ruleObj = ruleArr.createNestedObject();
       ruleObj[F("value")] = rule.value;
       ruleObj[F("channel")] = rule.channel;
       ruleObj[F("press")] = rule.press;
@@ -550,8 +550,8 @@ namespace Victor::Components {
       ruleObj[F("serviceId")] = rule.serviceId;
     }
     // last received
-    auto lastReceived = radioStorage.getLastReceived();
-    JsonObject lastReceivedObj = res.createNestedObject(F("lastReceived"));
+    const auto lastReceived = radioStorage.getLastReceived();
+    const JsonObject lastReceivedObj = res.createNestedObject(F("lastReceived"));
     lastReceivedObj[F("value")] = lastReceived.value;
     lastReceivedObj[F("channel")] = lastReceived.channel;
     // end
@@ -562,16 +562,16 @@ namespace Victor::Components {
   void VictorWeb::_handleRadioRuleSave() {
     _dispatchRequestStart();
     // payload
-    auto payloadJson = _server->arg(F("plain"));
+    const auto payloadJson = _server->arg(F("plain"));
     DynamicJsonDocument payload(1024 + 512);
     deserializeJson(payload, payloadJson);
     // read
-    auto ruleItems = payload["rules"];
+    const auto ruleItems = payload["rules"];
     // save
     auto model = radioStorage.load();
     model.rules.clear();
     for (size_t i = 0; i < ruleItems.size(); i++) {
-      auto item = ruleItems[i];
+      const auto item = ruleItems[i];
       model.rules.push_back({
         .value = String(item[F("value")]),
         .channel = String(item[F("channel")]).toInt(),
@@ -592,10 +592,10 @@ namespace Victor::Components {
     _dispatchRequestStart();
     DynamicJsonDocument res(1024 + 512);
     // commands
-    auto model = radioStorage.load();
-    JsonArray commandArr = res.createNestedArray(F("commands"));
+    const auto model = radioStorage.load();
+    const JsonArray commandArr = res.createNestedArray(F("commands"));
     for (const auto& command : model.commands) {
-      JsonObject commandObj = commandArr.createNestedObject();
+      const JsonObject commandObj = commandArr.createNestedObject();
       commandObj[F("entry")] = command.entry;
       commandObj[F("action")] = command.action;
       commandObj[F("press")] = command.press;
@@ -609,16 +609,16 @@ namespace Victor::Components {
   void VictorWeb::_handleRadioCommandSave() {
     _dispatchRequestStart();
     // payload
-    auto payloadJson = _server->arg(F("plain"));
+    const auto payloadJson = _server->arg(F("plain"));
     DynamicJsonDocument payload(1024 + 512);
     deserializeJson(payload, payloadJson);
     // read
-    auto commandItems = payload["commands"];
+    const auto commandItems = payload["commands"];
     // save
     auto model = radioStorage.load();
     model.commands.clear();
     for (size_t i = 0; i < commandItems.size(); i++) {
-      auto item = commandItems[i];
+      const auto item = commandItems[i];
       model.commands.push_back({
         .entry = RadioCommandEntry(String(item[F("entry")]).toInt()),
         .action = String(item[F("action")]).toInt(),
