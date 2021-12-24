@@ -8,8 +8,8 @@
     "watch": "gulp watch"
   },
   "author": {
-    "email": "rulee@live.cn",
-    "name": "Rulee Chen"
+    "name": "Rulee Chen",
+    "email": "rulee@live.cn"
   },
   "repository": {
     "type": "git",
