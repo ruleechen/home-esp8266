@@ -60,6 +60,8 @@ namespace Victor::Components {
     _server->on(F("/radio/rule"), HTTP_POST, std::bind(&VictorWeb::_handleRadioRuleSave, this));
     _server->on(F("/radio/command"), HTTP_GET, std::bind(&VictorWeb::_handleRadioCommandGet, this));
     _server->on(F("/radio/command"), HTTP_POST, std::bind(&VictorWeb::_handleRadioCommandSave, this));
+    _server->on(F("/service/state"), HTTP_GET, std::bind(&VictorWeb::_handleServiceState, this));
+    _server->on(F("/service/reset"), HTTP_POST, std::bind(&VictorWeb::_handleServiceReset, this));
   }
 
   void VictorWeb::_solvePageTokens(String& html) {
@@ -630,6 +632,36 @@ namespace Victor::Components {
     // res
     DynamicJsonDocument res(64);
     res[F("message")] = String(F("success"));
+    _sendJson(res);
+    _dispatchRequestEnd();
+  }
+
+  void VictorWeb::_handleServiceState() {
+    _dispatchRequestStart();
+    std::vector<KeyValueModel> states;
+    if (onGetServiceState) {
+      onGetServiceState(states);
+    }
+    DynamicJsonDocument res(1024);
+    const JsonArray itemsArr = res.createNestedArray(F("items"));
+    for (const auto& state : states) {
+      const JsonArray stateArr = itemsArr.createNestedArray();
+      stateArr[0] = state.key;
+      stateArr[1] = state.value;
+    }
+    _sendJson(res);
+    _dispatchRequestEnd();
+  }
+
+  void VictorWeb::_handleServiceReset() {
+    _dispatchRequestStart();
+    DynamicJsonDocument res(512);
+    if (onResetService) {
+      onResetService();
+      res[F("message")] = String(F("success"));
+    } else {
+      res[F("error")] = String(F("onResetService is required"));
+    }
     _sendJson(res);
     _dispatchRequestEnd();
   }

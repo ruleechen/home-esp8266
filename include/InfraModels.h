@@ -20,6 +20,11 @@ namespace Victor {
     DEBOUNCE_MULTI_PRESS,
   };
 
+  struct KeyValueModel {
+    String key;
+    String value;
+  };
+
   struct AppModel {
     String name;
     int8_t ledPin = 2;      // -128 ~ 127

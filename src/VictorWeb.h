@@ -2,6 +2,7 @@
 #define VictorWeb_h
 
 #include <functional>
+#include <vector>
 #include <Arduino.h>
 #include <LittleFS.h>
 #include <ArduinoJson.h>
@@ -22,12 +23,16 @@ namespace Victor::Components {
     void setup();
     void loop();
     // server events
-    typedef std::function<void()> TServerEvent;
-    TServerEvent onRequestStart;
-    TServerEvent onRequestEnd;
+    typedef std::function<void()> TServerEventHandler;
+    TServerEventHandler onRequestStart;
+    TServerEventHandler onRequestEnd;
     // radio events
-    typedef std::function<void(int index)> TRadioEmit;
-    TRadioEmit onRadioEmit;
+    typedef std::function<void(int index)> TRadioEmitHandler;
+    TRadioEmitHandler onRadioEmit;
+    // service
+    typedef std::function<void(std::vector<KeyValueModel> items)> TServiceStateHandler;
+    TServiceStateHandler onGetServiceState;
+    TServerEventHandler onResetService;
 
    protected:
     ESP8266WebServer* _server = NULL;
@@ -62,6 +67,8 @@ namespace Victor::Components {
     void _handleRadioRuleSave();
     void _handleRadioCommandGet();
     void _handleRadioCommandSave();
+    void _handleServiceState();
+    void _handleServiceReset();
   };
 } // namespace Victor::Components
 

@@ -1,3 +1,4 @@
+#include <vector>
 #include <Arduino.h>
 #include <Ticker.h>
 
@@ -37,6 +38,10 @@ void setup(void) {
   webPortal.onRequestStart = []() { builtinLed->turnOn(); };
   webPortal.onRequestEnd = []() { builtinLed->turnOff(); };
   webPortal.onRadioEmit = [](int index) { radioPortal.emit(index); };
+  webPortal.onResetService = []() { console.log("reset service"); };
+  webPortal.onGetServiceState = [](std::vector<KeyValueModel> items) {
+    items.push_back({ .key = "key1", .value = "value1" });
+  };
   webPortal.setup();
 
   ticker.attach(10, []() { console.log("heartbeat"); });
