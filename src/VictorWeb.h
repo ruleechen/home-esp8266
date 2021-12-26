@@ -30,7 +30,7 @@ namespace Victor::Components {
     typedef std::function<void(int index)> TRadioEmitHandler;
     TRadioEmitHandler onRadioEmit;
     // service
-    typedef std::function<void(std::vector<KeyValueModel> items)> TServiceStateHandler;
+    typedef std::function<void(std::vector<KeyValueModel>& items)> TServiceStateHandler;
     TServiceStateHandler onGetServiceState;
     TServerEventHandler onResetService;
 
