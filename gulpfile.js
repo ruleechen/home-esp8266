@@ -5,13 +5,13 @@ const cleanCSS = require("gulp-clean-css");
 const rename = require("gulp-rename");
 
 const resource = {
-  css: ["src/*.css"],
-  js: ["src/*.js", "!src/*.min.js"],
-  copy: ["src/*.htm", "src/*.min.js"],
+  css: ["web/*.css"],
+  js: ["web/*.js", "!web/*.min.js"],
+  copy: ["web/*.htm", "web/*.min.js"],
 };
 
 const paths = {
-  dist: "../data/web",
+  dist: "data/web",
 };
 
 function clean() {
