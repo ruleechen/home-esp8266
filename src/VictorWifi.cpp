@@ -100,6 +100,7 @@ namespace Victor::Components {
       const auto wifiMode = WiFi.getMode();
       if (wifiMode != WIFI_STA) {
         WiFi.mode(WIFI_STA);
+        _log().section(F("mode"), F("STA"));
       }
     }
   }
@@ -111,6 +112,7 @@ namespace Victor::Components {
       const auto wifiMode = WiFi.getMode();
       if (wifiMode != WIFI_AP_STA) {
         WiFi.mode(WIFI_AP_STA);
+        _log().section(F("mode"), F("AP_STA"));
       }
     }
   }
@@ -128,6 +130,7 @@ namespace Victor::Components {
           const auto wifiMode = WiFi.getMode();
           if (wifiMode != WIFI_AP_STA) {
             WiFi.mode(WIFI_AP_STA);
+            _log().section(F("mode"), F("AP_STA"));
           }
         }
         break;
@@ -139,6 +142,7 @@ namespace Victor::Components {
           const auto wifiMode = WiFi.getMode();
           if (wifiMode != WIFI_STA) {
             WiFi.mode(WIFI_STA);
+            _log().section(F("mode"), F("STA"));
           }
         }
         break;
