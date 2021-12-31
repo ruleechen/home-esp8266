@@ -434,6 +434,7 @@ const WifiView = (() => {
                   ? m("a", { href: `http://${d.hostName}.local` }, d.hostName)
                   : "",
               ],
+              ["MDNS", d.mdnsIsRunning ? "Running" : "-"],
               ["Mode", d.wifiMode],
               ["Joined", d.joined ? d.joined : "-"],
               [

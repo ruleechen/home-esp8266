@@ -274,6 +274,7 @@ namespace Victor::Components {
     DynamicJsonDocument res(512);
     // wifi
     res[F("hostName")] = victorWifi.getHostName();
+    res[F("mdnsIsRunning")] = MDNS.isRunning();
     res[F("wifiMode")] = strWifiMode;
     res[F("joined")] = ssidJoined;
     res[F("staAddress")] = staAddress;
