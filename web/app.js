@@ -164,7 +164,57 @@ vic.mRadioList = (name, values, list) =>
 vic.mCheckList = (name, values, list) =>
   mSelectionList("checkbox", name, values, list);
 
-const HomeView = (() => {
+const ServiceView = (() => {
+  const state = {
+    loading: true,
+    items: [],
+  };
+  const oninit = () => {
+    state.loading = true;
+    m.request({
+      method: "GET",
+      url: "/service/state",
+    }).then((res) => {
+      state.loading = false;
+      state.items = res.items;
+      m.redraw();
+    });
+  };
+  const reset = () => {
+    if (vic.confirm()) {
+      m.request({
+        method: "POST",
+        url: "/service/reset",
+        body: {},
+      }).then((res) => {
+        if (res.error) {
+          alert(res.error);
+        } else {
+          oninit();
+        }
+      });
+    }
+  };
+  return {
+    oninit,
+    view() {
+      if (state.loading) {
+        return vic.getLoading();
+      }
+      return [
+        vic.getNav(),
+        m("h3", "Service"),
+        vic.mTable({
+          header: null,
+          rows: state.items,
+        }),
+        m("div.form", [m("p", [m("button.btn", { onclick: reset }, "Reset")])]),
+      ];
+    },
+  };
+})();
+
+const SystemView = (() => {
   const state = {
     loading: true,
     data: {},
@@ -658,65 +708,6 @@ const OtaOtwView = {
         }),
       ]),
     ];
-  },
-};
-
-const ResetView = (() => {
-  const state = {
-    loading: true,
-  };
-  const reset = () => {
-    if (vic.confirm()) {
-      const values = vic
-        .queryAll("input[name=Reset]:checked")
-        .map((x) => x.value)
-        .join(",");
-      m.request({
-        method: "POST",
-        url: "/reset",
-        body: { values },
-      }).then((res) => {
-        if (res.error) {
-          alert(res.error);
-        } else {
-          m.redraw();
-        }
-      });
-    }
-  };
-  const oninit = () => {
-    state.loading = false;
-  };
-  return {
-    oninit,
-    view() {
-      if (state.loading) {
-        return vic.getLoading();
-      }
-      return [
-        vic.getNav(),
-        m("h3", "Reset"),
-        m("div.form", [
-          vic.mCheckList(
-            "Reset",
-            [],
-            [
-              { value: "EspRestart", text: "ESP Restart" },
-              { value: "EspReset", text: "ESP Reset" },
-              { value: "EspEraseCfg", text: "ESP Erase Config" },
-              { value: "WifiReset", text: "Reset WiFi" },
-            ]
-          ),
-          m("p", [m("button.btn", { onclick: reset }, "Submit")]),
-        ]),
-      ];
-    },
-  };
-})();
-
-const NotfoundView = {
-  view() {
-    return "Oops... Notfound";
   },
 };
 
@@ -1239,36 +1230,31 @@ const RadioCommandView = (() => {
   };
 })();
 
-const ServiceView = (() => {
+const ResetView = (() => {
   const state = {
     loading: true,
-    items: [],
-  };
-  const oninit = () => {
-    state.loading = true;
-    m.request({
-      method: "GET",
-      url: "/service/state",
-    }).then((res) => {
-      state.loading = false;
-      state.items = res.items;
-      m.redraw();
-    });
   };
   const reset = () => {
     if (vic.confirm()) {
+      const values = vic
+        .queryAll("input[name=Reset]:checked")
+        .map((x) => x.value)
+        .join(",");
       m.request({
         method: "POST",
-        url: "/service/reset",
-        body: {},
+        url: "/reset",
+        body: { values },
       }).then((res) => {
         if (res.error) {
           alert(res.error);
         } else {
-          oninit();
+          m.redraw();
         }
       });
     }
+  };
+  const oninit = () => {
+    state.loading = false;
   };
   return {
     oninit,
@@ -1278,20 +1264,36 @@ const ServiceView = (() => {
       }
       return [
         vic.getNav(),
-        m("h3", "Service"),
-        vic.mTable({
-          header: null,
-          rows: state.items,
-        }),
-        m("div.form", [m("p", [m("button.btn", { onclick: reset }, "Reset")])]),
+        m("h3", "Reset"),
+        m("div.form", [
+          vic.mCheckList(
+            "Reset",
+            [],
+            [
+              { value: "EspRestart", text: "ESP Restart" },
+              { value: "EspReset", text: "ESP Reset" },
+              { value: "EspEraseCfg", text: "ESP Erase Config" },
+              { value: "WifiReset", text: "Reset WiFi" },
+            ]
+          ),
+          m("p", [m("button.btn", { onclick: reset }, "Submit")]),
+        ]),
       ];
     },
   };
 })();
 
+const NotfoundView = {
+  view() {
+    return "Oops... Notfound";
+  },
+};
+
 vic.appendNav((items) =>
   items.concat([
-    vic.navItem("/", "Home"),
+    vic.navItem("/service", "Service"),
+    m("span", " | "),
+    vic.navItem("/system", "System"),
     m("span", " | "),
     vic.navItem("/wifi", "WiFi"),
     m("span", " | "),
@@ -1299,17 +1301,16 @@ vic.appendNav((items) =>
     m("span", " | "),
     vic.navItem("/ota", "OTA"),
     m("span", " | "),
-    vic.navItem("/reset", "Reset"),
-    m("span", " | "),
     vic.navItem("/radio", "Radio"),
     m("span", " | "),
-    vic.navItem("/service", "Service"),
+    vic.navItem("/reset", "Reset"),
   ])
 );
 
 vic.appendRoute((config) =>
   Object.assign(config, {
-    "/": HomeView,
+    "/service": ServiceView,
+    "/system": SystemView,
     "/wifi": WifiView,
     "/wifi/list": WifiListView,
     "/fs": FileSystemView,
@@ -1317,18 +1318,17 @@ vic.appendRoute((config) =>
     "/fs/files/:path": FileItemView,
     "/ota": OtaView,
     "/ota/otw": OtaOtwView,
-    "/reset": ResetView,
-    "/404": NotfoundView,
     "/radio": RadioView,
     "/radio/emit": RadioEmitView,
     "/radio/rule": RadioRuleView,
     "/radio/command": RadioCommandView,
-    "/service": ServiceView,
+    "/reset": ResetView,
+    "/404": NotfoundView,
   })
 );
 
 // start
 vic(() => {
   const root = vic.query("div.main");
-  m.route(root, "/", vic.getRoute());
+  m.route(root, "/service", vic.getRoute());
 });
