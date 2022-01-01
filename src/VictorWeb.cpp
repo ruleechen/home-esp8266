@@ -639,7 +639,9 @@ namespace Victor::Components {
 
   void VictorWeb::_handleServiceState() {
     _dispatchRequestStart();
-    std::vector<KeyValueModel> states;
+    std::vector<KeyValueModel> states = {
+      { .key = "Identify", .value = victorWifi.getHostName() }
+    };
     if (onGetServiceState) {
       onGetServiceState(states);
     }
