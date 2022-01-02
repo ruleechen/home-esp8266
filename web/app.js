@@ -239,7 +239,7 @@ const SystemView = (() => {
       const d = state.data;
       return [
         vic.getNav(),
-        m("h3", "Home"),
+        m("h3", "System"),
         m("p", [
           vic.mTable({
             header: ["Status", ""],
