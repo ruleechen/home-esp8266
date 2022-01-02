@@ -44,7 +44,8 @@ namespace Victor::Components {
     void _dispatchRequestStart();
     void _dispatchRequestEnd();
     void _handleIndexPage();
-    void _handleStatus();
+    void _handleSystemStatus();
+    void _handleSystemReset();
     void _handleFileSystem();
     void _handleFiles();
     void _handleFileGet();
@@ -54,9 +55,9 @@ namespace Victor::Components {
     void _handleWifiList();
     void _handleWifiJoin();
     void _handleWifiMode();
+    void _handleWifiReset();
     void _handleOta();
     void _handleOtaFire();
-    void _handleReset();
     void _handleNotFound();
     void _handleRadioGet();
     void _handleRadioSave();

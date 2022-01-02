@@ -37,7 +37,8 @@ namespace Victor::Components {
     _server->serveStatic("/mithril.min.js", LittleFS, "/web/mithril.min.js", "max-age=43200");
     _server->serveStatic("/app.min.js", LittleFS, "/web/app.min.js");
     _server->on(F("/"), HTTP_GET, std::bind(&VictorWeb::_handleIndexPage, this));
-    _server->on(F("/status"), HTTP_GET, std::bind(&VictorWeb::_handleStatus, this));
+    _server->on(F("/system/status"), HTTP_GET, std::bind(&VictorWeb::_handleSystemStatus, this));
+    _server->on(F("/system/reset"), HTTP_POST, std::bind(&VictorWeb::_handleSystemReset, this));
     _server->on(F("/fs"), HTTP_GET, std::bind(&VictorWeb::_handleFileSystem, this));
     _server->on(F("/files"), HTTP_GET, std::bind(&VictorWeb::_handleFiles, this));
     _server->on(F("/file"), HTTP_GET, std::bind(&VictorWeb::_handleFileGet, this));
@@ -47,9 +48,9 @@ namespace Victor::Components {
     _server->on(F("/wifi/list"), HTTP_GET, std::bind(&VictorWeb::_handleWifiList, this));
     _server->on(F("/wifi/join"), HTTP_POST, std::bind(&VictorWeb::_handleWifiJoin, this));
     _server->on(F("/wifi/mode"), HTTP_POST, std::bind(&VictorWeb::_handleWifiMode, this));
+    _server->on(F("/wifi/reset"), HTTP_POST, std::bind(&VictorWeb::_handleWifiReset, this));
     _server->on(F("/ota"), HTTP_GET, std::bind(&VictorWeb::_handleOta, this));
     _server->on(F("/ota/fire"), HTTP_POST, std::bind(&VictorWeb::_handleOtaFire, this));
-    _server->on(F("/reset"), HTTP_POST, std::bind(&VictorWeb::_handleReset, this));
     _server->onNotFound(std::bind(&VictorWeb::_handleNotFound, this));
     _server->on(F("/radio"), HTTP_GET, std::bind(&VictorWeb::_handleRadioGet, this));
     _server->on(F("/radio"), HTTP_POST, std::bind(&VictorWeb::_handleRadioSave, this));
@@ -112,7 +113,7 @@ namespace Victor::Components {
     _dispatchRequestEnd();
   }
 
-  void VictorWeb::_handleStatus() {
+  void VictorWeb::_handleSystemStatus() {
     _dispatchRequestStart();
     // res
     DynamicJsonDocument res(1024);
@@ -138,6 +139,31 @@ namespace Victor::Components {
     res[F("coreVersion")] = ESP.getCoreVersion();
     res[F("firmwareVersion")] = FirmwareVersion;
     // end
+    _sendJson(res);
+    _dispatchRequestEnd();
+  }
+
+  void VictorWeb::_handleSystemReset() {
+    _dispatchRequestStart();
+    // payload
+    const auto payloadJson = _server->arg(F("plain"));
+    DynamicJsonDocument payload(64);
+    deserializeJson(payload, payloadJson);
+    // read
+    const auto values = String(payload[F("values")]);
+    // action
+    if (values.indexOf(F("1")) >= 0) {
+      // sdk_system_restart();
+      ESP.restart();
+    }
+    if (values.indexOf(F("2")) >= 0) {
+      ESP.reset();
+    }
+    if (values.indexOf(F("3")) >= 0) {
+      ESP.eraseConfig();
+    }
+    DynamicJsonDocument res(64);
+    res[F("message")] = String(F("success"));
     _sendJson(res);
     _dispatchRequestEnd();
   }
@@ -355,6 +381,17 @@ namespace Victor::Components {
     _dispatchRequestEnd();
   }
 
+  void VictorWeb::_handleWifiReset() {
+    _dispatchRequestStart();
+    // set
+    victorWifi.reset();
+    // res
+    DynamicJsonDocument res(64);
+    res[F("message")] = String(F("success"));
+    _sendJson(res);
+    _dispatchRequestEnd();
+  }
+
   void VictorWeb::_handleOta() {
     _dispatchRequestStart();
     DynamicJsonDocument res(512);
@@ -385,34 +422,6 @@ namespace Victor::Components {
     // update
     victorOTA.update(version, type);
     // res
-    DynamicJsonDocument res(64);
-    res[F("message")] = String(F("success"));
-    _sendJson(res);
-    _dispatchRequestEnd();
-  }
-
-  void VictorWeb::_handleReset() {
-    _dispatchRequestStart();
-    // payload
-    const auto payloadJson = _server->arg(F("plain"));
-    DynamicJsonDocument payload(64);
-    deserializeJson(payload, payloadJson);
-    // read
-    const auto values = String(payload[F("values")]);
-    // action
-    if (values.indexOf(F("EspRestart")) >= 0) {
-      // sdk_system_restart();
-      ESP.restart();
-    }
-    if (values.indexOf(F("EspReset")) >= 0) {
-      ESP.reset();
-    }
-    if (values.indexOf(F("EspEraseCfg")) >= 0) {
-      ESP.eraseConfig();
-    }
-    if (values.indexOf(F("WifiReset")) >= 0) {
-      victorWifi.reset();
-    }
     DynamicJsonDocument res(64);
     res[F("message")] = String(F("success"));
     _sendJson(res);

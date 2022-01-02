@@ -208,7 +208,9 @@ const ServiceView = (() => {
           header: null,
           rows: state.items,
         }),
-        m("div.form", [m("p", [m("button.btn", { onclick: reset }, "Reset")])]),
+        m("div.form", [
+          m("p", [m("button.btn.weak", { onclick: reset }, "Reset")]),
+        ]),
       ];
     },
   };
@@ -223,7 +225,7 @@ const SystemView = (() => {
     state.loading = true;
     m.request({
       method: "GET",
-      url: "/status",
+      url: "/system/status",
     }).then((res) => {
       state.loading = false;
       state.data = res;
@@ -240,6 +242,7 @@ const SystemView = (() => {
       return [
         vic.getNav(),
         m("h3", "System"),
+        m("p", [m(m.route.Link, { href: "/system/reset" }, "Reset")]),
         m("p", [
           vic.mTable({
             header: ["Status", ""],
@@ -277,6 +280,63 @@ const SystemView = (() => {
               ["Firmware Version", d.firmwareVersion],
             ],
           }),
+        ]),
+      ];
+    },
+  };
+})();
+
+const SystemResetView = (() => {
+  const state = {
+    loading: true,
+  };
+  const reset = () => {
+    if (vic.confirm()) {
+      const values = vic
+        .queryAll("input[name=esp]:checked")
+        .map((x) => x.value)
+        .join(",");
+      m.request({
+        method: "POST",
+        url: "/system/reset",
+        body: { values },
+      }).then((res) => {
+        if (res.error) {
+          alert(res.error);
+        } else {
+          m.redraw();
+        }
+      });
+    }
+  };
+  const oninit = () => {
+    state.loading = true;
+    setTimeout(() => {
+      state.loading = false;
+      m.redraw();
+    }, 100);
+  };
+  return {
+    oninit,
+    view() {
+      if (state.loading) {
+        return vic.getLoading();
+      }
+      return [
+        vic.getNav(),
+        m("p", [m(m.route.Link, { href: "/system" }, "< System")]),
+        m("h3", "Reset(ESP)"),
+        m("div.form", [
+          vic.mCheckList(
+            "esp",
+            [],
+            [
+              { value: "1", text: "Restart" },
+              { value: "2", text: "Reset" },
+              { value: "3", text: "Erase Config" },
+            ]
+          ),
+          m("p", [m("button.btn.weak", { onclick: reset }, "Submit")]),
         ]),
       ];
     },
@@ -451,17 +511,8 @@ const WifiView = (() => {
     }).then((res) => {
       state.loading = false;
       state.data = res;
+      WifiView.wifiMode = res.wifiMode; // hook
       m.redraw();
-    });
-  };
-  const setMode = () => {
-    const modeEl = vic.query("input[type=radio]:checked");
-    m.request({
-      method: "POST",
-      url: "/wifi/mode",
-      body: { mode: modeEl.value },
-    }).then(() => {
-      oninit();
     });
   };
   return {
@@ -474,7 +525,11 @@ const WifiView = (() => {
       return [
         vic.getNav(),
         m("h3", "WiFi"),
-        m("p", [m(m.route.Link, { href: "/wifi/list" }, "Join Wifi")]),
+        m("p", [
+          m(m.route.Link, { href: "/wifi/list" }, "Join"),
+          m("span", " | "),
+          m(m.route.Link, { href: "/wifi/mode" }, "Mode"),
+        ]),
         m("p", [
           vic.mTable({
             rows: [
@@ -503,20 +558,6 @@ const WifiView = (() => {
               ["AP MAC", d.apMacAddress],
             ],
           }),
-        ]),
-        m("h3", "WiFi Mode"),
-        m("div.form", [
-          vic.mRadioList(
-            "WifiMode",
-            [d.wifiMode],
-            [
-              { value: "AP_STA", text: "AP+STA" },
-              { value: "STA", text: "STA" },
-              { value: "AP", text: "AP" },
-              { value: "OFF", text: "OFF" },
-            ]
-          ),
-          m("p", [m("button.btn", { onclick: setMode }, "Submit")]),
         ]),
       ];
     },
@@ -554,6 +595,17 @@ const WifiListView = (() => {
       }
       m.redraw();
     });
+  };
+  const reset = () => {
+    if (vic.confirm()) {
+      m.request({
+        method: "POST",
+        url: "/wifi/reset",
+        body: {},
+      }).then(() => {
+        oninit();
+      });
+    }
   };
   const oninit = () => {
     state.loading = true;
@@ -600,9 +652,57 @@ const WifiListView = (() => {
             }),
           ]),
           m("p", [
+            m("button.btn.weak", { onclick: reset }, "Reset"),
             m("button.btn", { onclick: scan }, "Scan"),
             m("button.btn", { onclick: join }, "Join"),
           ]),
+        ]),
+      ];
+    },
+  };
+})();
+
+const WifiModeView = (() => {
+  const state = {
+    loading: true,
+    wifiMode: "",
+  };
+  const oninit = () => {
+    state.wifiMode = WifiView.wifiMode;
+    state.loading = false;
+  };
+  const save = () => {
+    const modeEl = vic.query("input[type=radio]:checked");
+    m.request({
+      method: "POST",
+      url: "/wifi/mode",
+      body: { mode: modeEl.value },
+    }).then(() => {
+      oninit();
+    });
+  };
+  return {
+    oninit,
+    view() {
+      if (state.loading) {
+        return vic.getLoading();
+      }
+      return [
+        vic.getNav(),
+        m("h3", "WiFi Mode"),
+        m("p", [m(m.route.Link, { href: "/wifi" }, "< WiFi")]),
+        m("div.form", [
+          vic.mRadioList(
+            "WifiMode",
+            [state.wifiMode],
+            [
+              { value: "AP_STA", text: "AP+STA" },
+              { value: "STA", text: "STA" },
+              { value: "AP", text: "AP" },
+              { value: "OFF", text: "OFF" },
+            ]
+          ),
+          m("p", [m("button.btn", { onclick: save }, "Save")]),
         ]),
       ];
     },
@@ -1230,59 +1330,6 @@ const RadioCommandView = (() => {
   };
 })();
 
-const ResetView = (() => {
-  const state = {
-    loading: true,
-  };
-  const reset = () => {
-    if (vic.confirm()) {
-      const values = vic
-        .queryAll("input[name=Reset]:checked")
-        .map((x) => x.value)
-        .join(",");
-      m.request({
-        method: "POST",
-        url: "/reset",
-        body: { values },
-      }).then((res) => {
-        if (res.error) {
-          alert(res.error);
-        } else {
-          m.redraw();
-        }
-      });
-    }
-  };
-  const oninit = () => {
-    state.loading = false;
-  };
-  return {
-    oninit,
-    view() {
-      if (state.loading) {
-        return vic.getLoading();
-      }
-      return [
-        vic.getNav(),
-        m("h3", "Reset"),
-        m("div.form", [
-          vic.mCheckList(
-            "Reset",
-            [],
-            [
-              { value: "EspRestart", text: "ESP Restart" },
-              { value: "EspReset", text: "ESP Reset" },
-              { value: "EspEraseCfg", text: "ESP Erase Config" },
-              { value: "WifiReset", text: "Reset WiFi" },
-            ]
-          ),
-          m("p", [m("button.btn", { onclick: reset }, "Submit")]),
-        ]),
-      ];
-    },
-  };
-})();
-
 const NotfoundView = {
   view() {
     return "Oops... Notfound";
@@ -1302,8 +1349,6 @@ vic.appendNav((items) =>
     vic.navItem("/ota", "OTA"),
     m("span", " | "),
     vic.navItem("/radio", "Radio"),
-    m("span", " | "),
-    vic.navItem("/reset", "Reset"),
   ])
 );
 
@@ -1311,8 +1356,10 @@ vic.appendRoute((config) =>
   Object.assign(config, {
     "/service": ServiceView,
     "/system": SystemView,
+    "/system/reset": SystemResetView,
     "/wifi": WifiView,
     "/wifi/list": WifiListView,
+    "/wifi/mode": WifiModeView,
     "/fs": FileSystemView,
     "/fs/files": FileListView,
     "/fs/files/:path": FileItemView,
@@ -1322,7 +1369,6 @@ vic.appendRoute((config) =>
     "/radio/emit": RadioEmitView,
     "/radio/rule": RadioRuleView,
     "/radio/command": RadioCommandView,
-    "/reset": ResetView,
     "/404": NotfoundView,
   })
 );
