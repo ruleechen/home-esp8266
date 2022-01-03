@@ -278,6 +278,7 @@ const SystemView = (() => {
               ["SDK Version", d.sdkVersion],
               ["Core Version", d.coreVersion],
               ["Firmware Version", d.firmwareVersion],
+              ["Build Time", new Date(d.unixTime * 1000).toLocaleString()],
             ],
           }),
         ]),
@@ -325,7 +326,7 @@ const SystemResetView = (() => {
       return [
         vic.getNav(),
         m("p", [m(m.route.Link, { href: "/system" }, "< System")]),
-        m("h3", "Reset(ESP)"),
+        m("h3", "Reset (ESP)"),
         m("div.form", [
           vic.mCheckList(
             "esp",
@@ -511,7 +512,7 @@ const WifiView = (() => {
     }).then((res) => {
       state.loading = false;
       state.data = res;
-      WifiView.wifiMode = res.wifiMode; // hook
+      WifiView.mode = res.mode; // hook
       m.redraw();
     });
   };
@@ -539,9 +540,9 @@ const WifiView = (() => {
                   ? m("a", { href: `http://${d.hostName}.local` }, d.hostName)
                   : "",
               ],
-              ["MDNS", d.mdnsIsRunning ? "Running" : "-"],
-              ["Mode", d.wifiMode],
-              ["Joined", d.joined ? d.joined : "-"],
+              ["MDNS", d.mdns ? "Running" : "-"],
+              ["Mode", d.mode],
+              ["Joined", d.joined ? `${d.joined} (${100 + d.rssi}%)` : "-"],
               [
                 "STA IP",
                 d.staAddress
@@ -665,10 +666,10 @@ const WifiListView = (() => {
 const WifiModeView = (() => {
   const state = {
     loading: true,
-    wifiMode: "",
+    mode: "",
   };
   const oninit = () => {
-    state.wifiMode = WifiView.wifiMode;
+    state.mode = WifiView.mode;
     state.loading = false;
   };
   const save = () => {
@@ -694,7 +695,7 @@ const WifiModeView = (() => {
         m("div.form", [
           vic.mRadioList(
             "WifiMode",
-            [state.wifiMode],
+            [state.mode],
             [
               { value: "AP_STA", text: "AP+STA" },
               { value: "STA", text: "STA" },

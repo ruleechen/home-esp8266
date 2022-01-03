@@ -138,6 +138,7 @@ namespace Victor::Components {
     res[F("sdkVersion")] = ESP.getSdkVersion();
     res[F("coreVersion")] = ESP.getCoreVersion();
     res[F("firmwareVersion")] = FirmwareVersion;
+    res[F("unixTime")] = UnixTime;
     // end
     _sendJson(res);
     _dispatchRequestEnd();
@@ -266,19 +267,18 @@ namespace Victor::Components {
   void VictorWeb::_handleWifi() {
     _dispatchRequestStart();
     // wifi
-    const auto ssidJoined = WiFi.SSID();
-    const auto wifiMode = WiFi.getMode();
-    auto strWifiMode = String(F("OFF"));
-    if (wifiMode == WIFI_STA) {
-      strWifiMode = F("STA");
-    } else if (wifiMode == WIFI_AP) {
-      strWifiMode = F("AP");
-    } else if (wifiMode == WIFI_AP_STA) {
-      strWifiMode = F("AP_STA");
+    const auto mode = WiFi.getMode();
+    auto strMode = String(F("OFF"));
+    if (mode == WIFI_STA) {
+      strMode = F("STA");
+    } else if (mode == WIFI_AP) {
+      strMode = F("AP");
+    } else if (mode == WIFI_AP_STA) {
+      strMode = F("AP_STA");
     }
     // station
     const auto staMacAddress = WiFi.macAddress();
-    const auto isStaEnabled = ((wifiMode & WIFI_STA) != 0);
+    const auto isStaEnabled = ((mode & WIFI_STA) != 0);
     auto staAddress = String("");
     if (isStaEnabled) {
       IPAddress localIP = WiFi.localIP();
@@ -288,7 +288,7 @@ namespace Victor::Components {
     }
     // access point
     const auto apMacAddress = WiFi.softAPmacAddress();
-    const auto isApEnabled = ((wifiMode & WIFI_AP) != 0);
+    const auto isApEnabled = ((mode & WIFI_AP) != 0);
     auto apAddress = String("");
     if (isApEnabled) {
       IPAddress apIP = WiFi.softAPIP();
@@ -300,9 +300,10 @@ namespace Victor::Components {
     DynamicJsonDocument res(512);
     // wifi
     res[F("hostName")] = victorWifi.getHostName();
-    res[F("mdnsIsRunning")] = MDNS.isRunning();
-    res[F("wifiMode")] = strWifiMode;
-    res[F("joined")] = ssidJoined;
+    res[F("mdns")] = MDNS.isRunning();
+    res[F("mode")] = strMode;
+    res[F("joined")] = WiFi.SSID();
+    res[F("rssi")] = WiFi.RSSI();
     res[F("staAddress")] = staAddress;
     res[F("staMacAddress")] = staMacAddress;
     res[F("apAddress")] = apAddress;
