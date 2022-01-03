@@ -2,10 +2,10 @@
 
 namespace Victor::Components {
 
-  DigitalOutput::DigitalOutput(uint8_t pin, uint8_t trueValue) {
+  DigitalOutput::DigitalOutput(uint8_t pin, uint8_t trueValue, uint8_t mode) {
     _pin = pin;
     _trueValue = trueValue;
-    pinMode(_pin, OUTPUT);
+    pinMode(_pin, mode);
   }
 
   void DigitalOutput::setValue(bool value) {

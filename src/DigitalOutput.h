@@ -6,7 +6,7 @@
 namespace Victor::Components {
   class DigitalOutput {
    public:
-    DigitalOutput(uint8_t pin, uint8_t trueValue);
+    DigitalOutput(uint8_t pin, uint8_t trueValue, uint8_t mode = OUTPUT);
     void setValue(bool value);
     bool lastValue() const;
 

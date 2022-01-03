@@ -6,7 +6,7 @@
 namespace Victor::Components {
   class DigitalInput {
    public:
-    DigitalInput(uint8_t pin, uint8_t trueValue);
+    DigitalInput(uint8_t pin, uint8_t trueValue, uint8_t mode = INPUT_PULLUP);
     bool getValue();
 
    private:
