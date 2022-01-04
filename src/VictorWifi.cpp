@@ -16,6 +16,8 @@ namespace Victor::Components {
     WiFi.hostname(apName); // name which is displayed on router
     WiFi.softAP(apName); // name which is displayed on AP list
 
+    // need to keep the event handler for prevent unsubscribed automatically
+    // https://github.com/esp8266/Arduino/issues/2545
     _gotIPHandler = WiFi.onStationModeGotIP(std::bind(&VictorWifi::_handleStationModeGotIP, this, std::placeholders::_1));
     _disconnectedHandler = WiFi.onStationModeDisconnected(std::bind(&VictorWifi::_handleStationModeDisconnected, this, std::placeholders::_1));
 
