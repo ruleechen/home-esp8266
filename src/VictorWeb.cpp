@@ -33,8 +33,8 @@ namespace Victor::Components {
   }
 
   void VictorWeb::_registerHandlers() {
-    _server->serveStatic("/style.min.css", LittleFS, "/web/style.min.css", "max-age=43200"); // 43200 seconds --> 12 hours
-    _server->serveStatic("/mithril.min.js", LittleFS, "/web/mithril.min.js", "max-age=43200");
+    _server->serveStatic("/style.min.css", LittleFS, "/web/style.min.css", "max-age=1800"); // 1800 seconds --> 0.5 hours
+    _server->serveStatic("/mithril.min.js", LittleFS, "/web/mithril.min.js", "max-age=1800");
     _server->serveStatic("/app.min.js", LittleFS, "/web/app.min.js");
     _server->on(F("/"), HTTP_GET, std::bind(&VictorWeb::_handleIndexPage, this));
     _server->on(F("/system/status"), HTTP_GET, std::bind(&VictorWeb::_handleSystemStatus, this));
