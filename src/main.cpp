@@ -25,9 +25,6 @@ void setup(void) {
   builtinLed = new BuiltinLed();
   builtinLed->turnOn();
 
-  victorOTA.setup();
-  victorWifi.setup();
-
   radioPortal.onEmit = [](const RadioEmit& emit) {
     builtinLed->flash();
     console.log().bracket(F("radio"))
@@ -44,7 +41,12 @@ void setup(void) {
   };
   webPortal.setup();
 
-  ticker.attach(10, []() { console.log("heartbeat"); });
+  ticker.attach(10, []() {
+    // console.log("heartbeat");
+  });
+
+  victorOTA.setup();
+  victorWifi.setup();
 
   console.log(F("setup complete"));
   builtinLed->flash();

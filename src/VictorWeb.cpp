@@ -347,7 +347,8 @@ namespace Victor::Components {
       res[F("error")] = String(F("Please select wifi to join"));
     } else {
       victorWifi.join(ssid, password, channel, (uint8_t*)bssid.c_str());
-      const auto isConnected = WiFi.status() == WL_CONNECTED;
+      victorWifi.waitForConnected();
+      const auto isConnected = WiFi.isConnected();
       console.log().bracket(F("wifi")).section(F("connected"), String(isConnected));
       if (isConnected) {
         res[F("ip")] = WiFi.localIP().toString();

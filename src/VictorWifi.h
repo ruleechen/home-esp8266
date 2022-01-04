@@ -13,15 +13,17 @@ namespace Victor::Components {
     void setup();
     void reset();
     void join(String ssid, String password = emptyString, int32_t channel = 0, uint8_t* bssid = NULL);
+    void waitForConnected();
     String getHostId();
     String getHostName();
     String getApName();
 
    private:
+    WiFiEventHandler _gotIPHandler;
+    WiFiEventHandler _disconnectedHandler;
     void _handleStationModeGotIP(const WiFiEventStationModeGotIP& args);
     void _handleStationModeDisconnected(const WiFiEventStationModeDisconnected& args);
-    static void _onWifiEvent(WiFiEvent_t event);
-    static Console _log();
+    Console _log();
   };
 
   // global
