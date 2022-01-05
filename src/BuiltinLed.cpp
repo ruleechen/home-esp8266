@@ -2,18 +2,20 @@
 
 namespace Victor::Components {
 
-  BuiltinLed::BuiltinLed() {
-    const auto model = appStorage.load();
-    if (model.ledPin > -1) {
-      const auto trueValue = model.ledOnValue == 0 ? LOW : HIGH;
-      _outputPin = new DigitalOutput(model.ledPin, trueValue);
-    }
-  }
+  BuiltinLed::BuiltinLed() { }
 
   BuiltinLed::~BuiltinLed() {
     if (_outputPin) {
       delete _outputPin;
       _outputPin = NULL;
+    }
+  }
+
+  void BuiltinLed::setup() {
+    const auto model = appStorage.load();
+    if (model.ledPin > -1) {
+      const auto trueValue = model.ledOnValue == 0 ? LOW : HIGH;
+      _outputPin = new DigitalOutput(model.ledPin, trueValue);
     }
   }
 
@@ -41,5 +43,8 @@ namespace Victor::Components {
       _outputPin->setValue(!value);
     }
   }
+
+  // global
+  BuiltinLed builtinLed;
 
 } // namespace Victor::Components

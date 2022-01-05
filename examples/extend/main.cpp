@@ -9,7 +9,6 @@ using namespace Victor;
 using namespace Victor::Events;
 using namespace Victor::Components;
 
-BuiltinLed* builtinLed;
 WebPortal webPortal(80);
 
 void setup(void) {
@@ -18,18 +17,18 @@ void setup(void) {
     console.error(F("fs mount failed"));
   }
 
-  builtinLed = new BuiltinLed();
-  builtinLed->turnOn();
+  builtinLed.setup();
+  builtinLed.turnOn();
+
+  webPortal.onRequestStart = []() { builtinLed.turnOn(); };
+  webPortal.onRequestEnd = []() { builtinLed.turnOff(); };
+  webPortal.setup();
 
   victorOTA.setup();
   victorWifi.setup();
 
-  webPortal.onRequestStart = []() { builtinLed->turnOn(); };
-  webPortal.onRequestEnd = []() { builtinLed->turnOff(); };
-  webPortal.setup();
-
+  builtinLed.flash();
   console.log(F("setup complete"));
-  builtinLed->flash();
 }
 
 void loop(void) {

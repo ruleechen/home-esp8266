@@ -12,7 +12,6 @@ using namespace Victor;
 using namespace Victor::Components;
 
 Ticker ticker;
-BuiltinLed* builtinLed;
 VictorWeb webPortal(80);
 VictorRadio radioPortal(&ticker);
 
@@ -22,20 +21,20 @@ void setup(void) {
     console.error(F("fs mount failed"));
   }
 
-  builtinLed = new BuiltinLed();
-  builtinLed->turnOn();
+  builtinLed.setup();
+  builtinLed.turnOn();
 
   // setup radio
   radioPortal.onEmit = [](const RadioEmit& emit) {
-    builtinLed->flash();
+    builtinLed.flash();
     console.log().bracket(F("radio"))
       .write(F(" sent ")).bracket(emit.value)
       .write(F(" via channel ")).bracket(String(emit.channel));
   };
 
   // setup web
-  webPortal.onRequestStart = []() { builtinLed->turnOn(); };
-  webPortal.onRequestEnd = []() { builtinLed->turnOff(); };
+  webPortal.onRequestStart = []() { builtinLed.turnOn(); };
+  webPortal.onRequestEnd = []() { builtinLed.turnOff(); };
   webPortal.onRadioEmit = [](int index) { radioPortal.emit(index); };
   webPortal.onResetService = []() { console.log("reset service"); };
   webPortal.onGetServiceState = [](std::vector<KeyValueModel>& items) {
@@ -52,10 +51,10 @@ void setup(void) {
   victorWifi.setup();
 
   // done
-  builtinLed->flash();
+  builtinLed.flash();
   console.log(F("setup complete"));
   while (!WiFi.isConnected()) {
-    builtinLed->flash();
+    builtinLed.flash();
     delay(50);
   }
 }
@@ -69,6 +68,6 @@ void loop(void) {
     console.log().bracket(F("radio"))
       .write(F(" received ")).bracket(value)
       .write(F(" from channel ")).bracket(String(channel));
-    builtinLed->flash();
+    builtinLed.flash();
   }
 }

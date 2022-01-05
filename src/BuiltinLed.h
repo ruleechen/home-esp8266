@@ -10,6 +10,7 @@ namespace Victor::Components {
    public:
     BuiltinLed();
     ~BuiltinLed();
+    void setup();
     void turnOn();
     void turnOff();
     void flash();
@@ -18,6 +19,9 @@ namespace Victor::Components {
    private:
     DigitalOutput* _outputPin;
   };
+
+  // global
+  extern BuiltinLed builtinLed;
 
 } // namespace Victor::Components
 

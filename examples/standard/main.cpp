@@ -9,7 +9,6 @@
 using namespace Victor;
 using namespace Victor::Components;
 
-BuiltinLed* builtinLed;
 VictorRadio radioPortal;
 VictorWeb webPortal(80);
 
@@ -19,27 +18,27 @@ void setup(void) {
     console.error(F("fs mount failed"));
   }
 
-  builtinLed = new BuiltinLed();
-  builtinLed->turnOn();
-
-  victorOTA.setup();
-  victorWifi.setup();
+  builtinLed.setup();
+  builtinLed.turnOn();
 
   radioPortal.onEmit = [](const RadioEmit& emit) {
-    builtinLed->flash();
+    builtinLed.flash();
     // emit via your radio tool
     console.log().bracket(F("radio"))
       .write(F(" sent ")).bracket(emit.value)
       .write(F(" via channel ")).bracket(String(emit.channel));
   };
 
-  webPortal.onRequestStart = []() { builtinLed->turnOn(); };
-  webPortal.onRequestEnd = []() { builtinLed->turnOff(); };
+  webPortal.onRequestStart = []() { builtinLed.turnOn(); };
+  webPortal.onRequestEnd = []() { builtinLed.turnOff(); };
   webPortal.onRadioEmit = [](int index) { radioPortal.emit(index); };
   webPortal.setup();
 
+  victorOTA.setup();
+  victorWifi.setup();
+
+  builtinLed.flash();
   console.log(F("setup complete"));
-  builtinLed->flash();
 }
 
 void loop(void) {
@@ -52,6 +51,6 @@ void loop(void) {
     console.log().bracket(F("radio"))
       .write(F(" received ")).bracket(value)
       .write(F(" from channel ")).bracket(String(channel));
-    builtinLed->flash();
+    builtinLed.flash();
   }
 }
