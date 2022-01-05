@@ -1,6 +1,4 @@
-#include <vector>
 #include <Arduino.h>
-#include <Ticker.h>
 
 #include "BuiltinLed.h"
 #include "VictorOTA.h"
@@ -26,9 +24,10 @@ void setup(void) {
   // setup radio
   radioPortal.onEmit = [](const RadioEmit& emit) {
     builtinLed.flash();
-    console.log().bracket(F("radio"))
-      .write(F(" sent ")).bracket(emit.value)
-      .write(F(" via channel ")).bracket(String(emit.channel));
+    console.log()
+      .bracket(F("radio"))
+      .section(F("sent"), emit.value)
+      .section(F("via channel"), String(emit.channel));
   };
 
   // setup web
@@ -56,9 +55,10 @@ void loop(void) {
     String value = "";
     int channel = 1;
     radioPortal.receive(value, channel);
-    console.log().bracket(F("radio"))
-      .write(F(" received ")).bracket(value)
-      .write(F(" from channel ")).bracket(String(channel));
     builtinLed.flash();
+    console.log()
+      .bracket(F("radio"))
+      .section(F("received"), value)
+      .section(F("from channel"), String(channel));
   }
 }
