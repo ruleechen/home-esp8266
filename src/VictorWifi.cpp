@@ -24,6 +24,7 @@ namespace Victor::Components {
     const auto model = appStorage.load();
     WiFi.begin(model.wifiSsid, model.wifiPass);
 
+    builtinLed.twinkle();
     _log().section(F("begin"))
       .section(F("ssid"), WiFi.SSID())
       .section(F("host"), WiFi.getHostname())
@@ -35,6 +36,7 @@ namespace Victor::Components {
     // wifi_config_reset();
     WiFi.disconnect(true);
     WiFi.mode(WIFI_AP_STA);
+    builtinLed.twinkle();
     _log().section(F("mode"), F("AP_STA"));
   }
 
@@ -43,10 +45,14 @@ namespace Victor::Components {
     WiFi.begin(ssid, password, channel, bssid, true);
   }
 
+  bool VictorWifi::isConnected() {
+    return WiFi.isConnected();
+  }
+
   void VictorWifi::waitForConnected() {
     console.newline();
     auto checkTimes = 60;
-    while (!WiFi.isConnected()) {
+    while (!isConnected()) {
       delay(500);
       console.write(F("."));
       if (checkTimes == 0) {
@@ -82,6 +88,7 @@ namespace Victor::Components {
   }
 
   void VictorWifi::_handleStationModeGotIP(const WiFiEventStationModeGotIP& args) {
+    builtinLed.stop();
     _log().section(F("station")).section(F("got ip"), args.ip.toString());
     const auto model = appStorage.load();
     if (model.autoMode) {
@@ -94,6 +101,7 @@ namespace Victor::Components {
   }
 
   void VictorWifi::_handleStationModeDisconnected(const WiFiEventStationModeDisconnected& args) {
+    builtinLed.twinkle();
     _log().section(F("station"), F("disconnected"));
     const auto model = appStorage.load();
     if (model.autoMode) {

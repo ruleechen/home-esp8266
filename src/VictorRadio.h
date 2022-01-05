@@ -23,7 +23,7 @@ namespace Victor::Components {
     typedef std::function<bool(const RadioCommandParsed&)> TRadioCommand;
 
    public:
-    VictorRadio(Ticker* ticker = NULL);
+    VictorRadio();
     ~VictorRadio();
     void emit(String name);
     void emit(uint8_t index);

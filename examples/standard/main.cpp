@@ -37,7 +37,6 @@ void setup(void) {
   victorOTA.setup();
   victorWifi.setup();
 
-  builtinLed.flash();
   console.log(F("setup complete"));
 }
 

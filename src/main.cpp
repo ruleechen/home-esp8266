@@ -11,9 +11,8 @@
 using namespace Victor;
 using namespace Victor::Components;
 
-Ticker ticker;
 VictorWeb webPortal(80);
-VictorRadio radioPortal(&ticker);
+VictorRadio radioPortal;
 
 void setup(void) {
   console.begin(115200);
@@ -42,25 +41,17 @@ void setup(void) {
   };
   webPortal.setup();
 
-  ticker.attach(10, []() {
-    // console.log("heartbeat");
-  });
-
   // setup wifi
   victorOTA.setup();
   victorWifi.setup();
 
   // done
-  builtinLed.flash();
   console.log(F("setup complete"));
-  while (!WiFi.isConnected()) {
-    builtinLed.flash();
-    delay(50);
-  }
 }
 
 void loop(void) {
   webPortal.loop();
+  // loop radio
   if (false) {
     String value = "";
     int channel = 1;

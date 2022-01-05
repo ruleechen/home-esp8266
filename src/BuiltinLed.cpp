@@ -2,9 +2,15 @@
 
 namespace Victor::Components {
 
-  BuiltinLed::BuiltinLed() { }
+  BuiltinLed::BuiltinLed() {
+    _ticker = new Ticker();
+  }
 
   BuiltinLed::~BuiltinLed() {
+    if (_ticker) {
+      delete _ticker;
+      _ticker = NULL;
+    }
     if (_outputPin) {
       delete _outputPin;
       _outputPin = NULL;
@@ -33,8 +39,11 @@ namespace Victor::Components {
 
   void BuiltinLed::flash() {
     turnOn();
-    delay(100); // at least light for some time
-    turnOff();
+    // at least light for some time
+    _ticker->detach();
+    _ticker->once_ms(100, [&]() {
+      turnOff();
+    });
   }
 
   void BuiltinLed::toggle() {
@@ -42,6 +51,18 @@ namespace Victor::Components {
       const auto value = _outputPin->lastValue();
       _outputPin->setValue(!value);
     }
+  }
+
+  void BuiltinLed::twinkle() {
+    _ticker->detach();
+    _ticker->attach_ms(100, [&]() {
+      toggle();
+    });
+  }
+
+  void BuiltinLed::stop() {
+    _ticker->detach();
+    turnOff();
   }
 
   // global

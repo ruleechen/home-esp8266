@@ -5,6 +5,7 @@
 #include <ESP8266WiFi.h>
 #include "Commons.h"
 #include "AppStorage.h"
+#include "BuiltinLed.h"
 
 namespace Victor::Components {
   class VictorWifi {
@@ -12,6 +13,7 @@ namespace Victor::Components {
     void setup();
     void reset();
     void join(String ssid, String password = emptyString, int32_t channel = 0, uint8_t* bssid = NULL);
+    bool isConnected();
     void waitForConnected();
     String getHostId();
     String getHostName();
@@ -22,7 +24,7 @@ namespace Victor::Components {
     WiFiEventHandler _disconnectedHandler;
     void _handleStationModeGotIP(const WiFiEventStationModeGotIP& args);
     void _handleStationModeDisconnected(const WiFiEventStationModeDisconnected& args);
-    Console _log();
+    static Console _log();
   };
 
   // global

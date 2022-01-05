@@ -2,6 +2,7 @@
 #define BuiltinLed_h
 
 #include <Arduino.h>
+#include <Ticker.h>
 #include "DigitalOutput.h"
 #include "AppStorage.h"
 
@@ -15,9 +16,12 @@ namespace Victor::Components {
     void turnOff();
     void flash();
     void toggle();
+    void twinkle();
+    void stop();
 
    private:
-    DigitalOutput* _outputPin;
+    Ticker* _ticker = NULL;
+    DigitalOutput* _outputPin = NULL;
   };
 
   // global

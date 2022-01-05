@@ -2,13 +2,7 @@
 
 namespace Victor::Components {
 
-  VictorRadio::VictorRadio(Ticker* ticker) {
-    if (ticker == NULL) {
-      _ticker = new Ticker();
-    } else {
-      _ticker = ticker;
-    }
-  }
+  VictorRadio::VictorRadio() { }
 
   VictorRadio::~VictorRadio() {
     if (_ticker) {
@@ -40,6 +34,9 @@ namespace Victor::Components {
   void VictorRadio::_handleEmit(const RadioEmit& emit) {
     if (!onEmit) {
       return;
+    }
+    if (_ticker == NULL) {
+      _ticker = new Ticker();
     }
     const auto id = GlobalHelpers::randomString(4);
     _lastEmitted = {
