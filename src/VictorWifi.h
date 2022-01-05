@@ -2,7 +2,6 @@
 #define VictorWifi_h
 
 #include <Arduino.h>
-#include <ESP8266mDNS.h>
 #include <ESP8266WiFi.h>
 #include "Commons.h"
 #include "AppStorage.h"
