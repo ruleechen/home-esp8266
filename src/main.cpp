@@ -1,5 +1,6 @@
 #include <Arduino.h>
 
+#include "Console.h"
 #include "BuiltinLed.h"
 #include "VictorOTA.h"
 #include "VictorWifi.h"

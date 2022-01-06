@@ -13,7 +13,7 @@ namespace Victor::Components {
   }
 
   String VictorOTA::getCurrentVersion() const {
-    return FirmwareVersion;
+    return VICTOR_FIRMWARE_VERSION;
   }
 
   String VictorOTA::checkNewVersion() {

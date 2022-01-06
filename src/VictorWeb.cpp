@@ -66,9 +66,8 @@ namespace Victor::Components {
   }
 
   void VictorWeb::_solvePageTokens(String& html) {
-    const auto productName = FirmwareName;
-    html.replace(F("{productName}"), productName);
-    html.replace(F("{version}"), String(UnixTime));
+    html.replace(F("{productName}"), VICTOR_FIRMWARE_NAME);
+    html.replace(F("{version}"), String(UNIX_TIME));
   }
 
   void VictorWeb::_sendHtml(const String& html) {
@@ -137,8 +136,8 @@ namespace Victor::Components {
     res[F("sketchFreeSpace")] = ESP.getFreeSketchSpace();
     res[F("sdkVersion")] = ESP.getSdkVersion();
     res[F("coreVersion")] = ESP.getCoreVersion();
-    res[F("firmwareVersion")] = FirmwareVersion;
-    res[F("unixTime")] = UnixTime;
+    res[F("firmwareVersion")] = VICTOR_FIRMWARE_VERSION;
+    res[F("unixTime")] = UNIX_TIME;
     // end
     _sendJson(res);
     _dispatchRequestEnd();

@@ -4,7 +4,7 @@
 #include <vector>
 #include <Arduino.h>
 
-namespace Victor {
+namespace Victor::Components {
 
   struct RadioMessage {
     String id;
@@ -97,6 +97,6 @@ namespace Victor {
     std::vector<RadioCommand> commands;
   };
 
-} // namespace Victor
+} // namespace Victor::Components
 
 #endif // RadioModels_h

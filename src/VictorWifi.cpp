@@ -76,13 +76,13 @@ namespace Victor::Components {
     const auto model = appStorage.load();
     const auto productName = model.name.length() > 0
       ? model.name
-      : FirmwareName;
+      : VICTOR_FIRMWARE_NAME;
     return productName + F("-") + id;
   }
 
   String VictorWifi::getApName() {
     const auto host = getHostName();
-    auto version = String(FirmwareVersion);
+    auto version = String(VICTOR_FIRMWARE_VERSION);
     version.replace(F("."), F(""));
     return host + F("-") + version;
   }

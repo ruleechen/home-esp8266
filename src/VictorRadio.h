@@ -4,7 +4,8 @@
 #include <Arduino.h>
 #include <Ticker.h>
 #include <ESP8266WiFi.h>
-#include "Commons.h"
+#include "GlobalHelpers.h"
+#include "Console.h"
 #include "VictorOTA.h"
 #include "VictorWifi.h"
 #include "AppStorage.h"

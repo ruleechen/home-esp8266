@@ -2,6 +2,7 @@
 #define RadioStorage_h
 
 #include "FileStorage.h"
+#include "RadioModels.h"
 
 namespace Victor::Components {
   class RadioStorage : public FileStorage<RadioModel> {

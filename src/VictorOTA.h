@@ -4,9 +4,16 @@
 #include <functional>
 #include <Arduino.h>
 #include <ESP8266httpUpdate.h>
-#include "Commons.h"
+#include "Console.h"
 
 namespace Victor::Components {
+
+  enum VOtaType {
+    VOta_All = 0,
+    VOta_Sketch = 1,
+    VOta_FileSystem = 2,
+  };
+
   class VictorOTA {
    public:
     void setup();
