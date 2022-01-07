@@ -12,7 +12,7 @@ namespace Victor::Components {
    public:
     void setup();
     void reset();
-    void join(String ssid, String password = emptyString, int32_t channel = 0, uint8_t* bssid = NULL);
+    void join(String ssid, String password = emptyString, int32_t channel = 0, uint8_t* bssid = nullptr);
     bool isConnected();
     void waitForConnected();
     String getHostId();

@@ -10,11 +10,11 @@ namespace Victor::Components {
     if (_server) {
       _server->stop();
       delete _server;
-      _server = NULL;
+      _server = nullptr;
     }
     if (_httpUpdater) {
       delete _httpUpdater;
-      _httpUpdater = NULL;
+      _httpUpdater = nullptr;
     }
   }
 
@@ -180,9 +180,7 @@ namespace Victor::Components {
       res[F("blockSize")] = fsInfo.blockSize;
       res[F("pageSize")] = fsInfo.pageSize;
     } else {
-      const auto error = String(F("read fs info failed"));
-      res[F("error")] = error;
-      console.error().bracket(F("fs")).section(error);
+      res[F("error")] = String(F("read fs info failed"));
     }
     _sendJson(res);
     _dispatchRequestEnd();
@@ -225,9 +223,7 @@ namespace Victor::Components {
       res[F("content")] = file.readString();
       file.close();
     } else {
-      const auto error = String(F("failed to open file"));
-      res[F("error")] = error;
-      console.error().bracket(F("fs")).section(error);
+      res[F("error")] = String(F("failed to open file"));
     }
     _sendJson(res);
     _dispatchRequestEnd();
@@ -348,7 +344,6 @@ namespace Victor::Components {
       victorWifi.join(ssid, password, channel, (uint8_t*)bssid.c_str());
       victorWifi.waitForConnected();
       const auto isConnected = WiFi.isConnected();
-      console.log().bracket(F("wifi")).section(F("connected"), String(isConnected));
       if (isConnected) {
         res[F("ip")] = WiFi.localIP().toString();
       } else {
@@ -402,7 +397,7 @@ namespace Victor::Components {
     res[F("sketchFreeSpace")] = ESP.getFreeSketchSpace();
     res[F("otaVersion")] = victorOTA.getCurrentVersion();
     res[F("otaNewVersion")] = victorOTA.checkNewVersion();
-    res[F("overTheWeb")] = _httpUpdater != NULL;
+    res[F("overTheWeb")] = _httpUpdater != nullptr;
     _sendJson(res);
     _dispatchRequestEnd();
   }

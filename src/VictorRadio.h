@@ -34,7 +34,7 @@ namespace Victor::Components {
     TRadioCommand onCommand;
 
    private:
-    Ticker* _ticker = NULL;
+    Ticker* _ticker = nullptr;
     RadioEmit _lastEmitted = {};
     RadioMessage _lastReceived = {};
     RadioPressState _lastPressState = PressStateAwait;

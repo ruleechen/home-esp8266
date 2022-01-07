@@ -20,8 +20,8 @@ namespace Victor::Components {
     void stop();
 
    private:
-    Ticker* _ticker = NULL;
-    DigitalOutput* _outputPin = NULL;
+    Ticker* _ticker = nullptr;
+    DigitalOutput* _outputPin = nullptr;
   };
 
   // global

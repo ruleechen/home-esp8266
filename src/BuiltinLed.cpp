@@ -9,11 +9,11 @@ namespace Victor::Components {
   BuiltinLed::~BuiltinLed() {
     if (_ticker) {
       delete _ticker;
-      _ticker = NULL;
+      _ticker = nullptr;
     }
     if (_outputPin) {
       delete _outputPin;
-      _outputPin = NULL;
+      _outputPin = nullptr;
     }
   }
 

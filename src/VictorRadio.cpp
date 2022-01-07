@@ -7,7 +7,7 @@ namespace Victor::Components {
   VictorRadio::~VictorRadio() {
     if (_ticker) {
       delete _ticker;
-      _ticker = NULL;
+      _ticker = nullptr;
     }
   }
 
@@ -35,7 +35,7 @@ namespace Victor::Components {
     if (!onEmit) {
       return;
     }
-    if (_ticker == NULL) {
+    if (_ticker == nullptr) {
       _ticker = new Ticker();
     }
     const auto id = GlobalHelpers::randomString(4);

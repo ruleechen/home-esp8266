@@ -10,7 +10,6 @@
 #include <ESP8266mDNS.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266HTTPUpdateServer.h>
-#include "Console.h"
 #include "AppStorage.h"
 #include "RadioStorage.h"
 #include "VictorOTA.h"
@@ -42,8 +41,8 @@ namespace Victor::Components {
     TServerEventHandler onResetService;
 
    protected:
-    ESP8266WebServer* _server = NULL;
-    ESP8266HTTPUpdateServer* _httpUpdater = NULL;
+    ESP8266WebServer* _server = nullptr;
+    ESP8266HTTPUpdateServer* _httpUpdater = nullptr;
     virtual void _registerHandlers();
     virtual void _solvePageTokens(String& html);
     void _sendHtml(const String& html);
