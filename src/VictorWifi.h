@@ -20,8 +20,8 @@ namespace Victor::Components {
     String getApName();
 
    private:
-    WiFiEventHandler _gotIPHandler;
-    WiFiEventHandler _disconnectedHandler;
+    WiFiEventHandler _gotIPHandler = nullptr;
+    WiFiEventHandler _disconnectedHandler = nullptr;
     void _handleStationModeGotIP(const WiFiEventStationModeGotIP& args);
     void _handleStationModeDisconnected(const WiFiEventStationModeDisconnected& args);
     static Console _log();

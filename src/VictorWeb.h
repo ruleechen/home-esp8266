@@ -30,15 +30,16 @@ namespace Victor::Components {
     void loop();
     // server events
     typedef std::function<void()> TServerEventHandler;
-    TServerEventHandler onRequestStart;
-    TServerEventHandler onRequestEnd;
+    TServerEventHandler onRequestStart = nullptr;
+    TServerEventHandler onRequestEnd = nullptr;
     // radio events
-    typedef std::function<void(int index)> TRadioEmitHandler;
-    TRadioEmitHandler onRadioEmit;
+    typedef std::function<void(const int index)> TRadioEmitHandler;
+    TRadioEmitHandler onRadioEmit = nullptr;
     // service
-    typedef std::function<void(std::vector<KeyValueModel>& items)> TServiceStateHandler;
-    TServiceStateHandler onGetServiceState;
-    TServerEventHandler onResetService;
+    typedef std::function<void(std::vector<KeyValueModel>& items)> TServiceGetHandler;
+    typedef std::function<void(const String type)> TServicePostHandler;
+    TServiceGetHandler onServiceGet = nullptr;
+    TServicePostHandler onServicePost = nullptr;
 
    protected:
     ESP8266WebServer* _server = nullptr;
@@ -74,8 +75,8 @@ namespace Victor::Components {
     void _handleRadioRuleSave();
     void _handleRadioCommandGet();
     void _handleRadioCommandSave();
-    void _handleServiceState();
-    void _handleServiceReset();
+    void _handleServiceGet();
+    void _handleServicePost();
   };
 } // namespace Victor::Components
 

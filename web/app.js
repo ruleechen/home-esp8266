@@ -173,19 +173,19 @@ const ServiceView = (() => {
     state.loading = true;
     m.request({
       method: "GET",
-      url: "/service/state",
+      url: "/service/get",
     }).then((res) => {
       state.loading = false;
       state.items = res.items;
       m.redraw();
     });
   };
-  const reset = () => {
+  const post = (ev) => {
     if (vic.confirm()) {
       m.request({
         method: "POST",
-        url: "/service/reset",
-        body: {},
+        url: "/service/post",
+        body: { type: ev.target.value },
       }).then((res) => {
         if (res.error) {
           alert(res.error);
@@ -209,7 +209,9 @@ const ServiceView = (() => {
           rows: state.items,
         }),
         m("div.form", [
-          m("p", [m("button.btn.weak", { onclick: reset }, "Reset")]),
+          m("p", [
+            m("button.btn.weak", { value: "reset", onclick: post }, "Reset"),
+          ]),
         ]),
       ];
     },

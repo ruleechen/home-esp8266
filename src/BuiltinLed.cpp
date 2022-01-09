@@ -39,9 +39,8 @@ namespace Victor::Components {
 
   void BuiltinLed::flash() {
     turnOn();
-    // at least light for some time
     _ticker->detach();
-    _ticker->once_ms(100, [&]() {
+    _ticker->once_ms(100, [&]() { // at least light for some time
       turnOff();
     });
   }

@@ -28,10 +28,10 @@ namespace Victor::Components {
     ~VictorRadio();
     void emit(String name);
     void emit(uint8_t index);
-    TRadioEmit onEmit;
+    TRadioEmit onEmit = nullptr;
     void receive(String value, int channel);
-    TRadioAction onAction;
-    TRadioCommand onCommand;
+    TRadioAction onAction = nullptr;
+    TRadioCommand onCommand = nullptr;
 
    private:
     Ticker* _ticker = nullptr;

@@ -34,10 +34,12 @@ void setup(void) {
   // setup web
   webPortal.onRequestStart = []() { builtinLed.turnOn(); };
   webPortal.onRequestEnd = []() { builtinLed.turnOff(); };
-  webPortal.onRadioEmit = [](int index) { radioPortal.emit(index); };
-  webPortal.onResetService = []() { console.log("reset service"); };
-  webPortal.onGetServiceState = [](std::vector<KeyValueModel>& items) {
+  webPortal.onRadioEmit = [](const int index) { radioPortal.emit(index); };
+  webPortal.onServiceGet = [](std::vector<KeyValueModel>& items) {
     items.push_back({ .key = "key1", .value = "value1" });
+  };
+  webPortal.onServicePost = [](const String type) {
+    console.log().bracket("service").section("post", type);
   };
   webPortal.setup();
 

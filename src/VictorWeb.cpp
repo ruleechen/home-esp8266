@@ -33,8 +33,8 @@ namespace Victor::Components {
   }
 
   void VictorWeb::_registerHandlers() {
-    _server->serveStatic("/style.min.css", LittleFS, "/web/style.min.css", "max-age=1800"); // 1800 seconds --> 0.5 hours
-    _server->serveStatic("/mithril.min.js", LittleFS, "/web/mithril.min.js", "max-age=1800");
+    _server->serveStatic("/style.min.css", LittleFS, "/web/style.min.css"); // "max-age=x" means x seconds
+    _server->serveStatic("/mithril.min.js", LittleFS, "/web/mithril.min.js");
     _server->serveStatic("/app.min.js", LittleFS, "/web/app.min.js");
     _server->on(F("/"), HTTP_GET, std::bind(&VictorWeb::_handleIndexPage, this));
     _server->on(F("/system/status"), HTTP_GET, std::bind(&VictorWeb::_handleSystemStatus, this));
@@ -61,8 +61,8 @@ namespace Victor::Components {
     _server->on(F("/radio/rule"), HTTP_POST, std::bind(&VictorWeb::_handleRadioRuleSave, this));
     _server->on(F("/radio/command"), HTTP_GET, std::bind(&VictorWeb::_handleRadioCommandGet, this));
     _server->on(F("/radio/command"), HTTP_POST, std::bind(&VictorWeb::_handleRadioCommandSave, this));
-    _server->on(F("/service/state"), HTTP_GET, std::bind(&VictorWeb::_handleServiceState, this));
-    _server->on(F("/service/reset"), HTTP_POST, std::bind(&VictorWeb::_handleServiceReset, this));
+    _server->on(F("/service/get"), HTTP_GET, std::bind(&VictorWeb::_handleServiceGet, this));
+    _server->on(F("/service/post"), HTTP_POST, std::bind(&VictorWeb::_handleServicePost, this));
   }
 
   void VictorWeb::_solvePageTokens(String& html) {
@@ -642,14 +642,16 @@ namespace Victor::Components {
     _dispatchRequestEnd();
   }
 
-  void VictorWeb::_handleServiceState() {
+  void VictorWeb::_handleServiceGet() {
     _dispatchRequestStart();
+    // read
     std::vector<KeyValueModel> states = {
       { .key = "Identify", .value = victorWifi.getHostName() }
     };
-    if (onGetServiceState) {
-      onGetServiceState(states);
+    if (onServiceGet) {
+      onServiceGet(states);
     }
+    // write
     DynamicJsonDocument res(1024);
     const JsonArray itemsArr = res.createNestedArray(F("items"));
     for (const auto& state : states) {
@@ -657,19 +659,28 @@ namespace Victor::Components {
       stateArr[0] = state.key;
       stateArr[1] = state.value;
     }
+    // res
     _sendJson(res);
     _dispatchRequestEnd();
   }
 
-  void VictorWeb::_handleServiceReset() {
+  void VictorWeb::_handleServicePost() {
     _dispatchRequestStart();
+    // payload
+    const auto payloadJson = _server->arg(F("plain"));
+    DynamicJsonDocument payload(128);
+    deserializeJson(payload, payloadJson);
+    // read
+    const auto type = payload["type"];
+    // act
     DynamicJsonDocument res(512);
-    if (onResetService) {
-      onResetService();
+    if (onServicePost) {
+      onServicePost(type);
       res[F("message")] = String(F("success"));
     } else {
-      res[F("error")] = String(F("onResetService is required"));
+      res[F("error")] = String(F("onServicePost is required"));
     }
+    // res
     _sendJson(res);
     _dispatchRequestEnd();
   }
