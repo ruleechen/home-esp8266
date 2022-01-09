@@ -37,14 +37,6 @@ namespace Victor::Components {
     }
   }
 
-  void BuiltinLed::flash() {
-    turnOn();
-    _ticker->detach();
-    _ticker->once_ms(100, [&]() { // at least light for some time
-      turnOff();
-    });
-  }
-
   void BuiltinLed::toggle() {
     if (_outputPin) {
       const auto value = _outputPin->lastValue();
@@ -52,7 +44,14 @@ namespace Victor::Components {
     }
   }
 
+  void BuiltinLed::flash() {
+    toggle();
+    delay(100);
+    toggle();
+  }
+
   void BuiltinLed::twinkle() {
+    toggle();
     _ticker->detach();
     _ticker->attach_ms(100, [&]() {
       toggle();

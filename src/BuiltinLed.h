@@ -14,8 +14,8 @@ namespace Victor::Components {
     void setup();
     void turnOn();
     void turnOff();
-    void flash();
     void toggle();
+    void flash();
     void twinkle();
     void stop();
 
