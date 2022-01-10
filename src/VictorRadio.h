@@ -3,7 +3,6 @@
 
 #include <Arduino.h>
 #include <Ticker.h>
-#include <ESP8266WiFi.h>
 #include "GlobalHelpers.h"
 #include "Console.h"
 #include "VictorOTA.h"

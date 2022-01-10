@@ -699,10 +699,10 @@ const WifiModeView = (() => {
             "WifiMode",
             [state.mode],
             [
-              { value: "AP_STA", text: "AP+STA" },
-              { value: "STA", text: "STA" },
-              { value: "AP", text: "AP" },
-              { value: "OFF", text: "OFF" },
+              { value: "3", text: "AP+STA" },
+              { value: "2", text: "AP" },
+              { value: "1", text: "STA" },
+              { value: "0", text: "OFF" },
             ]
           ),
           m("p", [m("button.btn", { onclick: save }, "Save")]),

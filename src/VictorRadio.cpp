@@ -155,11 +155,11 @@ namespace Victor::Components {
     }
     switch (rule.action) {
       case RadioActionWiFiSta: {
-        WiFi.mode(WIFI_STA);
+        victorWifi.setMode(WIFI_STA);
         break;
       }
       case RadioActionWiFiStaAp: {
-        WiFi.mode(WIFI_AP_STA);
+        victorWifi.setMode(WIFI_AP_STA);
         break;
       }
       case RadioActionWiFiReset: {
@@ -199,10 +199,10 @@ namespace Victor::Components {
             const auto hasAP = command.parameters.indexOf(F("ap")) > -1;
             const auto hasSTA = command.parameters.indexOf(F("sta")) > -1;
             const auto isOff = command.parameters == F("off");
-            if (hasAP && hasSTA) { WiFi.mode(WIFI_AP_STA); }
-            else if (hasAP) { WiFi.mode(WIFI_AP); }
-            else if (hasSTA) { WiFi.mode(WIFI_STA); }
-            else if (isOff) { WiFi.mode(WIFI_OFF); }
+            if (hasAP && hasSTA) { victorWifi.setMode(WIFI_AP_STA); }
+            else if (hasAP) { victorWifi.setMode(WIFI_AP); }
+            else if (hasSTA) { victorWifi.setMode(WIFI_STA); }
+            else if (isOff) { victorWifi.setMode(WIFI_OFF); }
             break;
           }
           case EntryWifiReset: {

@@ -3,7 +3,7 @@
 namespace Victor::Components {
 
   void VictorWifi::setup() {
-    WiFi.mode(WIFI_AP_STA);
+    setMode(WIFI_AP_STA);
     WiFi.persistent(true);
     WiFi.setAutoConnect(true);
     WiFi.setAutoReconnect(true);
@@ -18,8 +18,8 @@ namespace Victor::Components {
 
     // need to keep the event handler for prevent unsubscribed automatically
     // https://github.com/esp8266/Arduino/issues/2545
-    _gotIPHandler = WiFi.onStationModeGotIP(std::bind(&VictorWifi::_handleStationModeGotIP, this, std::placeholders::_1));
-    _disconnectedHandler = WiFi.onStationModeDisconnected(std::bind(&VictorWifi::_handleStationModeDisconnected, this, std::placeholders::_1));
+    _gotIPHandler = WiFi.onStationModeGotIP(std::bind(&VictorWifi::_handleStaGotIP, this, std::placeholders::_1));
+    _disconnectedHandler = WiFi.onStationModeDisconnected(std::bind(&VictorWifi::_handleStaDisconnected, this, std::placeholders::_1));
 
     const auto model = appStorage.load();
     WiFi.begin(model.wifiSsid, model.wifiPass);
@@ -35,9 +35,33 @@ namespace Victor::Components {
   void VictorWifi::reset() {
     // wifi_config_reset();
     WiFi.disconnect(true);
-    WiFi.mode(WIFI_AP_STA);
+    setMode(WIFI_AP_STA);
     builtinLed.twinkle();
-    _log().section(F("mode"), F("AP_STA"));
+  }
+
+  WiFiMode_t VictorWifi::getMode() const {
+    return WiFi.getMode();
+  }
+
+  void VictorWifi::setMode(WiFiMode_t mode) {
+    if (getMode() != mode) {
+      WiFi.mode(mode);
+      _log().section(F("mode"), modeName(mode));
+    }
+  }
+
+  String VictorWifi::modeName(WiFiMode_t mode) {
+    if (mode == WIFI_STA) {
+      return F("STA");
+    } else if (mode == WIFI_AP) {
+      return F("AP");
+    } else if (mode == WIFI_AP_STA) {
+      return F("AP+STA");
+    } else if (mode == WIFI_OFF) {
+      return F("OFF");
+    } else {
+      return F("Unknown");
+    }
   }
 
   void VictorWifi::join(String ssid, String password, int32_t channel, uint8_t* bssid) {
@@ -45,8 +69,12 @@ namespace Victor::Components {
     WiFi.begin(ssid, password, channel, bssid, true);
   }
 
-  bool VictorWifi::isConnected() {
+  bool VictorWifi::isConnected() const {
     return WiFi.isConnected();
+  }
+
+  bool VictorWifi::isMDNSRunning() const {
+    return MDNS.isRunning();
   }
 
   void VictorWifi::waitForConnected() {
@@ -87,29 +115,21 @@ namespace Victor::Components {
     return host + F("-") + version;
   }
 
-  void VictorWifi::_handleStationModeGotIP(const WiFiEventStationModeGotIP& args) {
+  void VictorWifi::_handleStaGotIP(const WiFiEventStationModeGotIP& args) {
     builtinLed.stop();
     _log().section(F("station")).section(F("got ip"), args.ip.toString());
     const auto model = appStorage.load();
     if (model.autoMode) {
-      const auto mode = WiFi.getMode();
-      if (mode != WIFI_STA) {
-        WiFi.mode(WIFI_STA);
-        _log().section(F("mode"), F("STA"));
-      }
+      setMode(WIFI_STA);
     }
   }
 
-  void VictorWifi::_handleStationModeDisconnected(const WiFiEventStationModeDisconnected& args) {
+  void VictorWifi::_handleStaDisconnected(const WiFiEventStationModeDisconnected& args) {
     builtinLed.twinkle();
     _log().section(F("station"), F("disconnected"));
     const auto model = appStorage.load();
     if (model.autoMode) {
-      const auto mode = WiFi.getMode();
-      if (mode != WIFI_AP_STA) {
-        WiFi.mode(WIFI_AP_STA);
-        _log().section(F("mode"), F("AP_STA"));
-      }
+      setMode(WIFI_AP_STA);
     }
   }
 

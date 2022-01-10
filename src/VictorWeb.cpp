@@ -263,20 +263,12 @@ namespace Victor::Components {
     _dispatchRequestStart();
     // wifi
     const auto mode = WiFi.getMode();
-    auto strMode = String(F("OFF"));
-    if (mode == WIFI_STA) {
-      strMode = F("STA");
-    } else if (mode == WIFI_AP) {
-      strMode = F("AP");
-    } else if (mode == WIFI_AP_STA) {
-      strMode = F("AP_STA");
-    }
     // station
     const auto staMacAddress = WiFi.macAddress();
     const auto isStaEnabled = ((mode & WIFI_STA) != 0);
     auto staAddress = String("");
     if (isStaEnabled) {
-      IPAddress localIP = WiFi.localIP();
+      const IPAddress localIP = WiFi.localIP();
       if (localIP) {
         staAddress = localIP.toString();
       }
@@ -286,7 +278,7 @@ namespace Victor::Components {
     const auto isApEnabled = ((mode & WIFI_AP) != 0);
     auto apAddress = String("");
     if (isApEnabled) {
-      IPAddress apIP = WiFi.softAPIP();
+      const IPAddress apIP = WiFi.softAPIP();
       if (apIP) {
         apAddress = apIP.toString();
       }
@@ -295,8 +287,8 @@ namespace Victor::Components {
     DynamicJsonDocument res(512);
     // wifi
     res[F("hostName")] = victorWifi.getHostName();
-    res[F("mdns")] = MDNS.isRunning();
-    res[F("mode")] = strMode;
+    res[F("mdns")] = victorWifi.isMDNSRunning();
+    res[F("mode")] = victorWifi.modeName(mode);
     res[F("joined")] = WiFi.SSID();
     res[F("rssi")] = WiFi.RSSI();
     res[F("staAddress")] = staAddress;
@@ -343,8 +335,7 @@ namespace Victor::Components {
     } else {
       victorWifi.join(ssid, password, channel, (uint8_t*)bssid.c_str());
       victorWifi.waitForConnected();
-      const auto isConnected = WiFi.isConnected();
-      if (isConnected) {
+      if (victorWifi.isConnected()) {
         res[F("ip")] = WiFi.localIP().toString();
       } else {
         res[F("error")] = String(F("failed"));
@@ -363,13 +354,7 @@ namespace Victor::Components {
     // read
     const auto mode = String(payload[F("mode")]);
     // set
-    if (mode == "STA") {
-      WiFi.mode(WIFI_STA);
-    } else if (mode == "AP") {
-      WiFi.mode(WIFI_AP);
-    } else if (mode == "AP_STA") {
-      WiFi.mode(WIFI_AP_STA);
-    }
+    victorWifi.setMode(WiFiMode_t(mode.toInt()));
     // res
     DynamicJsonDocument res(64);
     res[F("message")] = String(F("success"));

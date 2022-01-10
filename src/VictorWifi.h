@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
+#include <ESP8266mDNS.h>
 #include "Console.h"
 #include "AppStorage.h"
 #include "BuiltinLed.h"
@@ -12,8 +13,12 @@ namespace Victor::Components {
    public:
     void setup();
     void reset();
+    WiFiMode_t getMode() const;
+    void setMode(WiFiMode_t mode);
+    static String modeName(WiFiMode_t mode);
     void join(String ssid, String password = emptyString, int32_t channel = 0, uint8_t* bssid = nullptr);
-    bool isConnected();
+    bool isConnected() const;
+    bool isMDNSRunning() const;
     void waitForConnected();
     String getHostId();
     String getHostName();
@@ -22,8 +27,8 @@ namespace Victor::Components {
    private:
     WiFiEventHandler _gotIPHandler = nullptr;
     WiFiEventHandler _disconnectedHandler = nullptr;
-    void _handleStationModeGotIP(const WiFiEventStationModeGotIP& args);
-    void _handleStationModeDisconnected(const WiFiEventStationModeDisconnected& args);
+    void _handleStaGotIP(const WiFiEventStationModeGotIP& args);
+    void _handleStaDisconnected(const WiFiEventStationModeDisconnected& args);
     static Console _log();
   };
 
