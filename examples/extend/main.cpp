@@ -21,8 +21,8 @@ void setup(void) {
   builtinLed.setup();
   builtinLed.turnOn();
 
-  webPortal.onRequestStart = []() { builtinLed.turnOn(); };
-  webPortal.onRequestEnd = []() { builtinLed.turnOff(); };
+  webPortal.onRequestStart = []() { builtinLed.toggle(); };
+  webPortal.onRequestEnd = []() { builtinLed.toggle(); };
   webPortal.setup();
 
   victorOTA.setup();

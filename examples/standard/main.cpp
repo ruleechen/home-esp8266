@@ -31,8 +31,8 @@ void setup(void) {
       .section(F("via channel"), String(emit.channel));
   };
 
-  webPortal.onRequestStart = []() { builtinLed.turnOn(); };
-  webPortal.onRequestEnd = []() { builtinLed.turnOff(); };
+  webPortal.onRequestStart = []() { builtinLed.toggle(); };
+  webPortal.onRequestEnd = []() { builtinLed.toggle(); };
   webPortal.onRadioEmit = [](int index) { radioPortal.emit(index); };
   webPortal.setup();
 
