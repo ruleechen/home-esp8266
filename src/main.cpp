@@ -36,10 +36,10 @@ void setup(void) {
   webPortal.onRequestEnd = []() { builtinLed.toggle(); };
   webPortal.onRadioEmit = [](const int index) { radioPortal.emit(index); };
   webPortal.onServiceGet = [](std::vector<KeyValueModel>& items) {
-    items.push_back({ .key = "key1", .value = "value1" });
+    items.push_back({ .key = F("key1"), .value = F("value1") });
   };
   webPortal.onServicePost = [](const String type) {
-    console.log().bracket("service").section("post", type);
+    console.log().bracket(F("service")).section(F("post"), type);
   };
   webPortal.setup();
 
@@ -55,7 +55,7 @@ void loop(void) {
   webPortal.loop();
   // loop radio
   if (false) {
-    String value = "";
+    auto value = String(F(""));
     int channel = 1;
     radioPortal.receive(value, channel);
     builtinLed.flash();

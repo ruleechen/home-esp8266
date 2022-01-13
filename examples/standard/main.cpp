@@ -46,7 +46,7 @@ void loop(void) {
   webPortal.loop();
   // receive from your radio tool
   if (false) {
-    String value = "";
+    auto value = String(F(""));
     int channel = 1;
     radioPortal.receive(value, channel);
     builtinLed.flash();

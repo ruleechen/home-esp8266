@@ -87,7 +87,7 @@ namespace Victor::Components {
   }
 
   Console VictorOTA::_log() {
-    return console.log().bracket("ota");
+    return console.log().bracket(F("ota"));
   }
 
   // global

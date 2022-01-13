@@ -106,8 +106,8 @@ namespace Victor::Components {
     auto html = file.readString();
     file.close();
     _solvePageTokens(html);
-    html.replace(F("{appendHead}"), "");
-    html.replace(F("{appendBody}"), "");
+    html.replace(F("{appendHead}"), F(""));
+    html.replace(F("{appendBody}"), F(""));
     _sendHtml(html);
     _dispatchRequestEnd();
   }
@@ -266,7 +266,7 @@ namespace Victor::Components {
     // station
     const auto staMacAddress = WiFi.macAddress();
     const auto isStaEnabled = ((mode & WIFI_STA) != 0);
-    auto staAddress = String("");
+    auto staAddress = String(F(""));
     if (isStaEnabled) {
       const IPAddress localIP = WiFi.localIP();
       if (localIP) {
@@ -276,7 +276,7 @@ namespace Victor::Components {
     // access point
     const auto apMacAddress = WiFi.softAPmacAddress();
     const auto isApEnabled = ((mode & WIFI_AP) != 0);
-    auto apAddress = String("");
+    auto apAddress = String(F(""));
     if (isApEnabled) {
       const IPAddress apIP = WiFi.softAPIP();
       if (apIP) {
@@ -330,7 +330,7 @@ namespace Victor::Components {
     const int32_t channel = payload[F("channel")];
     // res
     DynamicJsonDocument res(64);
-    if (!ssid || ssid == "") {
+    if (!ssid || ssid == F("")) {
       res[F("error")] = String(F("Please select wifi to join"));
     } else {
       victorWifi.join(ssid, password, channel, (uint8_t*)bssid.c_str());
@@ -412,7 +412,6 @@ namespace Victor::Components {
   void VictorWeb::_handleNotFound() {
     _dispatchRequestStart();
     DynamicJsonDocument res(512);
-    res[F("method")] = (_server->method() == HTTP_GET) ? String(F("GET")) : String(F("POST"));
     res[F("uri")] = _server->uri();
     res[F("error")] = String(F("Resource Not Found"));
     _sendJson(res);
@@ -559,7 +558,7 @@ namespace Victor::Components {
     DynamicJsonDocument payload(1024 + 512);
     deserializeJson(payload, payloadJson);
     // read
-    const auto ruleItems = payload["rules"];
+    const auto ruleItems = payload[F("rules")];
     // save
     auto model = radioStorage.load();
     model.rules.clear();
@@ -606,7 +605,7 @@ namespace Victor::Components {
     DynamicJsonDocument payload(1024 + 512);
     deserializeJson(payload, payloadJson);
     // read
-    const auto commandItems = payload["commands"];
+    const auto commandItems = payload[F("commands")];
     // save
     auto model = radioStorage.load();
     model.commands.clear();
@@ -631,7 +630,7 @@ namespace Victor::Components {
     _dispatchRequestStart();
     // read
     std::vector<KeyValueModel> states = {
-      { .key = "Identify", .value = victorWifi.getHostName() }
+      { .key = F("Identify"), .value = victorWifi.getHostName() }
     };
     if (onServiceGet) {
       onServiceGet(states);
@@ -656,7 +655,7 @@ namespace Victor::Components {
     DynamicJsonDocument payload(128);
     deserializeJson(payload, payloadJson);
     // read
-    const auto type = payload["type"];
+    const auto type = payload[F("type")];
     // act
     DynamicJsonDocument res(512);
     if (onServicePost) {
