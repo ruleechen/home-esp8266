@@ -15,7 +15,9 @@ WebPortal webPortal(80);
 void setup(void) {
   console.begin(115200);
   if (!LittleFS.begin()) {
-    console.error(F("fs mount failed"));
+    console.error()
+      .bracket(F("fs"))
+      .section(F("mount failed"));
   }
 
   builtinLed.setup();
@@ -28,7 +30,9 @@ void setup(void) {
   victorOTA.setup();
   victorWifi.setup();
 
-  console.log(F("setup complete"));
+  console.log()
+    .bracket(F("setup"))
+    .section(F("complete"));
 }
 
 void loop(void) {

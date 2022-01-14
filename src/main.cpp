@@ -16,7 +16,9 @@ VictorRadio radioPortal;
 void setup(void) {
   console.begin(115200);
   if (!LittleFS.begin()) {
-    console.error(F("fs mount failed"));
+    console.error()
+      .bracket(F("fs"))
+      .section(F("mount failed"));
   }
 
   builtinLed.setup();
@@ -39,7 +41,9 @@ void setup(void) {
     items.push_back({ .key = F("key1"), .value = F("value1") });
   };
   webPortal.onServicePost = [](const String type) {
-    console.log().bracket(F("service")).section(F("post"), type);
+    console.log()
+      .bracket(F("service"))
+      .section(F("post"), type);
   };
   webPortal.setup();
 
@@ -48,7 +52,9 @@ void setup(void) {
   victorWifi.setup();
 
   // done
-  console.log(F("setup complete"));
+  console.log()
+    .bracket(F("setup"))
+    .section(F("complete"));
 }
 
 void loop(void) {
