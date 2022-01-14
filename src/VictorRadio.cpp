@@ -11,7 +11,7 @@ namespace Victor::Components {
     }
   }
 
-  void VictorRadio::emit(String name) {
+  void VictorRadio::emit(const String& name) {
     const auto model = radioStorage.load();
     if (model.outputPin > -1) {
       for (const auto& emit : model.emits) {
@@ -71,7 +71,7 @@ namespace Victor::Components {
     }
   }
 
-  void VictorRadio::receive(String value, int channel) {
+  void VictorRadio::receive(String value, uint8_t channel) {
     // read id
     auto id = String(F("none"));
     if (value.indexOf(F("!")) == 4) {

@@ -64,7 +64,7 @@ namespace Victor::Components {
     }
   }
 
-  void VictorWifi::join(String ssid, String password, int32_t channel, uint8_t* bssid) {
+  void VictorWifi::join(const String& ssid, const String& password, int32_t channel, uint8_t* bssid) {
     _log().section(F("joining"), ssid);
     WiFi.begin(ssid, password, channel, bssid, true);
   }

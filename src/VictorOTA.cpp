@@ -20,7 +20,7 @@ namespace Victor::Components {
     return F("99.4.99");
   }
 
-  void VictorOTA::update(String version, VOtaType type) {
+  void VictorOTA::update(const String& version, VOtaType type) {
     ESPhttpUpdate.rebootOnUpdate(true);
     switch (type) {
       case VOta_All: {

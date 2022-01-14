@@ -8,9 +8,9 @@ namespace Victor {
 
   class GlobalHelpers {
    public:
-    static String randomString(int length) {
+    static String randomString(uint8_t length) {
       auto result = String(F(""));
-      int generated = 0;
+      uint8_t generated = 0;
       while (generated < length) {
         // .platformio/packages/framework-arduinoespressif8266/cores/esp8266/WMath.cpp
         const byte randomValue = random(0, 26);

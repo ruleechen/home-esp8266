@@ -16,7 +16,7 @@ namespace Victor::Components {
     WiFiMode_t getMode() const;
     void setMode(WiFiMode_t mode);
     static String modeName(WiFiMode_t mode);
-    void join(String ssid, String password = emptyString, int32_t channel = 0, uint8_t* bssid = nullptr);
+    void join(const String& ssid, const String& password = emptyString, int32_t channel = 0, uint8_t* bssid = nullptr);
     bool isConnected() const;
     bool isMDNSRunning() const;
     void waitForConnected();

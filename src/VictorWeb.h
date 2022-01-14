@@ -32,7 +32,7 @@ namespace Victor::Components {
     TServerEventHandler onRequestStart = nullptr;
     TServerEventHandler onRequestEnd = nullptr;
     // radio events
-    typedef std::function<void(const int index)> TRadioEmitHandler;
+    typedef std::function<void(const uint8_t index)> TRadioEmitHandler;
     TRadioEmitHandler onRadioEmit = nullptr;
     // service
     typedef std::function<void(std::vector<KeyValueModel>& items)> TServiceGetHandler;

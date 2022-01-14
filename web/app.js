@@ -1101,7 +1101,7 @@ const RadioRuleView = (() => {
     const channelEls = vic.queryAll("input[name=Channel]");
     const pressIdEls = vic.queryAll("select[name=PressId]");
     const actionIdEls = vic.queryAll("select[name=ActionId]");
-    const serviceIdEls = vic.queryAll("select[name=ServiceId]");
+    const serviceIdEls = vic.queryAll("input[name=ServiceId]");
     const rules = valueEls.map((valueEl, i) => ({
       value: valueEl.value,
       channel: channelEls[i].value,
@@ -1243,7 +1243,7 @@ const RadioCommandView = (() => {
   const save = () => {
     const entryActionEls = vic.queryAll("select[name=EntryAction]");
     const pressIdEls = vic.queryAll("select[name=PressId]");
-    const serviceIdEls = vic.queryAll("select[name=ServiceId]");
+    const serviceIdEls = vic.queryAll("input[name=ServiceId]");
     const commands = entryActionEls.map((el, i) => {
       const entryAction = el.value.split("-");
       return {

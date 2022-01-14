@@ -25,10 +25,10 @@ namespace Victor::Components {
    public:
     VictorRadio();
     ~VictorRadio();
-    void emit(String name);
+    void emit(const String& name);
     void emit(uint8_t index);
     TRadioEmit onEmit = nullptr;
-    void receive(String value, int channel);
+    void receive(String value, uint8_t channel);
     TRadioAction onAction = nullptr;
     TRadioCommand onCommand = nullptr;
 

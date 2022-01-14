@@ -34,7 +34,7 @@ void setup(void) {
   // setup web
   webPortal.onRequestStart = []() { builtinLed.toggle(); };
   webPortal.onRequestEnd = []() { builtinLed.toggle(); };
-  webPortal.onRadioEmit = [](const int index) { radioPortal.emit(index); };
+  webPortal.onRadioEmit = [](const uint8_t index) { radioPortal.emit(index); };
   webPortal.onServiceGet = [](std::vector<KeyValueModel>& items) {
     items.push_back({ .key = F("key1"), .value = F("value1") });
   };
@@ -56,7 +56,7 @@ void loop(void) {
   // loop radio
   if (false) {
     auto value = String(F(""));
-    int channel = 1;
+    uint8_t channel = 1;
     radioPortal.receive(value, channel);
     builtinLed.flash();
     console.log()

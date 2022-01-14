@@ -19,7 +19,7 @@ namespace Victor::Components {
     void setup();
     String getCurrentVersion() const;
     String checkNewVersion();
-    void update(String version, VOtaType type);
+    void update(const String& version, VOtaType type);
     void trigger(VOtaType type);
 
    private:

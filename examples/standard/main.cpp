@@ -33,7 +33,7 @@ void setup(void) {
 
   webPortal.onRequestStart = []() { builtinLed.toggle(); };
   webPortal.onRequestEnd = []() { builtinLed.toggle(); };
-  webPortal.onRadioEmit = [](int index) { radioPortal.emit(index); };
+  webPortal.onRadioEmit = [](const uint8_t index) { radioPortal.emit(index); };
   webPortal.setup();
 
   victorOTA.setup();
@@ -47,7 +47,7 @@ void loop(void) {
   // receive from your radio tool
   if (false) {
     auto value = String(F(""));
-    int channel = 1;
+    uint8_t channel = 1;
     radioPortal.receive(value, channel);
     builtinLed.flash();
     console.log()

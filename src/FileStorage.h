@@ -44,31 +44,18 @@ namespace Victor::Components {
       // open file
       auto file = LittleFS.open(_filePath, "r");
       if (file) {
-        // validate size
-        const auto size = file.size();
-        // read file
-        // Allocate a buffer to store contents of the file.
-        char buffer[size];
-        // We don't use String here because ArduinoJson library requires the input
-        // buffer to be mutable. If you don't use ArduinoJson, you may as well
-        // use file.readString instead.
-        file.readBytes(buffer, size);
+        // deserialize
+        DynamicJsonDocument doc(_maxSize); // Store data in the heap - Dynamic Memory Allocation
+        // StaticJsonDocument<DEFAULT_FILE_SIZE> doc; // Store data in the stack - Fixed Memory Allocation
+        const auto error = deserializeJson(doc, file);
+        if (!error) {
+          // convert
+          _deserializeFrom(model, doc);
+        } else {
+          _error().section(F("parse failed"), error.f_str());
+        }
         // close
         file.close();
-        // deserialize
-        if (size <= _maxSize) {
-          DynamicJsonDocument doc(_maxSize); // Store data in the heap - Dynamic Memory Allocation
-          // StaticJsonDocument<DEFAULT_FILE_SIZE> doc; // Store data in the stack - Fixed Memory Allocation
-          const auto error = deserializeJson(doc, buffer);
-          if (!error) {
-            // convert
-            _deserializeFrom(model, doc);
-          } else {
-            _error().section(F("parse failed"), error.f_str());
-          }
-        } else {
-          _error().section(F("file too large"));
-        }
       } else {
         _error().section(F("open failed"));
       }

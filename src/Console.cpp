@@ -33,19 +33,23 @@ namespace Victor {
   }
 
   Console Console::ts() {
-    return newline().bracket(String(millis()));
+    return newline().bracket(millis());
   }
 
   Console Console::bracket(const String& msg) {
-    return write(F("[") + msg + F("]"));
+    return write(F("[")).write(msg).write(F("]"));
+  }
+
+  Console Console::bracket(unsigned long msg) {
+    return write(F("[")).write(msg).write(F("]"));
   }
 
   Console Console::section(const String& key, const String& val) {
-    return section(key + F(": ") + val);
+    return write(F(" ")).write(key).write(F(": ")).write(val);
   }
 
   Console Console::section(const String& msg) {
-    return write(F(" ") + msg);
+    return write(F(" ")).write(msg);
   }
 
   Console Console::write(const String& msg) {
@@ -53,8 +57,13 @@ namespace Victor {
     return console;
   }
 
+  Console Console::write(unsigned long msg) {
+    Serial.print(msg);
+    return console;
+  }
+
   Console Console::newline() {
-    Serial.println(F(""));
+    Serial.println();
     return console;
   }
 

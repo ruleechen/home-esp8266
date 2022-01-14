@@ -45,7 +45,7 @@ namespace Victor::Components {
       // ...
       // res
       DynamicJsonDocument res(64);
-      res[F("message")] = String(F("success"));
+      res[F("message")] = F("success");
       _sendJson(res);
       _dispatchRequestEnd();
   }

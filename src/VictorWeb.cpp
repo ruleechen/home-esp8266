@@ -101,8 +101,7 @@ namespace Victor::Components {
 
   void VictorWeb::_handleIndexPage() {
     _dispatchRequestStart();
-    const auto path = String(F("/web/index.htm"));
-    auto file = LittleFS.open(path, "r");
+    auto file = LittleFS.open(F("/web/index.htm"), "r");
     auto html = file.readString();
     file.close();
     _solvePageTokens(html);
@@ -163,7 +162,7 @@ namespace Victor::Components {
       ESP.eraseConfig();
     }
     DynamicJsonDocument res(64);
-    res[F("message")] = String(F("success"));
+    res[F("message")] = F("success");
     _sendJson(res);
     _dispatchRequestEnd();
   }
@@ -180,7 +179,7 @@ namespace Victor::Components {
       res[F("blockSize")] = fsInfo.blockSize;
       res[F("pageSize")] = fsInfo.pageSize;
     } else {
-      res[F("error")] = String(F("read fs info failed"));
+      res[F("error")] = F("read fs info failed");
     }
     _sendJson(res);
     _dispatchRequestEnd();
@@ -223,7 +222,7 @@ namespace Victor::Components {
       res[F("content")] = file.readString();
       file.close();
     } else {
-      res[F("error")] = String(F("failed to open file"));
+      res[F("error")] = F("failed to open file");
     }
     _sendJson(res);
     _dispatchRequestEnd();
@@ -240,10 +239,10 @@ namespace Victor::Components {
     const auto path = _server->arg(F("path"));
     auto file = LittleFS.open(path, "w");
     if (file) {
-      const auto content = String(payload[F("content")]);
-      file.print(content);
+      const char* content = payload[F("content")];
+      file.write(content);
       file.close();
-      res[F("message")] = String(F("success"));
+      res[F("message")] = F("success");
     }
     _sendJson(res);
     _dispatchRequestEnd();
@@ -254,7 +253,7 @@ namespace Victor::Components {
     const auto path = _server->arg(F("path"));
     LittleFS.remove(path);
     DynamicJsonDocument res(64);
-    res[F("message")] = String(F("success"));
+    res[F("message")] = F("success");
     _sendJson(res);
     _dispatchRequestEnd();
   }
@@ -331,14 +330,14 @@ namespace Victor::Components {
     // res
     DynamicJsonDocument res(64);
     if (!ssid || ssid == F("")) {
-      res[F("error")] = String(F("Please select wifi to join"));
+      res[F("error")] = F("Please select wifi to join");
     } else {
       victorWifi.join(ssid, password, channel, (uint8_t*)bssid.c_str());
       victorWifi.waitForConnected();
       if (victorWifi.isConnected()) {
         res[F("ip")] = WiFi.localIP().toString();
       } else {
-        res[F("error")] = String(F("failed"));
+        res[F("error")] = F("failed");
       }
     }
     _sendJson(res);
@@ -352,12 +351,12 @@ namespace Victor::Components {
     DynamicJsonDocument payload(128);
     deserializeJson(payload, payloadJson);
     // read
-    const auto mode = String(payload[F("mode")]);
+    const uint8_t mode = payload[F("mode")];
     // set
-    victorWifi.setMode(WiFiMode_t(mode.toInt()));
+    victorWifi.setMode(WiFiMode_t(mode));
     // res
     DynamicJsonDocument res(64);
-    res[F("message")] = String(F("success"));
+    res[F("message")] = F("success");
     _sendJson(res);
     _dispatchRequestEnd();
   }
@@ -368,7 +367,7 @@ namespace Victor::Components {
     victorWifi.reset();
     // res
     DynamicJsonDocument res(64);
-    res[F("message")] = String(F("success"));
+    res[F("message")] = F("success");
     _sendJson(res);
     _dispatchRequestEnd();
   }
@@ -404,7 +403,7 @@ namespace Victor::Components {
     victorOTA.update(version, type);
     // res
     DynamicJsonDocument res(64);
-    res[F("message")] = String(F("success"));
+    res[F("message")] = F("success");
     _sendJson(res);
     _dispatchRequestEnd();
   }
@@ -413,7 +412,7 @@ namespace Victor::Components {
     _dispatchRequestStart();
     DynamicJsonDocument res(512);
     res[F("uri")] = _server->uri();
-    res[F("error")] = String(F("Resource Not Found"));
+    res[F("error")] = F("Resource Not Found");
     _sendJson(res);
     _dispatchRequestEnd();
   }
@@ -443,16 +442,16 @@ namespace Victor::Components {
     DynamicJsonDocument payload(64);
     deserializeJson(payload, payloadJson);
     // read
-    const auto inputPin = String(payload[F("inputPin")]);
-    const auto outputPin = String(payload[F("outputPin")]);
+    const int8_t inputPin = payload[F("inputPin")];
+    const int8_t outputPin = payload[F("outputPin")];
     // action
     auto model = radioStorage.load();
-    model.inputPin = inputPin.toInt();
-    model.outputPin = outputPin.toInt();
+    model.inputPin = inputPin;
+    model.outputPin = outputPin;
     radioStorage.save(model);
     // res
     DynamicJsonDocument res(64);
-    res[F("message")] = String(F("success"));
+    res[F("message")] = F("success");
     _sendJson(res);
     _dispatchRequestEnd();
   }
@@ -494,16 +493,16 @@ namespace Victor::Components {
     for (size_t i = 0; i < emitItems.size(); i++) {
       const auto item = emitItems[i];
       model.emits.push_back({
-        .name = String(item[F("name")]),
-        .value = String(item[F("value")]),
-        .channel = String(item[F("channel")]).toInt(),
-        .press = RadioPressState(String(item[F("press")]).toInt()),
+        .name = item[F("name")],
+        .value = item[F("value")],
+        .channel = item[F("channel")],
+        .press = RadioPressState(item[F("press")]),
       });
     }
     radioStorage.save(model);
     // res
     DynamicJsonDocument res(64);
-    res[F("message")] = String(F("success"));
+    res[F("message")] = F("success");
     _sendJson(res);
     _dispatchRequestEnd();
   }
@@ -515,13 +514,13 @@ namespace Victor::Components {
     DynamicJsonDocument payload(64);
     deserializeJson(payload, payloadJson);
     // read
-    const auto index = String(payload[F("index")]);
+    const uint8_t index = payload[F("index")];
     DynamicJsonDocument res(64);
     if (onRadioEmit) {
-      onRadioEmit(index.toInt());
-      res[F("message")] = String(F("success"));
+      onRadioEmit(index);
+      res[F("message")] = F("success");
     } else {
-      res[F("error")] = String(F("onRadioEmit is required"));
+      res[F("error")] = F("onRadioEmit is required");
     }
     _sendJson(res);
     _dispatchRequestEnd();
@@ -565,17 +564,17 @@ namespace Victor::Components {
     for (size_t i = 0; i < ruleItems.size(); i++) {
       const auto item = ruleItems[i];
       model.rules.push_back({
-        .value = String(item[F("value")]),
-        .channel = String(item[F("channel")]).toInt(),
-        .press = RadioPressState(String(item[F("press")]).toInt()),
-        .action = RadioAction(String(item[F("action")]).toInt()),
-        .serviceId = String(item[F("serviceId")]),
+        .value = item[F("value")],
+        .channel = item[F("channel")],
+        .press = RadioPressState(item[F("press")]),
+        .action = RadioAction(item[F("action")]),
+        .serviceId = item[F("serviceId")],
       });
     }
     radioStorage.save(model);
     // res
     DynamicJsonDocument res(64);
-    res[F("message")] = String(F("success"));
+    res[F("message")] = F("success");
     _sendJson(res);
     _dispatchRequestEnd();
   }
@@ -612,16 +611,16 @@ namespace Victor::Components {
     for (size_t i = 0; i < commandItems.size(); i++) {
       const auto item = commandItems[i];
       model.commands.push_back({
-        .entry = RadioCommandEntry(String(item[F("entry")]).toInt()),
-        .action = String(item[F("action")]).toInt(),
-        .press = RadioPressState(String(item[F("press")]).toInt()),
-        .serviceId = String(item[F("serviceId")]),
+        .entry = RadioCommandEntry(item[F("entry")]),
+        .action = item[F("action")],
+        .press = RadioPressState(item[F("press")]),
+        .serviceId = item[F("serviceId")],
       });
     }
     radioStorage.save(model);
     // res
     DynamicJsonDocument res(64);
-    res[F("message")] = String(F("success"));
+    res[F("message")] = F("success");
     _sendJson(res);
     _dispatchRequestEnd();
   }
@@ -660,9 +659,9 @@ namespace Victor::Components {
     DynamicJsonDocument res(512);
     if (onServicePost) {
       onServicePost(type);
-      res[F("message")] = String(F("success"));
+      res[F("message")] = F("success");
     } else {
-      res[F("error")] = String(F("onServicePost is required"));
+      res[F("error")] = F("onServicePost is required");
     }
     // res
     _sendJson(res);
