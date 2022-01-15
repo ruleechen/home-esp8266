@@ -34,7 +34,6 @@ namespace Victor::Components {
       item[1] = rule.channel;
       item[2] = rule.press;
       item[3] = rule.action;
-      item[4] = rule.serviceId;
     }
     const JsonArray commandItems = doc.createNestedArray(F("commands"));
     for (const auto& command : model.commands) {
@@ -42,7 +41,6 @@ namespace Victor::Components {
       item[0] = command.entry;
       item[1] = command.action;
       item[2] = command.press;
-      item[3] = command.serviceId;
     }
   }
 
@@ -68,7 +66,6 @@ namespace Victor::Components {
         .channel = item[1],
         .press = item[2],
         .action = item[3],
-        .serviceId = item[4],
       };
       model.rules.push_back(rule);
     }
@@ -79,7 +76,6 @@ namespace Victor::Components {
         .entry = item[0],
         .action = item[1],
         .press = item[2],
-        .serviceId = item[3],
       };
       model.commands.push_back(command);
     }

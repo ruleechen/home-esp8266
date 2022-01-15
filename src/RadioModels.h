@@ -43,7 +43,6 @@ namespace Victor::Components {
     uint8_t channel = 0;
     RadioPressState press = PressStateClick;
     RadioAction action = RadioActionNone;
-    String serviceId;
   };
 
   enum RadioCommandEntry {
@@ -82,7 +81,6 @@ namespace Victor::Components {
     RadioCommandEntry entry = EntryNone;
     int8_t action = -1;
     RadioPressState press = PressStateClick;
-    String serviceId;
   };
 
   struct RadioCommandParsed :RadioCommand {

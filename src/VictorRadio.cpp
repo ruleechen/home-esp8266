@@ -142,7 +142,6 @@ namespace Victor::Components {
         command.action == parsedCommand.action &&
         command.press == press
       ) {
-        parsedCommand.serviceId = command.serviceId;
         _proceedCommand(parsedCommand);
       }
     }

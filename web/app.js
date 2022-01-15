@@ -1061,7 +1061,7 @@ const RadioEmitView = (() => {
 const RadioRuleView = (() => {
   const state = {
     loading: true,
-    rules: [{ value: "", channel: 0, press: 1, action: 1, serviceId: "" }],
+    rules: [{ value: "", channel: 0, press: 1, action: 1 }],
     lastReceived: { value: "", channel: 0 },
     pressOptions: [
       [1, "Click"],
@@ -1085,7 +1085,6 @@ const RadioRuleView = (() => {
       channel: state.lastReceived.channel,
       press: state.pressOptions[0][0],
       action: state.actionOptions[0][0],
-      serviceId: "",
     });
     m.redraw();
   };
@@ -1101,13 +1100,11 @@ const RadioRuleView = (() => {
     const channelEls = vic.queryAll("input[name=Channel]");
     const pressIdEls = vic.queryAll("select[name=PressId]");
     const actionIdEls = vic.queryAll("select[name=ActionId]");
-    const serviceIdEls = vic.queryAll("input[name=ServiceId]");
     const rules = valueEls.map((valueEl, i) => ({
       value: valueEl.value,
       channel: channelEls[i].value,
       press: pressIdEls[i].value,
       action: actionIdEls[i].value,
-      serviceId: serviceIdEls[i].value,
     }));
     m.request({
       method: "POST",
@@ -1184,12 +1181,6 @@ const RadioRuleView = (() => {
                   text: x[1],
                 }))
               ),
-              m("input[type=text]", {
-                name: "ServiceId",
-                value: rule.serviceId,
-                maxLength: 8,
-                style: { width: "60px" },
-              }),
             ]),
           }),
           m("p", [
@@ -1205,7 +1196,7 @@ const RadioRuleView = (() => {
 const RadioCommandView = (() => {
   const state = {
     loading: true,
-    commands: [{ entry: 1, action: 1, press: 1, serviceId: "" }],
+    commands: [{ entry: 1, action: 1, press: 1 }],
     entryActionOptions: [
       ["0-0", "None"],
       ["1-1", "wifi-join"],
@@ -1229,7 +1220,6 @@ const RadioCommandView = (() => {
       entry: entryAction[0],
       action: entryAction[1],
       press: state.pressOptions[0][0],
-      serviceId: "",
     });
     m.redraw();
   };
@@ -1243,14 +1233,12 @@ const RadioCommandView = (() => {
   const save = () => {
     const entryActionEls = vic.queryAll("select[name=EntryAction]");
     const pressIdEls = vic.queryAll("select[name=PressId]");
-    const serviceIdEls = vic.queryAll("input[name=ServiceId]");
     const commands = entryActionEls.map((el, i) => {
       const entryAction = el.value.split("-");
       return {
         entry: entryAction[0],
         action: entryAction[1],
         press: pressIdEls[i].value,
-        serviceId: serviceIdEls[i].value,
       };
     });
     m.request({
@@ -1315,12 +1303,6 @@ const RadioCommandView = (() => {
                   text: x[1],
                 }))
               ),
-              m("input[type=text]", {
-                name: "ServiceId",
-                value: command.serviceId,
-                maxLength: 8,
-                style: { width: "60px" },
-              }),
             ]),
           }),
           m("p", [

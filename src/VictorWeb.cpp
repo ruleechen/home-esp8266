@@ -538,7 +538,6 @@ namespace Victor::Components {
       ruleObj[F("channel")] = rule.channel;
       ruleObj[F("press")] = rule.press;
       ruleObj[F("action")] = rule.action;
-      ruleObj[F("serviceId")] = rule.serviceId;
     }
     // last received
     const auto lastReceived = radioStorage.getLastReceived();
@@ -568,7 +567,6 @@ namespace Victor::Components {
         .channel = item[F("channel")],
         .press = RadioPressState(item[F("press")]),
         .action = RadioAction(item[F("action")]),
-        .serviceId = item[F("serviceId")],
       });
     }
     radioStorage.save(model);
@@ -590,7 +588,6 @@ namespace Victor::Components {
       commandObj[F("entry")] = command.entry;
       commandObj[F("action")] = command.action;
       commandObj[F("press")] = command.press;
-      commandObj[F("serviceId")] = command.serviceId;
     }
     // end
     _sendJson(res);
@@ -614,7 +611,6 @@ namespace Victor::Components {
         .entry = RadioCommandEntry(item[F("entry")]),
         .action = item[F("action")],
         .press = RadioPressState(item[F("press")]),
-        .serviceId = item[F("serviceId")],
       });
     }
     radioStorage.save(model);
