@@ -12,9 +12,9 @@ namespace Victor::Components {
     // IPAddress apSubnet(255, 255, 255, 0);
     // WiFi.softAPConfig(apIp, apIp, apSubnet);
 
-    const auto apName = getApName();
-    WiFi.hostname(apName); // name which is displayed on router
-    WiFi.softAP(apName); // name which is displayed on AP list
+    const auto hostName = getHostName();
+    WiFi.hostname(hostName); // name which is displayed on router
+    WiFi.softAP(hostName); // name which is displayed on AP list
 
     // need to keep the event handler for prevent unsubscribed automatically
     // https://github.com/esp8266/Arduino/issues/2545
@@ -106,13 +106,6 @@ namespace Victor::Components {
       ? model.name
       : VICTOR_FIRMWARE_NAME;
     return productName + F("-") + id;
-  }
-
-  String VictorWifi::getApName() {
-    const auto host = getHostName();
-    auto version = String(VICTOR_FIRMWARE_VERSION);
-    version.replace(F("."), F(""));
-    return host + F("-") + version;
   }
 
   void VictorWifi::_handleStaGotIP(const WiFiEventStationModeGotIP& args) {

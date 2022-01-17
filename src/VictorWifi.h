@@ -22,7 +22,6 @@ namespace Victor::Components {
     void waitForConnected();
     String getHostId();
     String getHostName();
-    String getApName();
 
    private:
     WiFiEventHandler _gotIPHandler = nullptr;
