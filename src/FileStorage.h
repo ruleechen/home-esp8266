@@ -20,7 +20,7 @@ namespace Victor::Components {
     bool save(const TModel& model);
 
    protected:
-    String _filePath;
+    const char* _filePath;
     size_t _maxSize = DEFAULT_FILE_SIZE;
     bool _userCache = false;
     TModel* _cache = nullptr;

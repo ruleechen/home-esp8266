@@ -3,7 +3,7 @@
 namespace Victor::Components {
 
   AppStorage::AppStorage() {
-    _filePath = F("/app.json");
+    _filePath = "/app.json";
     _maxSize = 256;
   }
 
