@@ -71,7 +71,7 @@ namespace Victor::Components {
     }
   }
 
-  void VictorRadio::receive(String value, uint8_t channel) {
+  void VictorRadio::receive(String& value, uint8_t channel) {
     // read id
     auto id = String(F("none"));
     if (value.indexOf(F("!")) == 4) {

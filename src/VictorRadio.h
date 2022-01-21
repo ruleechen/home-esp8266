@@ -18,9 +18,9 @@
 
 namespace Victor::Components {
   class VictorRadio {
-    typedef std::function<void(const RadioEmit&)> TRadioEmit;
-    typedef std::function<bool(const RadioRule&)> TRadioAction;
-    typedef std::function<bool(const RadioCommandParsed&)> TRadioCommand;
+    typedef std::function<void(const RadioEmit& emit)> TRadioEmit;
+    typedef std::function<bool(const RadioRule& rule)> TRadioAction;
+    typedef std::function<bool(const RadioCommandParsed& command)> TRadioCommand;
 
    public:
     VictorRadio();
@@ -28,7 +28,7 @@ namespace Victor::Components {
     void emit(const String& name);
     void emit(uint8_t index);
     TRadioEmit onEmit = nullptr;
-    void receive(String value, uint8_t channel);
+    void receive(String& value, uint8_t channel);
     TRadioAction onAction = nullptr;
     TRadioCommand onCommand = nullptr;
 

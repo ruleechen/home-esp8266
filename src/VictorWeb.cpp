@@ -330,7 +330,7 @@ namespace Victor::Components {
     // res
     DynamicJsonDocument res(64);
     if (!ssid || ssid == F("")) {
-      res[F("error")] = F("Please select wifi to join");
+      res[F("error")] = F("input ssid to join");
     } else {
       victorWifi.join(ssid, password, channel, (uint8_t*)bssid.c_str());
       victorWifi.waitForConnected();
@@ -412,7 +412,7 @@ namespace Victor::Components {
     _dispatchRequestStart();
     DynamicJsonDocument res(512);
     res[F("uri")] = _server->uri();
-    res[F("error")] = F("Resource Not Found");
+    res[F("error")] = F("resource not found");
     _sendJson(res);
     _dispatchRequestEnd();
   }
