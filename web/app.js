@@ -187,8 +187,8 @@ const ServiceView = (() => {
         url: "/service/post",
         body: { type: ev.target.value },
       }).then((res) => {
-        if (res.error) {
-          alert(res.error);
+        if (res.err) {
+          alert(res.err);
         } else {
           oninit();
         }
@@ -304,8 +304,8 @@ const SystemResetView = (() => {
         url: "/system/reset",
         body: { values },
       }).then((res) => {
-        if (res.error) {
-          alert(res.error);
+        if (res.err) {
+          alert(res.err);
         } else {
           m.redraw();
         }
@@ -453,8 +453,8 @@ const FileItemView = (() => {
     request("POST", {
       content: vic.query("textarea").value,
     }).then((res) => {
-      if (res.error) {
-        alert(res.error);
+      if (res.err) {
+        alert(res.err);
       } else {
         oninit();
       }
@@ -463,8 +463,8 @@ const FileItemView = (() => {
   const remove = () => {
     if (vic.confirm()) {
       request("DELETE").then((res) => {
-        if (res.error) {
-          alert(res.error);
+        if (res.err) {
+          alert(res.err);
           return;
         }
         m.route.set("/fs/files");
@@ -591,8 +591,8 @@ const WifiListView = (() => {
       url: "/wifi/join",
       body: Object.assign({}, { password: passEl.value }, ap),
     }).then((res) => {
-      if (res.error) {
-        alert(res.error);
+      if (res.err) {
+        alert(res.err);
       } else if (res.ip) {
         alert("Success! obtain ip: " + res.ip);
       }
@@ -725,8 +725,8 @@ const OtaView = (() => {
       url: "/ota/fire",
       body: { version, otaType },
     }).then((res) => {
-      if (res.error) {
-        alert(res.error);
+      if (res.err) {
+        alert(res.err);
       } else {
         m.redraw();
       }
@@ -833,8 +833,8 @@ const RadioView = (() => {
       url: "/radio",
       body: { inputPin, outputPin },
     }).then((res) => {
-      if (res.error) {
-        alert(res.error);
+      if (res.err) {
+        alert(res.err);
       } else {
         oninit();
       }
@@ -958,8 +958,8 @@ const RadioEmitView = (() => {
       url: "/radio/emit",
       body: { emits },
     }).then((res) => {
-      if (res.error) {
-        alert(res.error);
+      if (res.err) {
+        alert(res.err);
       } else {
         oninit();
       }
@@ -973,8 +973,8 @@ const RadioEmitView = (() => {
       url: "/radio/emit/send",
       body: { index },
     }).then((res) => {
-      if (res.error) {
-        alert(res.error);
+      if (res.err) {
+        alert(res.err);
       }
       state.loading = false;
       m.redraw();
@@ -1111,8 +1111,8 @@ const RadioRuleView = (() => {
       url: "/radio/rule",
       body: { rules },
     }).then((res) => {
-      if (res.error) {
-        alert(res.error);
+      if (res.err) {
+        alert(res.err);
       } else {
         oninit();
       }
@@ -1246,8 +1246,8 @@ const RadioCommandView = (() => {
       url: "/radio/command",
       body: { commands },
     }).then((res) => {
-      if (res.error) {
-        alert(res.error);
+      if (res.err) {
+        alert(res.err);
       } else {
         oninit();
       }

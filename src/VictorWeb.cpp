@@ -162,7 +162,7 @@ namespace Victor::Components {
       ESP.eraseConfig();
     }
     DynamicJsonDocument res(64);
-    res[F("message")] = F("success");
+    res[F("msg")] = F("success");
     _sendJson(res);
     _dispatchRequestEnd();
   }
@@ -179,7 +179,7 @@ namespace Victor::Components {
       res[F("blockSize")] = fsInfo.blockSize;
       res[F("pageSize")] = fsInfo.pageSize;
     } else {
-      res[F("error")] = F("read fs info failed");
+      res[F("err")] = F("read fs info failed");
     }
     _sendJson(res);
     _dispatchRequestEnd();
@@ -222,7 +222,7 @@ namespace Victor::Components {
       res[F("content")] = file.readString();
       file.close();
     } else {
-      res[F("error")] = F("failed to open file");
+      res[F("err")] = F("failed to open file");
     }
     _sendJson(res);
     _dispatchRequestEnd();
@@ -242,7 +242,7 @@ namespace Victor::Components {
       const char* content = payload[F("content")];
       file.write(content);
       file.close();
-      res[F("message")] = F("success");
+      res[F("msg")] = F("success");
     }
     _sendJson(res);
     _dispatchRequestEnd();
@@ -253,7 +253,7 @@ namespace Victor::Components {
     const auto path = _server->arg(F("path"));
     LittleFS.remove(path);
     DynamicJsonDocument res(64);
-    res[F("message")] = F("success");
+    res[F("msg")] = F("success");
     _sendJson(res);
     _dispatchRequestEnd();
   }
@@ -330,14 +330,14 @@ namespace Victor::Components {
     // res
     DynamicJsonDocument res(64);
     if (!ssid || ssid == F("")) {
-      res[F("error")] = F("input ssid to join");
+      res[F("err")] = F("input ssid to join");
     } else {
       victorWifi.join(ssid, password, channel, (uint8_t*)bssid.c_str());
       victorWifi.waitForConnected();
       if (victorWifi.isConnected()) {
         res[F("ip")] = WiFi.localIP().toString();
       } else {
-        res[F("error")] = F("failed");
+        res[F("err")] = F("failed");
       }
     }
     _sendJson(res);
@@ -356,7 +356,7 @@ namespace Victor::Components {
     victorWifi.setMode(WiFiMode_t(mode));
     // res
     DynamicJsonDocument res(64);
-    res[F("message")] = F("success");
+    res[F("msg")] = F("success");
     _sendJson(res);
     _dispatchRequestEnd();
   }
@@ -367,7 +367,7 @@ namespace Victor::Components {
     victorWifi.reset();
     // res
     DynamicJsonDocument res(64);
-    res[F("message")] = F("success");
+    res[F("msg")] = F("success");
     _sendJson(res);
     _dispatchRequestEnd();
   }
@@ -403,7 +403,7 @@ namespace Victor::Components {
     victorOTA.update(version, type);
     // res
     DynamicJsonDocument res(64);
-    res[F("message")] = F("success");
+    res[F("msg")] = F("success");
     _sendJson(res);
     _dispatchRequestEnd();
   }
@@ -412,7 +412,7 @@ namespace Victor::Components {
     _dispatchRequestStart();
     DynamicJsonDocument res(512);
     res[F("uri")] = _server->uri();
-    res[F("error")] = F("resource not found");
+    res[F("err")] = F("resource not found");
     _sendJson(res);
     _dispatchRequestEnd();
   }
@@ -451,7 +451,7 @@ namespace Victor::Components {
     radioStorage.save(model);
     // res
     DynamicJsonDocument res(64);
-    res[F("message")] = F("success");
+    res[F("msg")] = F("success");
     _sendJson(res);
     _dispatchRequestEnd();
   }
@@ -502,7 +502,7 @@ namespace Victor::Components {
     radioStorage.save(model);
     // res
     DynamicJsonDocument res(64);
-    res[F("message")] = F("success");
+    res[F("msg")] = F("success");
     _sendJson(res);
     _dispatchRequestEnd();
   }
@@ -518,9 +518,9 @@ namespace Victor::Components {
     DynamicJsonDocument res(64);
     if (onRadioEmit) {
       onRadioEmit(index);
-      res[F("message")] = F("success");
+      res[F("msg")] = F("success");
     } else {
-      res[F("error")] = F("onRadioEmit is required");
+      res[F("err")] = F("onRadioEmit is required");
     }
     _sendJson(res);
     _dispatchRequestEnd();
@@ -572,7 +572,7 @@ namespace Victor::Components {
     radioStorage.save(model);
     // res
     DynamicJsonDocument res(64);
-    res[F("message")] = F("success");
+    res[F("msg")] = F("success");
     _sendJson(res);
     _dispatchRequestEnd();
   }
@@ -616,7 +616,7 @@ namespace Victor::Components {
     radioStorage.save(model);
     // res
     DynamicJsonDocument res(64);
-    res[F("message")] = F("success");
+    res[F("msg")] = F("success");
     _sendJson(res);
     _dispatchRequestEnd();
   }
@@ -655,9 +655,9 @@ namespace Victor::Components {
     DynamicJsonDocument res(512);
     if (onServicePost) {
       onServicePost(type);
-      res[F("message")] = F("success");
+      res[F("msg")] = F("success");
     } else {
-      res[F("error")] = F("onServicePost is required");
+      res[F("err")] = F("onServicePost is required");
     }
     // res
     _sendJson(res);
