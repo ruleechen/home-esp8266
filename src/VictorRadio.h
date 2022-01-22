@@ -28,7 +28,7 @@ namespace Victor::Components {
     void emit(const String& name);
     void emit(uint8_t index);
     TRadioEmit onEmit = nullptr;
-    void receive(String& value, uint8_t channel);
+    void receive(const String& value, uint8_t channel);
     TRadioAction onAction = nullptr;
     TRadioCommand onCommand = nullptr;
 

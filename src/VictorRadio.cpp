@@ -71,17 +71,18 @@ namespace Victor::Components {
     }
   }
 
-  void VictorRadio::receive(String& value, uint8_t channel) {
+  void VictorRadio::receive(const String& value, uint8_t channel) {
     // read id
-    auto id = String(F("none"));
+    auto idPart = String(F("none"));
+    auto valuePart = String(value);
     if (value.indexOf(F("!")) == 4) {
-      id = value.substring(0, 4);
-      value = value.substring(5);
+      idPart = value.substring(0, 4);
+      valuePart = value.substring(5);
     }
     // message
     const RadioMessage message = {
-      .id = id,
-      .value = value,
+      .id = idPart,
+      .value = valuePart,
       .channel = channel,
       .timestamp = millis(),
     };
