@@ -71,7 +71,7 @@ namespace Victor::Components {
     }
   }
 
-  void VictorRadio::receive(const String& value, uint8_t channel) {
+  void VictorRadio::receive(String value, uint8_t channel) {
     // read id
     auto idPart = String(F("none"));
     auto valuePart = String(value);
