@@ -36,7 +36,7 @@ void setup(void) {
   // setup web
   webPortal.onRequestStart = []() { builtinLed.toggle(); };
   webPortal.onRequestEnd = []() { builtinLed.toggle(); };
-  webPortal.onRadioEmit = [](const uint8_t index) { radioPortal.emit(index); };
+  webPortal.onRadioEmit = [](uint8_t index) { radioPortal.emit(index); };
   webPortal.onServiceGet = [](std::vector<KeyValueModel>& items) {
     items.push_back({ .key = F("key1"), .value = F("value1") });
   };

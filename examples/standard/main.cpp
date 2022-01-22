@@ -35,7 +35,7 @@ void setup(void) {
 
   webPortal.onRequestStart = []() { builtinLed.toggle(); };
   webPortal.onRequestEnd = []() { builtinLed.toggle(); };
-  webPortal.onRadioEmit = [](const uint8_t index) { radioPortal.emit(index); };
+  webPortal.onRadioEmit = [](uint8_t index) { radioPortal.emit(index); };
   webPortal.setup();
 
   victorOTA.setup();
