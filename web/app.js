@@ -1142,7 +1142,7 @@ const RadioRuleView = (() => {
         m("p", [m(m.route.Link, { href: "/radio" }, "< Radio")]),
         m("div.form", [
           vic.mTable({
-            header: ["", "Value", "Channel", "Press", "Action", "Service"],
+            header: ["", "Value", "Channel", "Press", "Action"],
             rows: state.rules.map((rule, index) => [
               m(
                 "button.btn.weak",
@@ -1276,7 +1276,7 @@ const RadioCommandView = (() => {
         m("p", [m(m.route.Link, { href: "/radio" }, "< Radio")]),
         m("div.form", [
           vic.mTable({
-            header: ["", "Entry", "Press", "Service"],
+            header: ["", "Entry", "Press"],
             rows: state.commands.map((command, index) => [
               m(
                 "button.btn.weak",
