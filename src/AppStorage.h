@@ -8,7 +8,7 @@ namespace Victor::Components {
   struct AppModel {
     String name;
     int8_t ledPin = 2;      // -128 ~ 127
-    uint8_t ledOnValue = 0; // 0 ~ 256 LOW
+    bool ledOnHigh = false; // false: LOW, true: HIGH
     bool overTheWeb = false;
     String wifiSsid;
     String wifiPass;

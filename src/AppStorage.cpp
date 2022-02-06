@@ -10,7 +10,7 @@ namespace Victor::Components {
   void AppStorage::_serializeTo(const AppModel& model, DynamicJsonDocument& doc) {
     doc[F("name")] = model.name;
     doc[F("led")][0] = model.ledPin;
-    doc[F("led")][1] = model.ledOnValue;
+    doc[F("led")][1] = model.ledOnHigh;
     doc[F("otw")] = model.overTheWeb ? 1 : 0;
     doc[F("wifi")][0] = model.wifiSsid;
     doc[F("wifi")][1] = model.wifiPass;
@@ -21,7 +21,7 @@ namespace Victor::Components {
     const char* name = doc[F("name")];
     model.name = String(name);
     model.ledPin = doc[F("led")][0];
-    model.ledOnValue = doc[F("led")][1];
+    model.ledOnHigh = doc[F("led")][1];
     model.overTheWeb = doc[F("otw")] == 1;
     model.wifiSsid = String(doc[F("wifi")][0]);
     model.wifiPass = String(doc[F("wifi")][1]);
