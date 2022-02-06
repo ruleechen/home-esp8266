@@ -11,6 +11,7 @@ namespace Victor::Components {
     doc[F("name")] = model.name;
     doc[F("led")][0] = model.ledPin;
     doc[F("led")][1] = model.ledOnHigh;
+    doc[F("led")][2] = model.ledEnabled;
     doc[F("otw")] = model.overTheWeb ? 1 : 0;
     doc[F("wifi")][0] = model.wifiSsid;
     doc[F("wifi")][1] = model.wifiPass;
@@ -22,6 +23,7 @@ namespace Victor::Components {
     model.name = String(name);
     model.ledPin = doc[F("led")][0];
     model.ledOnHigh = doc[F("led")][1];
+    model.ledEnabled = doc[F("led")][2];
     model.overTheWeb = doc[F("otw")] == 1;
     model.wifiSsid = String(doc[F("wifi")][0]);
     model.wifiPass = String(doc[F("wifi")][1]);

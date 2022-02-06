@@ -19,7 +19,7 @@ namespace Victor::Components {
 
   void BuiltinLed::setup() {
     const auto model = appStorage.load();
-    if (model.ledPin > -1) {
+    if (model.ledEnabled) {
       const auto trueValue = model.ledOnHigh ? HIGH : LOW;
       _outputPin = new DigitalOutput(model.ledPin, trueValue);
     }
