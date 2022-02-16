@@ -751,11 +751,7 @@ const OtaView = (() => {
       return [
         vic.getNav(),
         m("h3", "OTA"),
-        d.overTheWeb
-          ? m("p", [
-              m(m.route.Link, { href: "/ota/otw" }, "Update - Over The Web"),
-            ])
-          : null,
+        m("p", [m(m.route.Link, { href: "/ota/otw" }, "Over Web")]),
         m("div.form", [
           m("p", [
             vic.mTable({

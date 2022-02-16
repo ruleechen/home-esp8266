@@ -4,6 +4,7 @@ namespace Victor::Components {
 
   VictorWeb::VictorWeb(int port) {
     _server = new ESP8266WebServer(port);
+    _httpUpdater = new ESP8266HTTPUpdateServer();
   }
 
   VictorWeb::~VictorWeb() {
@@ -20,11 +21,7 @@ namespace Victor::Components {
 
   void VictorWeb::setup() {
     _registerHandlers();
-    const auto model = appStorage.load();
-    if (model.overTheWeb) {
-      _httpUpdater = new ESP8266HTTPUpdateServer();
-      _httpUpdater->setup(_server, F("/update"));
-    }
+    _httpUpdater->setup(_server, F("/update"));
     _server->begin();
   }
 
@@ -381,7 +378,6 @@ namespace Victor::Components {
     res[F("sketchFreeSpace")] = ESP.getFreeSketchSpace();
     res[F("otaVersion")] = victorOTA.getCurrentVersion();
     res[F("otaNewVersion")] = victorOTA.checkNewVersion();
-    res[F("overTheWeb")] = _httpUpdater != nullptr;
     _sendJson(res);
     _dispatchRequestEnd();
   }

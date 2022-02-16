@@ -10,7 +10,6 @@ namespace Victor::Components {
     uint8_t ledPin = 2;     // 0 ~ 256
     bool ledOnHigh = false; // false: LOW, true: HIGH
     bool ledEnabled = true;
-    bool overTheWeb = false;
     String wifiSsid;
     String wifiPass;
     bool autoMode = true;
