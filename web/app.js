@@ -514,7 +514,6 @@ const WifiView = (() => {
     }).then((res) => {
       state.loading = false;
       state.data = res;
-      WifiView.mode = res.mode; // hook
       m.redraw();
     });
   };
@@ -671,7 +670,6 @@ const WifiModeView = (() => {
     mode: "",
   };
   const oninit = () => {
-    state.mode = WifiView.mode;
     state.loading = false;
   };
   const save = () => {
@@ -679,7 +677,7 @@ const WifiModeView = (() => {
     m.request({
       method: "POST",
       url: "/wifi/mode",
-      body: { mode: modeEl.value },
+      body: { mode: parseInt(modeEl.value, 10) },
     }).then(() => {
       oninit();
     });
