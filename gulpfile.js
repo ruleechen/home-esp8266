@@ -1,5 +1,6 @@
 const del = require("del");
 const gulp = require("gulp");
+const gzip = require("gulp-gzip");
 const uglify = require("gulp-uglify");
 const cleanCSS = require("gulp-clean-css");
 const rename = require("gulp-rename");
@@ -7,7 +8,8 @@ const rename = require("gulp-rename");
 const resource = {
   css: ["web/*.css"],
   js: ["web/*.js", "!web/*.min.js"],
-  copy: ["web/*.htm", "web/*.min.js"],
+  copy: ["web/*.htm"],
+  copy_gzip: ["web/*.min.js"],
 };
 
 const paths = {
@@ -22,6 +24,10 @@ function copy() {
   return gulp.src(resource.copy).pipe(gulp.dest(paths.dist));
 }
 
+function copy_gzip() {
+  return gulp.src(resource.copy_gzip).pipe(gzip()).pipe(gulp.dest(paths.dist));
+}
+
 function styles() {
   return gulp
     .src(resource.css)
@@ -31,6 +37,7 @@ function styles() {
         suffix: ".min",
       })
     )
+    .pipe(gzip())
     .pipe(gulp.dest(paths.dist));
 }
 
@@ -43,6 +50,7 @@ function scripts() {
         suffix: ".min",
       })
     )
+    .pipe(gzip())
     .pipe(gulp.dest(paths.dist));
 }
 
@@ -51,7 +59,10 @@ function watch() {
   gulp.watch(resource.js, scripts);
 }
 
-const build = gulp.series(clean, gulp.parallel(copy, styles, scripts));
+const build = gulp.series(
+  clean,
+  gulp.parallel(copy, copy_gzip, styles, scripts)
+);
 
 // export gulp tasks
 exports.clean = clean;

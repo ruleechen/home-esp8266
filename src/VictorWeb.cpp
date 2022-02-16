@@ -30,9 +30,9 @@ namespace Victor::Components {
   }
 
   void VictorWeb::_registerHandlers() {
-    _server->serveStatic("/style.min.css", LittleFS, "/web/style.min.css"); // "max-age=x" means x seconds
-    _server->serveStatic("/mithril.min.js", LittleFS, "/web/mithril.min.js");
-    _server->serveStatic("/app.min.js", LittleFS, "/web/app.min.js");
+    // max-age=600, no-cache, no-store, must-revalidate
+    // "max-age=x" means x seconds
+    _server->serveStatic("/w/", LittleFS, "/web/");
     _server->on(F("/"), HTTP_GET, std::bind(&VictorWeb::_handleIndexPage, this));
     _server->on(F("/system/status"), HTTP_GET, std::bind(&VictorWeb::_handleSystemStatus, this));
     _server->on(F("/system/reset"), HTTP_POST, std::bind(&VictorWeb::_handleSystemReset, this));
@@ -63,7 +63,7 @@ namespace Victor::Components {
   }
 
   void VictorWeb::_solvePageTokens(String& html) {
-    html.replace(F("{productName}"), VICTOR_FIRMWARE_NAME);
+    html.replace(F("{title}"), VICTOR_FIRMWARE_NAME);
     html.replace(F("{version}"), String(UNIX_TIME));
   }
 
