@@ -591,8 +591,8 @@ const WifiListView = (() => {
       url: "/wifi/join",
       body: Object.assign({}, { password: passEl.value }, ap),
     }).then((res) => {
-      if (res.err) {
-        alert(res.err);
+      if (res.msg) {
+        alert(res.msg);
       } else if (res.ip) {
         alert("Success! obtain ip: " + res.ip);
       }

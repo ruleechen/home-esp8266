@@ -330,14 +330,14 @@ namespace Victor::Components {
     // res
     DynamicJsonDocument res(64);
     if (!ssid || ssid == F("")) {
-      res[F("err")] = F("input ssid to join");
+      res[F("msg")] = F("input ssid to join");
     } else {
       victorWifi.join(ssid, password, channel, (uint8_t*)bssid.c_str());
-      victorWifi.waitForConnected();
+      // victorWifi.waitForConnected();
       if (victorWifi.isConnected()) {
         res[F("ip")] = WiFi.localIP().toString();
       } else {
-        res[F("err")] = F("failed");
+        res[F("msg")] = F("connecting");
       }
     }
     _sendJson(res);
