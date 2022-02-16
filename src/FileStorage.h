@@ -60,7 +60,7 @@ namespace Victor::Components {
         _error().section(F("open failed"));
       }
     } else {
-      _error().section(F("file notfound"), _filePath);
+      _error().section(F("not found"), _filePath);
     }
     if (_userCache) {
       _cache = &model;
@@ -85,7 +85,7 @@ namespace Victor::Components {
       file.close();
       success = true;
     } else {
-      _error().section(F("open write failed"));
+      _error().section(F("open(w) failed"));
     }
     return success;
   }

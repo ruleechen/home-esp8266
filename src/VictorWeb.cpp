@@ -30,9 +30,11 @@ namespace Victor::Components {
   }
 
   void VictorWeb::_registerHandlers() {
+    // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
     // max-age=600, no-cache, no-store, must-revalidate
-    // "max-age=x" means x seconds
+    // "max-age=N" means N seconds
     _server->serveStatic("/w/", LittleFS, "/web/");
+    _server->onNotFound(std::bind(&VictorWeb::_handleNotFound, this));
     _server->on(F("/"), HTTP_GET, std::bind(&VictorWeb::_handleIndexPage, this));
     _server->on(F("/system/status"), HTTP_GET, std::bind(&VictorWeb::_handleSystemStatus, this));
     _server->on(F("/system/reset"), HTTP_POST, std::bind(&VictorWeb::_handleSystemReset, this));
@@ -48,7 +50,6 @@ namespace Victor::Components {
     _server->on(F("/wifi/reset"), HTTP_POST, std::bind(&VictorWeb::_handleWifiReset, this));
     _server->on(F("/ota"), HTTP_GET, std::bind(&VictorWeb::_handleOta, this));
     _server->on(F("/ota/fire"), HTTP_POST, std::bind(&VictorWeb::_handleOtaFire, this));
-    _server->onNotFound(std::bind(&VictorWeb::_handleNotFound, this));
     _server->on(F("/radio"), HTTP_GET, std::bind(&VictorWeb::_handleRadioGet, this));
     _server->on(F("/radio"), HTTP_POST, std::bind(&VictorWeb::_handleRadioSave, this));
     _server->on(F("/radio/emit"), HTTP_GET, std::bind(&VictorWeb::_handleRadioEmitGet, this));
@@ -94,6 +95,15 @@ namespace Victor::Components {
     if (onRequestEnd) {
       onRequestEnd();
     }
+  }
+
+  void VictorWeb::_handleNotFound() {
+    _dispatchRequestStart();
+    DynamicJsonDocument res(512);
+    res[F("uri")] = _server->uri();
+    res[F("err")] = F("not found");
+    _sendJson(res);
+    _dispatchRequestEnd();
   }
 
   void VictorWeb::_handleIndexPage() {
@@ -400,15 +410,6 @@ namespace Victor::Components {
     // res
     DynamicJsonDocument res(64);
     res[F("msg")] = F("success");
-    _sendJson(res);
-    _dispatchRequestEnd();
-  }
-
-  void VictorWeb::_handleNotFound() {
-    _dispatchRequestStart();
-    DynamicJsonDocument res(512);
-    res[F("uri")] = _server->uri();
-    res[F("err")] = F("resource not found");
     _sendJson(res);
     _dispatchRequestEnd();
   }
