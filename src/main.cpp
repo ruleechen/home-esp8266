@@ -40,10 +40,10 @@ void setup(void) {
   webPortal.onServiceGet = [](std::vector<KeyValueModel>& items) {
     items.push_back({ .key = F("key1"), .value = F("value1") });
   };
-  webPortal.onServicePost = [](const String& type) {
+  webPortal.onServicePost = [](const String& value) {
     console.log()
       .bracket(F("service"))
-      .section(F("post"), type);
+      .section(F("post"), value);
   };
   webPortal.setup();
 

@@ -647,11 +647,11 @@ namespace Victor::Components {
     DynamicJsonDocument payload(128);
     deserializeJson(payload, payloadJson);
     // read
-    const auto type = payload[F("type")];
+    const auto value = payload[F("value")];
     // act
     DynamicJsonDocument res(512);
     if (onServicePost) {
-      onServicePost(type);
+      onServicePost(value);
       res[F("msg")] = F("success");
     } else {
       res[F("err")] = F("onServicePost is required");

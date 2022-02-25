@@ -185,7 +185,7 @@ const ServiceView = (() => {
       m.request({
         method: "POST",
         url: "/service/post",
-        body: { type: ev.target.value },
+        body: { value: ev.target.value },
       }).then((res) => {
         if (res.err) {
           alert(res.err);
