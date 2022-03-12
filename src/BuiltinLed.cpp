@@ -1,6 +1,6 @@
 #include "BuiltinLed.h"
 
-#define LED_FLASH_DURATION 200
+#define LED_FLASH_DURATION 500
 
 namespace Victor::Components {
 
