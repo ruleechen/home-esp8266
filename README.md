@@ -10,6 +10,7 @@ The foundation of home accessories base on chip ESP8266
 ```bash
 pio run --environment esp01_1m
 pio run --environment esp01_1m --target buildfs
-pio package pack
-pio package publish home-esp8266/home-esp8266-0.0.7.tar.gz
 ```
+
+### PlatformIO Registry
+- https://registry.platformio.org/libraries/ruleechen/home-esp8266
