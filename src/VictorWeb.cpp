@@ -341,11 +341,8 @@ namespace Victor::Components {
     } else {
       victorWifi.join(ssid, password, channel, (uint8_t*)bssid.c_str());
       victorWifi.waitForConnected();
-      if (victorWifi.isConnected()) {
-        res[F("ip")] = WiFi.localIP().toString();
-      } else {
-        res[F("msg")] = F("connecting");
-      }
+      res[F("connected")] = victorWifi.isConnected();
+      res[F("ip")] = WiFi.localIP().toString();
     }
     _sendJson(res);
     _dispatchRequestEnd();
