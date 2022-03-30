@@ -22,7 +22,7 @@ namespace Victor::Components {
    protected:
     const char* _filePath;
     size_t _maxSize = DEFAULT_FILE_SIZE;
-    bool _userCache = false;
+    bool _enableCache = false;
     TModel* _cache = nullptr;
     Console _error();
     virtual void _serializeTo(const TModel& model, DynamicJsonDocument& doc);
@@ -62,7 +62,7 @@ namespace Victor::Components {
     } else {
       _error().section(F("not found"), _filePath);
     }
-    if (_userCache) {
+    if (_enableCache) {
       _cache = &model;
     }
     return model;

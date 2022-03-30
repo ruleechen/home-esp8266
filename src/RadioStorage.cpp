@@ -5,6 +5,7 @@ namespace Victor::Components {
   RadioStorage::RadioStorage() {
     _filePath = "/radio.json";
     _maxSize = 4096;
+    _enableCache = false;
     _lastReceived = {}; // empty value
   }
 

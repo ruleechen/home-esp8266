@@ -5,6 +5,7 @@ namespace Victor::Components {
   AppStorage::AppStorage() {
     _filePath = "/app.json";
     _maxSize = 256;
+    _enableCache = true;
   }
 
   void AppStorage::_serializeTo(const AppModel& model, DynamicJsonDocument& doc) {
