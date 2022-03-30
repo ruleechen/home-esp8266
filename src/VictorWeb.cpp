@@ -340,7 +340,7 @@ namespace Victor::Components {
       res[F("msg")] = F("input ssid to join");
     } else {
       victorWifi.join(ssid, password, channel, (uint8_t*)bssid.c_str());
-      // victorWifi.waitForConnected();
+      victorWifi.waitForConnected();
       if (victorWifi.isConnected()) {
         res[F("ip")] = WiFi.localIP().toString();
       } else {

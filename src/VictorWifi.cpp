@@ -78,17 +78,8 @@ namespace Victor::Components {
   }
 
   void VictorWifi::waitForConnected() {
-    console.newline();
-    auto checkTimes = 60;
-    while (!isConnected()) {
-      delay(500);
-      console.write(F("."));
-      if (checkTimes == 0) {
-        break;
-      } else {
-        checkTimes--;
-      }
-    }
+    _log().section(F("connecting..."));
+    WiFi.waitForConnectResult(60000);
   }
 
   String VictorWifi::getHostId() {
