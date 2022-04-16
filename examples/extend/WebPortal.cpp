@@ -36,18 +36,18 @@ namespace Victor::Components {
 
   void WebPortal::_handleServiceSave() {
     _dispatchRequestStart();
-      // payload
-      const auto payloadJson = _server->arg(F("plain"));
-      DynamicJsonDocument payload(512);
-      deserializeJson(payload, payloadJson);
-      // read
-      const auto ruleItems = payload[F("rules")];
-      // ...
-      // res
-      DynamicJsonDocument res(64);
-      res[F("message")] = F("success");
-      _sendJson(res);
-      _dispatchRequestEnd();
+    // payload
+    const auto payloadJson = _server->arg(F("plain"));
+    DynamicJsonDocument payload(512);
+    deserializeJson(payload, payloadJson);
+    // read
+    const auto ruleItems = payload[F("rules")];
+    // ...
+    // res
+    DynamicJsonDocument res(64);
+    res[F("message")] = F("success");
+    _sendJson(res);
+    _dispatchRequestEnd();
   }
 
 } // namespace Victor::Components

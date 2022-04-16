@@ -625,11 +625,11 @@ namespace Victor::Components {
   void VictorWeb::_handleServiceGet() {
     _dispatchRequestStart();
     // read
-    std::vector<KeyValueModel> states = {
-      { .key = F("Identify"), .value = victorWifi.getHostName() }
+    std::vector<TextValueModel> states = {
+      { .text = F("Identify"), .value = victorWifi.getHostName() }
     };
-    std::vector<KeyValueModel> buttons = {
-      { .key = F("Reset"), .value = F("reset") }
+    std::vector<TextValueModel> buttons = {
+      { .text = F("Reset"), .value = F("reset") }
     };
     if (onServiceGet) {
       onServiceGet(states, buttons);
@@ -639,13 +639,13 @@ namespace Victor::Components {
     const JsonArray statesArr = res.createNestedArray(F("states"));
     for (const auto& state : states) {
       const JsonArray stateArr = statesArr.createNestedArray();
-      stateArr[0] = state.key;
+      stateArr[0] = state.text;
       stateArr[1] = state.value;
     }
     const JsonArray buttonsArr = res.createNestedArray(F("buttons"));
     for (const auto& button : buttons) {
       const JsonArray buttonArr = buttonsArr.createNestedArray();
-      buttonArr[0] = button.key;
+      buttonArr[0] = button.text;
       buttonArr[1] = button.value;
     }
     // res

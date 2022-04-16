@@ -16,8 +16,8 @@
 
 namespace Victor::Components {
 
-  struct KeyValueModel {
-    String key;
+  struct TextValueModel {
+    String text;
     String value;
   };
 
@@ -35,7 +35,7 @@ namespace Victor::Components {
     typedef std::function<void(uint8_t index)> TRadioEmitHandler;
     TRadioEmitHandler onRadioEmit = nullptr;
     // service
-    typedef std::function<void(std::vector<KeyValueModel>& states, std::vector<KeyValueModel>& buttons)> TServiceGetHandler;
+    typedef std::function<void(std::vector<TextValueModel>& states, std::vector<TextValueModel>& buttons)> TServiceGetHandler;
     typedef std::function<void(const String& value)> TServicePostHandler;
     TServiceGetHandler onServiceGet = nullptr;
     TServicePostHandler onServicePost = nullptr;
