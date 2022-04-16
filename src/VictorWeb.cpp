@@ -629,7 +629,7 @@ namespace Victor::Components {
       { .text = F("Identify"), .value = victorWifi.getHostName() }
     };
     std::vector<TextValueModel> buttons = {
-      { .text = F("Reset"), .value = F("reset") }
+      { .text = F("Reset"), .value = F("Reset") }
     };
     if (onServiceGet) {
       onServiceGet(states, buttons);
