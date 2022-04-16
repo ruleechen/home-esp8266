@@ -37,8 +37,9 @@ void setup(void) {
   webPortal.onRequestStart = []() { builtinLed.toggle(); };
   webPortal.onRequestEnd = []() { builtinLed.toggle(); };
   webPortal.onRadioEmit = [](uint8_t index) { radioPortal.emit(index); };
-  webPortal.onServiceGet = [](std::vector<KeyValueModel>& items) {
-    items.push_back({ .key = F("key1"), .value = F("value1") });
+  webPortal.onServiceGet = [](std::vector<KeyValueModel>& states, std::vector<KeyValueModel>& buttons) {
+    states.push_back({ .key = F("key1"), .value = F("value1") });
+    buttons.push_back({ .key = F("button1"), .value = F("btn1") });
   };
   webPortal.onServicePost = [](const String& value) {
     console.log()

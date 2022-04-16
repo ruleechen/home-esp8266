@@ -35,7 +35,7 @@ namespace Victor::Components {
     typedef std::function<void(uint8_t index)> TRadioEmitHandler;
     TRadioEmitHandler onRadioEmit = nullptr;
     // service
-    typedef std::function<void(std::vector<KeyValueModel>& items)> TServiceGetHandler;
+    typedef std::function<void(std::vector<KeyValueModel>& states, std::vector<KeyValueModel>& buttons)> TServiceGetHandler;
     typedef std::function<void(const String& value)> TServicePostHandler;
     TServiceGetHandler onServiceGet = nullptr;
     TServicePostHandler onServicePost = nullptr;

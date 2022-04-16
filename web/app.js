@@ -167,7 +167,8 @@ vic.mCheckList = (name, values, list) =>
 const ServiceView = (() => {
   const state = {
     loading: true,
-    items: [],
+    states: [],
+    buttons: [],
   };
   const oninit = () => {
     state.loading = true;
@@ -176,7 +177,8 @@ const ServiceView = (() => {
       url: "/service/get",
     }).then((res) => {
       state.loading = false;
-      state.items = res.items;
+      state.states = res.states;
+      state.buttons = res.buttons;
       m.redraw();
     });
   };
@@ -206,12 +208,15 @@ const ServiceView = (() => {
         m("h3", "Service"),
         vic.mTable({
           header: null,
-          rows: state.items,
+          rows: state.states,
         }),
         m("div.form", [
-          m("p", [
-            m("button.btn.weak", { value: "reset", onclick: post }, "Reset"),
-          ]),
+          m(
+            "p",
+            state.buttons.map(([text, value]) =>
+              m("button.btn.weak", { value, onclick: post }, text)
+            )
+          ),
         ]),
       ];
     },
