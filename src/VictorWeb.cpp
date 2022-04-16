@@ -46,6 +46,7 @@ namespace Victor::Components {
     _server->on(F("/wifi"), HTTP_GET, std::bind(&VictorWeb::_handleWifi, this));
     _server->on(F("/wifi/list"), HTTP_GET, std::bind(&VictorWeb::_handleWifiList, this));
     _server->on(F("/wifi/join"), HTTP_POST, std::bind(&VictorWeb::_handleWifiJoin, this));
+    _server->on(F("/wifi/join/status"), HTTP_GET, std::bind(&VictorWeb::_handleWifiJoinStatus, this));
     _server->on(F("/wifi/mode"), HTTP_POST, std::bind(&VictorWeb::_handleWifiMode, this));
     _server->on(F("/wifi/reset"), HTTP_POST, std::bind(&VictorWeb::_handleWifiReset, this));
     _server->on(F("/ota"), HTTP_GET, std::bind(&VictorWeb::_handleOta, this));
@@ -340,10 +341,16 @@ namespace Victor::Components {
       res[F("msg")] = F("input ssid to join");
     } else {
       victorWifi.join(ssid, password, channel, (uint8_t*)bssid.c_str());
-      victorWifi.waitForConnected();
-      res[F("connected")] = victorWifi.isConnected();
-      res[F("ip")] = WiFi.localIP().toString();
+      res[F("join")] = 1;
     }
+    _sendJson(res);
+    _dispatchRequestEnd();
+  }
+
+  void VictorWeb::_handleWifiJoinStatus() {
+    _dispatchRequestStart();
+    DynamicJsonDocument res(64);
+    res[F("status")] = victorWifi.status(true);
     _sendJson(res);
     _dispatchRequestEnd();
   }

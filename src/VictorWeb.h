@@ -60,6 +60,7 @@ namespace Victor::Components {
     void _handleWifi();
     void _handleWifiList();
     void _handleWifiJoin();
+    void _handleWifiJoinStatus();
     void _handleWifiMode();
     void _handleWifiReset();
     void _handleOta();

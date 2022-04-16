@@ -77,9 +77,11 @@ namespace Victor::Components {
     return MDNS.isRunning();
   }
 
-  void VictorWifi::waitForConnected() {
-    _log().section(F("connecting..."));
-    WiFi.waitForConnectResult(60000);
+  int8_t VictorWifi::status(bool query) {
+    _query = query;
+    const auto result = WiFi.status();
+    _log().section(F("got status"), String(result));
+    return result;
   }
 
   String VictorWifi::getHostId() {
@@ -102,9 +104,11 @@ namespace Victor::Components {
   void VictorWifi::_handleStaGotIP(const WiFiEventStationModeGotIP& args) {
     builtinLed.stop();
     _log().section(F("station")).section(F("got ip"), args.ip.toString());
-    const auto model = appStorage.load();
-    if (model.autoMode) {
-      setMode(WIFI_STA);
+    if (!_query) {
+      const auto model = appStorage.load();
+      if (model.autoMode) {
+        setMode(WIFI_STA);
+      }
     }
   }
 

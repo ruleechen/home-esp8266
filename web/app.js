@@ -569,51 +569,83 @@ const WifiView = (() => {
 const WifiListView = (() => {
   const state = {
     loading: true,
-    count: -1,
     bssid: null,
     founds: [{ bssid: "", ssid: "", channel: 0, rssi: 10 }],
     password: "",
+    times: -1,
+    status: -3, // unknown
   };
   const scan = () => {
     state.password = vic.query("#txtPassword").value;
     oninit();
   };
-  const count = (seconds) => {
-    state.count = seconds;
+  const statusName = (code) => {
+    const map = {
+      "-3": "UNKNOWN",
+      "-2": "ERROR",
+      "-1": "TIMEOUT",
+      0: "IDLE_STATUS",
+      1: "NO_SSID_AVAIL",
+      2: "SCAN_COMPLETED",
+      3: "CONNECTED",
+      4: "CONNECT_FAILED",
+      5: "CONNECTION_LOST",
+      6: "WRONG_PASSWORD",
+      7: "DISCONNECTED",
+    };
+    return map[code];
+  };
+  let countNext;
+  const countStatus = (times) => {
+    state.times = times;
     m.redraw();
-    setTimeout(() => {
-      if (state.count >= 0) {
-        count(state.count - 1);
-      }
-    }, 1000);
+    if (state.times > 0) {
+      m.request({
+        method: "GET",
+        url: "/wifi/join/status",
+      })
+        .then((res) => {
+          state.status = res.status;
+          countNext();
+        })
+        .catch(() => {
+          state.status = -2; // error
+          countNext();
+        });
+    }
+  };
+  countNext = () => {
+    m.redraw();
+    if (state.status === 3) {
+      alert("Connected!");
+    } else if (state.times > 0) {
+      setTimeout(() => {
+        countStatus(state.times - 1);
+      }, 1000);
+    }
   };
   const join = () => {
     // validate
+    const passEl = vic.query("#txtPassword");
     const bssidEl = vic.query("input[type=radio]:checked");
     if (!bssidEl) {
       alert("Please select wifi to join");
       return;
     }
-    // display status
-    count(60);
+    state.bssid = bssidEl.value;
+    state.password = passEl.value;
     // send request
-    const passEl = vic.query("#txtPassword");
-    const ap = state.founds.find((x) => x.bssid === bssidEl.value);
+    const ap = state.founds.find((x) => x.bssid === state.bssid);
     m.request({
       method: "POST",
       url: "/wifi/join",
-      body: Object.assign({}, { password: passEl.value }, ap),
+      body: Object.assign({}, { password: state.password }, ap),
     }).then((res) => {
-      count(-1); // stop
-      m.redraw();
       if (res.msg) {
         alert(res.msg);
       } else {
-        if (res.connected) {
-          alert("Connected with " + res.ip);
-        } else {
-          alert("Join failed!");
-        }
+        state.status = -3; // unknown
+        countStatus(60); // start monitor wifi join state
       }
     });
   };
@@ -677,11 +709,11 @@ const WifiListView = (() => {
             m("button.btn", { onclick: scan }, "Scan"),
             m("button.btn", { onclick: join }, "Join"),
           ]),
-          state.count >= 0
+          state.times >= 0
             ? m(
                 "p",
                 { style: { color: "#690" } },
-                "Connecting... (" + state.count + ")"
+                `Please wait... (${state.times})/${statusName(state.status)}`
               )
             : null,
         ]),
