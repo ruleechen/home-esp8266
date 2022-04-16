@@ -628,9 +628,7 @@ namespace Victor::Components {
     std::vector<TextValueModel> states = {
       { .text = F("Identify"), .value = victorWifi.getHostName() }
     };
-    std::vector<TextValueModel> buttons = {
-      { .text = F("Reset"), .value = F("Reset") }
-    };
+    std::vector<TextValueModel> buttons = {};
     if (onServiceGet) {
       onServiceGet(states, buttons);
     }
