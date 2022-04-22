@@ -457,7 +457,7 @@ const FileItemView = (() => {
   const save = () => {
     request("POST", {
       content: vic.query("textarea").value,
-      saveAs: vic.query("txtSaveAs").value,
+      saveAs: vic.query("#txtSaveAs").value,
     }).then((res) => {
       if (res.err) {
         alert(res.err);
