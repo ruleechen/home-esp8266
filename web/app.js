@@ -457,6 +457,7 @@ const FileItemView = (() => {
   const save = () => {
     request("POST", {
       content: vic.query("textarea").value,
+      saveAs: vic.query("txtSaveAs").value,
     }).then((res) => {
       if (res.err) {
         alert(res.err);
@@ -496,6 +497,9 @@ const FileItemView = (() => {
         m("p", [m(m.route.Link, { href: "/fs/files" }, "< Files")]),
         m("div.form", [
           m("p", [m("textarea", { cols: 50, rows: 10 }, state.file.content)]),
+          m("p", [
+            m("input[type=text]", { id: "txtSaveAs", placeholder: "Save As" }),
+          ]),
           m("p", [
             m("button.btn", { onclick: save }, "Save"),
             m("button.btn.weak", { onclick: remove }, "Delete"),

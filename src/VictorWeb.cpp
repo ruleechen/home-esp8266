@@ -244,8 +244,12 @@ namespace Victor::Components {
     deserializeJson(payload, payloadJson);
     // write
     DynamicJsonDocument res(64);
-    const auto path = _server->arg(F("path"));
-    auto file = LittleFS.open(path, "w");
+    auto path = _server->arg(F("path"));
+    const auto saveAs = String(payload[F("saveAs")]);
+    if (saveAs.length() > 3) { // minimal path as "/f.n"
+      path = saveAs;
+    }
+    auto file = LittleFS.open(path, "w+");
     if (file) {
       const char* content = payload[F("content")];
       file.write(content);

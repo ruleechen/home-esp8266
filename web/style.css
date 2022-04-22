@@ -23,7 +23,8 @@ b {
   color: #005c5f;
 }
 
-input {
+input,
+textarea {
   margin: 0 5px;
 }
 
