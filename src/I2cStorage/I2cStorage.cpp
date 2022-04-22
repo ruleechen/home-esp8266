@@ -2,7 +2,7 @@
 
 namespace Victor::Components {
 
-  I2cStorage::I2cStorage(char* filePath) {
+  I2cStorage::I2cStorage(const char* filePath) {
     _filePath = filePath;
     _maxSize = 512;
   }

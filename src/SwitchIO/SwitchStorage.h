@@ -7,7 +7,7 @@
 namespace Victor::Components {
   class SwitchStorage : public FileStorage<SwitchSetting> {
    public:
-    SwitchStorage(char* filePath);
+    SwitchStorage(const char* filePath);
 
    protected:
     void _serializeTo(const SwitchSetting& model, DynamicJsonDocument& doc) override;

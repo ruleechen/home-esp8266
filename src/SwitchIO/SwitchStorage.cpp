@@ -2,7 +2,7 @@
 
 namespace Victor::Components {
 
-  SwitchStorage::SwitchStorage(char* filePath) {
+  SwitchStorage::SwitchStorage(const char* filePath) {
     _filePath = filePath;
   }
 

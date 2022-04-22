@@ -5,6 +5,9 @@
 
 namespace Victor::Components {
 
+  /**
+   * {"pin":[4,5,0,0],"state":[0,0]}
+   */
   struct SwitchSetting {
     int8_t inputPin = -1;
     int8_t outputPin = -1;

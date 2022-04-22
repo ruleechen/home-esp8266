@@ -7,7 +7,7 @@
 namespace Victor::Components {
   class I2cStorage : public FileStorage<I2cSetting> {
    public:
-    I2cStorage(char* filePath);
+    I2cStorage(const char* filePath);
 
    protected:
     void _serializeTo(const I2cSetting& model, DynamicJsonDocument& doc) override;
