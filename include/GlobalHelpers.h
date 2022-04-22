@@ -40,6 +40,14 @@ namespace Victor {
       return parts;
     }
 
+    static String toYesNoName(bool state) {
+      return state ? F("Yes") : F("No");
+    }
+
+    static String toOnOffName(bool state) {
+      return state ? F("On") : F("Off");
+    }
+
   };
 
 } // namespace Victor
