@@ -7,7 +7,6 @@
 #include "WebPortal.h"
 
 using namespace Victor;
-using namespace Victor::Events;
 using namespace Victor::Components;
 
 WebPortal webPortal(80);
