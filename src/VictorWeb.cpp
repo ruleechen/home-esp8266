@@ -354,7 +354,7 @@ namespace Victor::Components {
   void VictorWeb::_handleWifiJoinStatus() {
     _dispatchRequestStart();
     DynamicJsonDocument res(64);
-    res[F("status")] = victorWifi.status(true);
+    res[F("status")] = victorWifi.status();
     _sendJson(res);
     _dispatchRequestEnd();
   }

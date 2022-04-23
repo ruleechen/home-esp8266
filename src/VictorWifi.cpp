@@ -66,6 +66,8 @@ namespace Victor::Components {
 
   void VictorWifi::join(const String& ssid, const String& password, int32_t channel, uint8_t* bssid) {
     _log().section(F("joining"), ssid);
+    _joiningSsid = ssid;
+    _joiningPass = password;
     WiFi.begin(ssid, password, channel, bssid, true);
   }
 
@@ -77,8 +79,7 @@ namespace Victor::Components {
     return MDNS.isRunning();
   }
 
-  int8_t VictorWifi::status(bool query) {
-    _query = query;
+  int8_t VictorWifi::status() {
     const auto result = WiFi.status();
     _log().section(F("got status"), String(result));
     return result;
@@ -104,8 +105,19 @@ namespace Victor::Components {
   void VictorWifi::_handleStaGotIP(const WiFiEventStationModeGotIP& args) {
     builtinLed.stop();
     _log().section(F("station")).section(F("got ip"), args.ip.toString());
-    if (!_query) {
-      const auto model = appStorage.load();
+    auto model = appStorage.load();
+    if (_joiningSsid && _joiningSsid != F("")) {
+      // save new wifi credential
+      if (
+        model.wifiSsid != _joiningSsid ||
+        model.wifiPass != _joiningPass
+      ) {
+        model.wifiSsid = _joiningSsid;
+        model.wifiPass = _joiningPass;
+        appStorage.save(model);
+      }
+    } else {
+      // turn off AP only when it is not a new join
       if (model.autoMode) {
         setMode(WIFI_STA);
       }

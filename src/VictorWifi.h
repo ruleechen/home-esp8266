@@ -19,12 +19,13 @@ namespace Victor::Components {
     void join(const String& ssid, const String& password = emptyString, int32_t channel = 0, uint8_t* bssid = nullptr);
     bool isConnected() const;
     bool isMDNSRunning() const;
-    int8_t status(bool query = false);
+    int8_t status();
     String getHostId();
     String getHostName();
 
    private:
-    bool _query = false;
+    String _joiningSsid;
+    String _joiningPass;
     WiFiEventHandler _gotIPHandler = nullptr;
     WiFiEventHandler _disconnectedHandler = nullptr;
     void _handleStaGotIP(const WiFiEventStationModeGotIP& args);
