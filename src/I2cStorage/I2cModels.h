@@ -5,9 +5,6 @@
 
 namespace Victor::Components {
 
-  /**
-   * {"sda":4,"scl":5,"loop":10,"reset":24}
-   */
   struct I2cSetting {
     uint8_t sdaPin = 4;
     uint8_t sclPin = 5;

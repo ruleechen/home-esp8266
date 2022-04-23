@@ -8,7 +8,7 @@ namespace Victor::Components {
     _input = new DigitalInput(model.inputPin, model.inputTrueValue);
     _output = new DigitalOutput(model.outputPin, model.outputTrueValue);
     _inputState = getInputState();
-    setOutputState(model.outputOn);
+    setOutputState(model.outputIsOn);
   }
 
   void SwitchIO::loop() {
@@ -35,7 +35,7 @@ namespace Victor::Components {
     // save output state
     auto model = _storage->load();
     if (model.saveOutput) {
-      model.outputOn = on;
+      model.outputIsOn = on;
       _storage->save(model);
     }
   }

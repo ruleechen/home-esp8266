@@ -5,16 +5,16 @@
 
 namespace Victor::Components {
 
-  /**
-   * {"pin":[4,5,0,0],"state":[0,0]}
-   */
   struct SwitchSetting {
+    // input pin
     int8_t inputPin = -1;
-    int8_t outputPin = -1;
     uint8_t inputTrueValue = 0;  // LOW
+    // output pin
+    int8_t outputPin = -1;
     uint8_t outputTrueValue = 0; // LOW
-    bool outputOn = false;
+    // output state
     bool saveOutput = false;
+    bool outputIsOn = false;
   };
 
 } // namespace Victor::Components

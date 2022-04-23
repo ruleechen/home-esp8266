@@ -7,25 +7,33 @@ namespace Victor::Components {
   }
 
   void SwitchStorage::_serializeTo(const SwitchSetting& model, DynamicJsonDocument& doc) {
-    const JsonArray pinArr = doc.createNestedArray(F("pin"));
-    pinArr[0] = model.inputPin;
-    pinArr[1] = model.outputPin;
-    pinArr[2] = model.inputTrueValue;
-    pinArr[3] = model.outputTrueValue;
+    // input pin
+    const JsonArray inputArr = doc.createNestedArray(F("i"));
+    inputArr[0] = model.inputPin;
+    inputArr[1] = model.inputTrueValue;
+    // output pin
+    const JsonArray outputArr = doc.createNestedArray(F("o"));
+    outputArr[0] = model.outputPin;
+    outputArr[1] = model.outputTrueValue;
+    // output state
     const JsonArray stateArr = doc.createNestedArray(F("state"));
-    stateArr[0] = model.outputOn ? 1 : 0;
-    stateArr[1] = model.saveOutput ? 1 : 0;
+    stateArr[0] = model.saveOutput ? 1 : 0;
+    stateArr[1] = model.outputIsOn ? 1 : 0;
   }
 
   void SwitchStorage::_deserializeFrom(SwitchSetting& model, const DynamicJsonDocument& doc) {
-    const auto pinArr = doc[F("pin")];
-    model.inputPin = pinArr[0];
-    model.outputPin = pinArr[1];
-    model.inputTrueValue = pinArr[2];
-    model.outputTrueValue = pinArr[3];
+    // input pin
+    const auto inputArr = doc[F("i")];
+    model.inputPin = inputArr[0];
+    model.inputTrueValue = inputArr[1];
+    // output pin
+    const auto outputArr = doc[F("o")];
+    model.outputPin = outputArr[0];
+    model.outputTrueValue = outputArr[1];
+    // output state
     const auto stateArr = doc[F("state")];
-    model.outputOn = stateArr[0] == 1;
-    model.saveOutput = stateArr[1] == 1;
+    model.saveOutput = stateArr[0] == 1;
+    model.outputIsOn = stateArr[1] == 1;
   }
 
 } // namespace Victor::Components
