@@ -8,12 +8,12 @@ namespace Victor::Components {
   }
 
   VictorWeb::~VictorWeb() {
-    if (_server) {
+    if (_server != nullptr) {
       _server->stop();
       delete _server;
       _server = nullptr;
     }
-    if (_httpUpdater) {
+    if (_httpUpdater != nullptr) {
       delete _httpUpdater;
       _httpUpdater = nullptr;
     }
@@ -87,13 +87,13 @@ namespace Victor::Components {
     _server->sendHeader(F("Access-Control-Allow-Methods"), F("PUT,POST,GET,OPTIONS"));
     _server->sendHeader(F("Access-Control-Allow-Headers"), F("*"));
     // fire event
-    if (onRequestStart) {
+    if (onRequestStart != nullptr) {
       onRequestStart();
     }
   }
 
   void VictorWeb::_dispatchRequestEnd() {
-    if (onRequestEnd) {
+    if (onRequestEnd != nullptr) {
       onRequestEnd();
     }
   }
@@ -521,7 +521,7 @@ namespace Victor::Components {
     // read
     const uint8_t index = payload[F("index")];
     DynamicJsonDocument res(64);
-    if (onRadioEmit) {
+    if (onRadioEmit != nullptr) {
       onRadioEmit(index);
       res[F("msg")] = F("success");
     } else {
@@ -633,7 +633,7 @@ namespace Victor::Components {
       { .text = F("Identify"), .value = victorWifi.getHostName() }
     };
     std::vector<TextValueModel> buttons = {};
-    if (onServiceGet) {
+    if (onServiceGet != nullptr) {
       onServiceGet(states, buttons);
     }
     // write
@@ -665,7 +665,7 @@ namespace Victor::Components {
     const auto value = payload[F("value")];
     // act
     DynamicJsonDocument res(512);
-    if (onServicePost) {
+    if (onServicePost != nullptr) {
       onServicePost(value);
       res[F("msg")] = F("success");
     } else {

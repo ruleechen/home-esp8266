@@ -10,11 +10,11 @@ namespace Victor::Components {
   }
 
   BuiltinLed::~BuiltinLed() {
-    if (_ticker) {
+    if (_ticker != nullptr) {
       delete _ticker;
       _ticker = nullptr;
     }
-    if (_outputPin) {
+    if (_outputPin != nullptr) {
       delete _outputPin;
       _outputPin = nullptr;
     }
@@ -29,19 +29,19 @@ namespace Victor::Components {
   }
 
   void BuiltinLed::turnOn() {
-    if (_outputPin) {
+    if (_outputPin != nullptr) {
       _outputPin->setValue(true);
     }
   }
 
   void BuiltinLed::turnOff() {
-    if (_outputPin) {
+    if (_outputPin != nullptr) {
       _outputPin->setValue(false);
     }
   }
 
   void BuiltinLed::toggle() {
-    if (_outputPin) {
+    if (_outputPin != nullptr) {
       const auto value = _outputPin->lastValue();
       _outputPin->setValue(!value);
     }

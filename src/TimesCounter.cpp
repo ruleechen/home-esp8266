@@ -16,7 +16,7 @@ namespace Victor::Components {
     }
     _count++;
     _last = now;
-    if (onCount) {
+    if (onCount != nullptr) {
       onCount(_count);
     }
   }

@@ -10,7 +10,7 @@ namespace Victor::Components {
 
    public:
     TimesCounter(unsigned long resetMillis);
-    TCountHandler onCount;
+    TCountHandler onCount = nullptr;
     void count();
     void reset();
 

@@ -5,7 +5,7 @@ namespace Victor::Components {
   VictorRadio::VictorRadio() { }
 
   VictorRadio::~VictorRadio() {
-    if (_ticker) {
+    if (_ticker != nullptr) {
       delete _ticker;
       _ticker = nullptr;
     }
@@ -32,7 +32,7 @@ namespace Victor::Components {
   }
 
   void VictorRadio::_handleEmit(const RadioEmit& emit) {
-    if (!onEmit) {
+    if (onEmit == nullptr) {
       return;
     }
     if (_ticker == nullptr) {
@@ -149,7 +149,7 @@ namespace Victor::Components {
   }
 
   void VictorRadio::_proceedAction(const RadioRule& rule) {
-    if (onAction) {
+    if (onAction != nullptr) {
       const auto handled = onAction(rule);
       if (handled) {
         return;
@@ -179,7 +179,7 @@ namespace Victor::Components {
   }
 
   void VictorRadio::_proceedCommand(const RadioCommandParsed& command) {
-    if (onCommand) {
+    if (onCommand != nullptr) {
       const auto handled = onCommand(command);
       if (handled) {
         return;

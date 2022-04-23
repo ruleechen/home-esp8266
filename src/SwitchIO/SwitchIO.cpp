@@ -18,7 +18,7 @@ namespace Victor::Components {
       const auto inputOn = getInputState();
       if (inputOn != _inputState) {
         _inputState = inputOn;
-        if (onInputChange && inputOn) {
+        if (onInputChange != nullptr && inputOn) {
           const auto outputState = _output->lastValue();
           onInputChange(!outputState); // toggle value
         }
