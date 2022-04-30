@@ -1,8 +1,5 @@
 #include "BuiltinLed.h"
 
-#define LED_FLASH_DURATION 10
-#define LED_TWINKLE_DURATION 500
-
 namespace Victor::Components {
 
   BuiltinLed::BuiltinLed() {
@@ -47,16 +44,16 @@ namespace Victor::Components {
     }
   }
 
-  void BuiltinLed::flash() {
+  void BuiltinLed::flash(uint16_t duration) {
     toggle();
-    delay(LED_FLASH_DURATION);
+    delay(duration);
     toggle();
   }
 
-  void BuiltinLed::twinkle() {
+  void BuiltinLed::twinkle(uint16_t duration) {
     toggle();
     _ticker->detach();
-    _ticker->attach_ms(LED_TWINKLE_DURATION, [&]() {
+    _ticker->attach_ms(duration, [&]() {
       toggle();
     });
   }
