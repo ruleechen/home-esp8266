@@ -7,8 +7,30 @@ namespace Victor::Components {
     const auto model = _storage->load();
     _input = new DigitalInput(model.inputPin, model.inputTrueValue);
     _output = new DigitalOutput(model.outputPin, model.outputTrueValue);
+    if (model.output2Pin > -1) {
+      _output2 = new DigitalOutput(model.output2Pin, model.output2TrueValue);
+    }
     _inputState = getInputState();
     setOutputState(model.outputIsOn);
+  }
+
+  SwitchIO::~SwitchIO() {
+    if (_storage != nullptr) {
+      // delete _storage; // ignore deleting external component
+      _storage = nullptr;
+    }
+    if (_input != nullptr) {
+      delete _input;
+      _input = nullptr;
+    }
+    if (_output != nullptr) {
+      delete _output;
+      _output = nullptr;
+    }
+    if (_output2 != nullptr) {
+      delete _output2;
+      _output2 = nullptr;
+    }
   }
 
   void SwitchIO::loop() {
@@ -32,6 +54,9 @@ namespace Victor::Components {
 
   void SwitchIO::setOutputState(bool on) {
     _output->setValue(on);
+    if (_output2 != nullptr) {
+      _output2->setValue(on);
+    }
     // save output state
     auto model = _storage->load();
     if (model.saveOutput) {
