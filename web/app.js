@@ -1421,6 +1421,11 @@ vic.appendRoute((config) =>
 
 // start
 vic(() => {
+  // main
   const root = vic.query("div.main");
   m.route(root, "/service", vic.getRoute());
+  // foot
+  const year = new Date().getFullYear();
+  const foot = vic.query("div.foot");
+  foot.innerHTML = `<a target="_blank" href="https://github.com/ruleechen">© ${year} ${document.title}</a>`;
 });
