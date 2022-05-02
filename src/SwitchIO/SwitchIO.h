@@ -6,6 +6,8 @@
 #include "SwitchModels.h"
 #include "SwitchStorage.h"
 
+#define SWITCHIO_THROTTLE_MILLIS 100
+
 namespace Victor::Components {
   class SwitchIO {
    public:

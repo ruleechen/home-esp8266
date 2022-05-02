@@ -35,12 +35,12 @@ namespace Victor::Components {
 
   void SwitchIO::loop() {
     const auto now = millis();
-    if (now - _lastLoop > 100) {
+    if (now - _lastLoop > SWITCHIO_THROTTLE_MILLIS) {
       _lastLoop = now;
       const auto inputOn = getInputState();
       if (inputOn != _inputState) {
         _inputState = inputOn;
-        if (onInputChange != nullptr && inputOn) {
+        if (onInputChange != nullptr && !inputOn) { // trigger only when input button released
           const auto outputState = _output->lastValue();
           onInputChange(!outputState); // toggle value
         }
