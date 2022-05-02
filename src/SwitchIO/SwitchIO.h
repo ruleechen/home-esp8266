@@ -12,9 +12,10 @@ namespace Victor::Components {
     SwitchIO(SwitchStorage* storage);
     ~SwitchIO();
     void loop();
-    void setOutputState(bool on);
+    bool getOutputState();
+    void setOutputState(bool value);
     // events
-    typedef std::function<void(ButtonAction action, bool outputValue)> TStateHandler;
+    typedef std::function<void(ButtonAction action)> TStateHandler;
     TStateHandler onInputChange = nullptr;
 
    private:

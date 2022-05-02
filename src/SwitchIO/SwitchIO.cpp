@@ -11,8 +11,9 @@ namespace Victor::Components {
       _output2 = new DigitalOutput(model.output2Pin, model.output2TrueValue);
     }
     _input->onClick = [&](ButtonAction action) {
-      const auto outputValue = _output->lastValue();
-      onInputChange(action, outputValue);
+      if (onInputChange != nullptr) {
+        onInputChange(action);
+      }
     };
     setOutputState(model.outputIsOn);
   }
@@ -39,15 +40,22 @@ namespace Victor::Components {
     _input->loop();
   }
 
-  void SwitchIO::setOutputState(bool on) {
-    _output->setValue(on);
+  bool SwitchIO::getOutputState() {
+    return _output->lastValue();
+  }
+
+  void SwitchIO::setOutputState(bool value) {
+    _output->setValue(value);
     if (_output2 != nullptr) {
-      _output2->setValue(on);
+      _output2->setValue(value);
     }
     // save output state
     auto model = _storage->load();
-    if (model.saveOutput) {
-      model.outputIsOn = on;
+    if (
+      model.saveOutput &&
+      model.outputIsOn != value
+    ) {
+      model.outputIsOn = value;
       _storage->save(model);
     }
   }
