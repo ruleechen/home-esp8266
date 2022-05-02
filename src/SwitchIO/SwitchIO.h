@@ -1,12 +1,10 @@
 #ifndef SwitchIO_h
 #define SwitchIO_h
 
-#include <DigitalInput.h>
 #include <DigitalOutput.h>
 #include "SwitchModels.h"
 #include "SwitchStorage.h"
-
-#define SWITCHIO_THROTTLE_MILLIS 100
+#include "Button/ToothpickButton.h"
 
 namespace Victor::Components {
   class SwitchIO {
@@ -14,19 +12,16 @@ namespace Victor::Components {
     SwitchIO(SwitchStorage* storage);
     ~SwitchIO();
     void loop();
-    bool getInputState();
     void setOutputState(bool on);
     // events
-    typedef std::function<void(bool on)> TStateHandler;
+    typedef std::function<void(ButtonAction action, bool outputValue)> TStateHandler;
     TStateHandler onInputChange = nullptr;
 
    private:
     SwitchStorage* _storage = nullptr;
-    DigitalInput* _input = nullptr;
+    ToothpickButton* _input = nullptr;
     DigitalOutput* _output = nullptr;
     DigitalOutput* _output2 = nullptr;
-    bool _inputState = false;
-    unsigned long _lastLoop = 0;
   };
 
 } // namespace Victor::Components

@@ -5,20 +5,22 @@ namespace Victor::Components {
   SwitchIO::SwitchIO(SwitchStorage* storage) {
     _storage = storage;
     const auto model = _storage->load();
-    _input = new DigitalInput(model.inputPin, model.inputTrueValue);
+    _input = new ToothpickButton(model.inputPin, model.inputTrueValue);
     _output = new DigitalOutput(model.outputPin, model.outputTrueValue);
     if (model.output2Pin > -1) {
       _output2 = new DigitalOutput(model.output2Pin, model.output2TrueValue);
     }
-    _inputState = getInputState();
+    _input->onClick = [&](ButtonAction action) {
+      const auto outputValue = _output->lastValue();
+      onInputChange(action, outputValue);
+    };
     setOutputState(model.outputIsOn);
   }
 
   SwitchIO::~SwitchIO() {
-    if (_storage != nullptr) {
-      // delete _storage; // ignore deleting external component
-      _storage = nullptr;
-    }
+    // ignore deleting external resource
+    _storage = nullptr;
+    onInputChange = nullptr;
     if (_input != nullptr) {
       delete _input;
       _input = nullptr;
@@ -34,22 +36,7 @@ namespace Victor::Components {
   }
 
   void SwitchIO::loop() {
-    const auto now = millis();
-    if (now - _lastLoop > SWITCHIO_THROTTLE_MILLIS) {
-      _lastLoop = now;
-      const auto inputOn = getInputState();
-      if (inputOn != _inputState) {
-        _inputState = inputOn;
-        if (onInputChange != nullptr && !inputOn) { // trigger only when input button released
-          const auto outputState = _output->lastValue();
-          onInputChange(!outputState); // toggle value
-        }
-      }
-    }
-  }
-
-  bool SwitchIO::getInputState() {
-    return _input->getValue();
+    _input->loop();
   }
 
   void SwitchIO::setOutputState(bool on) {
