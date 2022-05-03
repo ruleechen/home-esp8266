@@ -66,7 +66,7 @@ namespace Victor::Components {
 
   void VictorWeb::_solvePageTokens(String& html) {
     html.replace(F("{title}"), VICTOR_FIRMWARE_NAME);
-    html.replace(F("{version}"), String(UNIX_TIME));
+    html.replace(F("{timestamp}"), String(UNIX_TIME));
   }
 
   void VictorWeb::_sendHtml(const String& html) {
