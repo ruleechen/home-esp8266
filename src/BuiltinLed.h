@@ -19,7 +19,7 @@ namespace Victor::Components {
     void turnOff();
     void toggle();
     void flash(uint16_t duration = LED_FLASH_DURATION);
-    void twinkle(uint16_t duration = LED_FLASH_DURATION);
+    void twinkle(uint16_t duration = LED_TWINKLE_DURATION);
     void stop();
 
    private:
