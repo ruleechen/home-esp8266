@@ -4,9 +4,10 @@ namespace Victor::Components {
 
   SwitchStorage::SwitchStorage(const char* filePath) {
     _filePath = filePath;
+    _maxSize = 512;
   }
 
-  void SwitchStorage::_serializeTo(const SwitchSetting& model, DynamicJsonDocument& doc) {
+  void SwitchStorage::_serializeTo(const SwitchConfig& model, DynamicJsonDocument& doc) {
     // input pin
     const JsonArray inputArr = doc.createNestedArray(F("i"));
     inputArr[0] = model.inputPin;
@@ -25,7 +26,7 @@ namespace Victor::Components {
     stateArr[1] = model.outputIsOn ? 1 : 0;
   }
 
-  void SwitchStorage::_deserializeFrom(SwitchSetting& model, const DynamicJsonDocument& doc) {
+  void SwitchStorage::_deserializeFrom(SwitchConfig& model, const DynamicJsonDocument& doc) {
     // input pin
     const auto inputArr = doc[F("i")];
     model.inputPin = inputArr[0];

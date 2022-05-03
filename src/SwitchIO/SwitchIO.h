@@ -2,7 +2,6 @@
 #define SwitchIO_h
 
 #include <DigitalOutput.h>
-#include "SwitchModels.h"
 #include "SwitchStorage.h"
 #include "Button/ToothpickButton.h"
 

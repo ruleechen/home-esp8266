@@ -5,6 +5,7 @@ namespace Victor::Components {
   SwitchIO::SwitchIO(SwitchStorage* storage) {
     _storage = storage;
     const auto model = _storage->load();
+    setOutputState(model.outputIsOn);
     _input = new ToothpickButton(model.inputPin, model.inputTrueValue);
     _output = new DigitalOutput(model.outputPin, model.outputTrueValue);
     if (model.output2Pin > -1) {
@@ -15,7 +16,6 @@ namespace Victor::Components {
         onInputChange(action);
       }
     };
-    setOutputState(model.outputIsOn);
   }
 
   SwitchIO::~SwitchIO() {

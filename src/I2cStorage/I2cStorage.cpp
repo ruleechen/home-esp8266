@@ -7,14 +7,14 @@ namespace Victor::Components {
     _maxSize = 512;
   }
 
-  void I2cStorage::_serializeTo(const I2cSetting& model, DynamicJsonDocument& doc) {
+  void I2cStorage::_serializeTo(const I2cConfig& model, DynamicJsonDocument& doc) {
     doc[F("sda")] = model.sdaPin;
     doc[F("scl")] = model.sclPin;
     doc[F("loop")] = model.loopSeconds;
     doc[F("reset")] = model.resetHours;
   }
 
-  void I2cStorage::_deserializeFrom(I2cSetting& model, const DynamicJsonDocument& doc) {
+  void I2cStorage::_deserializeFrom(I2cConfig& model, const DynamicJsonDocument& doc) {
     model.sdaPin = doc[F("sda")];
     model.sclPin = doc[F("scl")];
     model.loopSeconds = doc[F("loop")];
