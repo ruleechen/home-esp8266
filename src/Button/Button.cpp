@@ -8,7 +8,8 @@ namespace Victor::Components {
   }
 
   Button::~Button() {
-    onClick = nullptr;
+    onPressed = nullptr;
+    onReleased = nullptr;
     if (_input != nullptr) {
       delete _input;
       _input = nullptr;
@@ -24,10 +25,14 @@ namespace Victor::Components {
         _state = pressed;
         if (pressed) {
           _lastPress = now;
-        } else if (onClick != nullptr) {
-          // trigger only when input button released
-          const auto duration = now - _lastPress;
-          onClick(duration);
+          if (onPressed != nullptr) {
+            onPressed();
+          }
+        } else {
+          if (onReleased != nullptr) {
+            const auto duration = now - _lastPress;
+            onReleased(duration);
+          }
         }
       }
     }

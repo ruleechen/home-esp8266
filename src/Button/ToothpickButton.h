@@ -3,16 +3,17 @@
 
 #include "Button/Button.h"
 
-#define TOOTHPICK_BUTTON_CLICK 0 * 1000
-#define TOOTHPICK_BUTTON_RESTART 5 * 1000
-#define TOOTHPICK_BUTTON_RESTORE 10 * 1000
+#define TOOTHPICK_BUTTON_RELEASED 50
+#define TOOTHPICK_BUTTON_RESTART  5 * 1000
+#define TOOTHPICK_BUTTON_RESTORE  10 * 1000
 
 namespace Victor::Components {
 
   enum ButtonAction {
-    ButtonClick = 0,
-    ButtonRestart = 1,
-    ButtonRestore = 2,
+    ButtonPressed = 0,
+    ButtonReleased = 1,
+    ButtonRestart = 2,
+    ButtonRestore = 3,
   };
 
   class ToothpickButton {
