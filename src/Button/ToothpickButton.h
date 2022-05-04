@@ -10,10 +10,11 @@
 namespace Victor::Components {
 
   enum ButtonAction {
-    ButtonPressed = 0,
-    ButtonReleased = 1,
-    ButtonRestart = 2,
-    ButtonRestore = 3,
+    ButtonActionNone = 0,
+    ButtonActionPressed = 1,
+    ButtonActionReleased = 2,
+    ButtonActionRestart = 3,
+    ButtonActionRestore = 4,
   };
 
   class ToothpickButton {
@@ -22,11 +23,12 @@ namespace Victor::Components {
     ~ToothpickButton();
     void loop();
     // events
-    typedef std::function<void(ButtonAction action)> TStateHandler;
-    TStateHandler onClick = nullptr;
+    typedef std::function<void(ButtonAction action)> TEventHandler;
+    TEventHandler onClick = nullptr;
 
    private:
     Button* _input = nullptr;
+    unsigned long _lastPress = 0;
   };
 
 } // namespace Victor::Components

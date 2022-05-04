@@ -24,14 +24,12 @@ namespace Victor::Components {
       if (pressed != _state) {
         _state = pressed;
         if (pressed) {
-          _lastPress = now;
           if (onPressed != nullptr) {
             onPressed();
           }
         } else {
           if (onReleased != nullptr) {
-            const auto duration = now - _lastPress;
-            onReleased(duration);
+            onReleased();
           }
         }
       }

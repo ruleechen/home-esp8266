@@ -6,20 +6,25 @@ namespace Victor::Components {
   ToothpickButton::ToothpickButton(uint8_t inputPin, uint8_t inputTrueValue) {
     _input = new Button(inputPin, inputTrueValue);
     _input->onPressed = [&]() {
+      _lastPress = millis();
       if (onClick != nullptr) {
-        onClick(ButtonPressed);
+        onClick(ButtonActionPressed);
       }
     };
-    _input->onReleased = [&](unsigned long duration) {
-      auto action = ButtonReleased;
+    _input->onReleased = [&]() {
+      const auto duration = millis() - _lastPress;
+      auto action = ButtonActionNone;
       if (duration >= TOOTHPICK_BUTTON_RESTORE) {
-        action = ButtonRestore;
+        action = ButtonActionRestore;
       } else if (duration >= TOOTHPICK_BUTTON_RESTART) {
-        action = ButtonRestart;
+        action = ButtonActionRestart;
       } else if (duration >= TOOTHPICK_BUTTON_RELEASED) {
-        action = ButtonReleased;
+        action = ButtonActionReleased;
       }
-      if (onClick != nullptr) {
+      if (
+        onClick != nullptr &&
+        action != ButtonActionNone
+      ) {
         onClick(action);
       }
     };

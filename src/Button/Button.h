@@ -13,16 +13,14 @@ namespace Victor::Components {
     void loop();
     bool getState();
     // events
-    typedef std::function<void()> TPressedHandler;
-    typedef std::function<void(unsigned long duration)> TReleasedHandler;
-    TPressedHandler onPressed = nullptr;
-    TReleasedHandler onReleased = nullptr;
+    typedef std::function<void()> TEventHandler;
+    TEventHandler onPressed = nullptr;
+    TEventHandler onReleased = nullptr;
 
    private:
     DigitalInput* _input = nullptr;
-    bool _state = false;
     unsigned long _lastLoop = 0;
-    unsigned long _lastPress = 0;
+    bool _state = false;
   };
 
 } // namespace Victor::Components
