@@ -11,9 +11,9 @@ namespace Victor::Components {
     if (model.output2Pin > -1) {
       _output2 = new DigitalOutput(model.output2Pin, model.output2TrueValue);
     }
-    _input->onClick = [&](ButtonAction action) {
-      if (onInputChange != nullptr) {
-        onInputChange(action);
+    _input->onAction = [&](ButtonAction action) {
+      if (onInputAction != nullptr) {
+        onInputAction(action);
       }
     };
   }
@@ -21,7 +21,7 @@ namespace Victor::Components {
   SwitchIO::~SwitchIO() {
     // ignore deleting external resource
     _storage = nullptr;
-    onInputChange = nullptr;
+    onInputAction = nullptr;
     if (_input != nullptr) {
       delete _input;
       _input = nullptr;

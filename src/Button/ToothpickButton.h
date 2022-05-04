@@ -23,8 +23,8 @@ namespace Victor::Components {
     ~ToothpickButton();
     void loop();
     // events
-    typedef std::function<void(ButtonAction action)> TEventHandler;
-    TEventHandler onClick = nullptr;
+    typedef std::function<void(ButtonAction action)> TActionHandler;
+    TActionHandler onAction = nullptr;
 
    private:
     Button* _input = nullptr;

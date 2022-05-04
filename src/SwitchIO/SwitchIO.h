@@ -14,8 +14,7 @@ namespace Victor::Components {
     bool getOutputState();
     void setOutputState(bool value);
     // events
-    typedef std::function<void(ButtonAction action)> TStateHandler;
-    TStateHandler onInputChange = nullptr;
+    ToothpickButton::TActionHandler onInputAction = nullptr;
 
    private:
     SwitchStorage* _storage = nullptr;

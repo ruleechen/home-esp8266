@@ -7,8 +7,8 @@ namespace Victor::Components {
     _input = new Button(inputPin, inputTrueValue);
     _input->onPressed = [&]() {
       _lastPress = millis();
-      if (onClick != nullptr) {
-        onClick(ButtonActionPressed);
+      if (onAction != nullptr) {
+        onAction(ButtonActionPressed);
       }
     };
     _input->onReleased = [&]() {
@@ -22,16 +22,16 @@ namespace Victor::Components {
         action = ButtonActionReleased;
       }
       if (
-        onClick != nullptr &&
+        onAction != nullptr &&
         action != ButtonActionNone
       ) {
-        onClick(action);
+        onAction(action);
       }
     };
   }
 
   ToothpickButton::~ToothpickButton() {
-    onClick = nullptr;
+    onAction = nullptr;
     if (_input != nullptr) {
       delete _input;
       _input = nullptr;
