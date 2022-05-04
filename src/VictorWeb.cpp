@@ -65,8 +65,20 @@ namespace Victor::Components {
   }
 
   void VictorWeb::_solvePageTokens(String& html) {
+    DynamicJsonDocument doc(512);
+    _getPageData(doc);
+    String json;
+    serializeJson(doc, json);
+    // replace
+    html.replace(F("{json}"), json);
     html.replace(F("{title}"), VICTOR_FIRMWARE_NAME);
     html.replace(F("{timestamp}"), String(UNIX_TIME));
+  }
+
+  void VictorWeb::_getPageData(DynamicJsonDocument res) {
+    res[F("firmwareName")] = VICTOR_FIRMWARE_NAME;
+    res[F("firmwareVersion")] = VICTOR_FIRMWARE_VERSION;
+    res[F("unixTime")] = UNIX_TIME;
   }
 
   void VictorWeb::_sendHtml(const String& html) {
@@ -143,8 +155,6 @@ namespace Victor::Components {
     res[F("sketchFreeSpace")] = ESP.getFreeSketchSpace();
     res[F("sdkVersion")] = ESP.getSdkVersion();
     res[F("coreVersion")] = ESP.getCoreVersion();
-    res[F("firmwareVersion")] = VICTOR_FIRMWARE_VERSION;
-    res[F("unixTime")] = UNIX_TIME;
     // end
     _sendJson(res);
     _dispatchRequestEnd();

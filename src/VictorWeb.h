@@ -45,6 +45,7 @@ namespace Victor::Components {
     ESP8266HTTPUpdateServer* _httpUpdater = nullptr;
     virtual void _registerHandlers();
     virtual void _solvePageTokens(String& html);
+    virtual void _getPageData(DynamicJsonDocument res);
     void _sendHtml(const String& html);
     void _sendJson(DynamicJsonDocument doc);
     void _dispatchRequestStart();
