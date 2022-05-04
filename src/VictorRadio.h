@@ -10,26 +10,35 @@
 #include "AppStorage.h"
 #include "RadioStorage.h"
 
-// timespan in millianseconds
-#define DOUBLE_CLICK_TIMESPAN_FROM 400
-#define DOUBLE_CLICK_TIMESPAN_TO 800
-#define LONG_PRESS_TIMESPAN 2000
-#define RESET_PRESS_TIMESPAN 2500
+#ifndef VICTOR_RADIO_DOUBLE_CLICK_FROM
+#define VICTOR_RADIO_DOUBLE_CLICK_FROM 400
+#endif
+
+#ifndef VICTOR_RADIO_DOUBLE_CLICK_TO
+#define VICTOR_RADIO_DOUBLE_CLICK_TO 800
+#endif
+
+#ifndef VICTOR_RADIO_LONG_PRESS
+#define VICTOR_RADIO_LONG_PRESS 2000
+#endif
+
+#ifndef VICTOR_RADIO_RESET_PRESS
+#define VICTOR_RADIO_RESET_PRESS 2500
+#endif
 
 namespace Victor::Components {
   class VictorRadio {
-    typedef std::function<void(const RadioEmit& emit)> TRadioEmit;
-    typedef std::function<bool(const RadioRule& rule)> TRadioAction;
-    typedef std::function<bool(const RadioCommandParsed& command)> TRadioCommand;
-
    public:
     VictorRadio();
     ~VictorRadio();
     void emit(const String& name);
     void emit(uint8_t index);
+    typedef std::function<void(const RadioEmit& emit)> TRadioEmit;
     TRadioEmit onEmit = nullptr;
     void receive(String value, uint8_t channel);
+    typedef std::function<bool(const RadioRule& rule)> TRadioAction;
     TRadioAction onAction = nullptr;
+    typedef std::function<bool(const RadioCommandParsed& command)> TRadioCommand;
     TRadioCommand onCommand = nullptr;
 
    private:

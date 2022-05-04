@@ -18,7 +18,7 @@ namespace Victor::Components {
 
   void Button::loop() {
     const auto now = millis();
-    if (now - _lastLoop > BUTTON_THROTTLE_MILLIS) {
+    if (now - _lastLoop > VICTOR_BUTTON_THROTTLE) {
       _lastLoop = now;
       const auto pressed = getState();
       if (pressed != _state) {

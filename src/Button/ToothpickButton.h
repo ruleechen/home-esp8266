@@ -3,9 +3,17 @@
 
 #include "Button/Button.h"
 
-#define TOOTHPICK_BUTTON_RELEASED 50
-#define TOOTHPICK_BUTTON_RESTART  5 * 1000
-#define TOOTHPICK_BUTTON_RESTORE  10 * 1000
+#ifndef VICTOR_BUTTON_RELEASED
+#define VICTOR_BUTTON_RELEASED 50
+#endif
+
+#ifndef VICTOR_BUTTON_RESTART
+#define VICTOR_BUTTON_RESTART 5 * 1000
+#endif
+
+#ifndef VICTOR_BUTTON_RESTORE
+#define VICTOR_BUTTON_RESTORE 10 * 1000
+#endif
 
 namespace Victor::Components {
 

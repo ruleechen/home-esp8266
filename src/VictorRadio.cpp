@@ -92,7 +92,7 @@ namespace Victor::Components {
     const auto timespan = message.timestamp - _lastReceived.timestamp;
     if (
       _lastReceived.id != message.id  ||
-      timespan > RESET_PRESS_TIMESPAN
+      timespan > VICTOR_RADIO_RESET_PRESS
     ) {
       RadioMessage empty {};
       _lastReceived = empty;
@@ -105,13 +105,13 @@ namespace Victor::Components {
       _handleReceived(message, PressStateClick);
     } else if (
       _lastPressState != PressStateDoubleClick &&
-      timespan >= DOUBLE_CLICK_TIMESPAN_FROM &&
-      timespan < DOUBLE_CLICK_TIMESPAN_TO
+      timespan >= VICTOR_RADIO_DOUBLE_CLICK_FROM &&
+      timespan < VICTOR_RADIO_DOUBLE_CLICK_TO
     ) {
       _handleReceived(_lastReceived, PressStateDoubleClick);
     } else if (
       _lastPressState != PressStateLongPress &&
-      (timespan >= LONG_PRESS_TIMESPAN)
+      (timespan >= VICTOR_RADIO_LONG_PRESS)
     ) {
       _handleReceived(_lastReceived, PressStateLongPress);
     }

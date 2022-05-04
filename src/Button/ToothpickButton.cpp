@@ -14,11 +14,11 @@ namespace Victor::Components {
     _input->onReleased = [&]() {
       const auto duration = millis() - _lastPress;
       auto action = ButtonActionNone;
-      if (duration >= TOOTHPICK_BUTTON_RESTORE) {
+      if (duration >= VICTOR_BUTTON_RESTORE) {
         action = ButtonActionRestore;
-      } else if (duration >= TOOTHPICK_BUTTON_RESTART) {
+      } else if (duration >= VICTOR_BUTTON_RESTART) {
         action = ButtonActionRestart;
-      } else if (duration >= TOOTHPICK_BUTTON_RELEASED) {
+      } else if (duration >= VICTOR_BUTTON_RELEASED) {
         action = ButtonActionReleased;
       }
       if (

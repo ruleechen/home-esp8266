@@ -6,8 +6,13 @@
 #include "DigitalOutput.h"
 #include "AppStorage.h"
 
-#define LED_FLASH_DURATION 10
-#define LED_TWINKLE_DURATION 500
+#ifndef VICTOR_LED_FLASH
+#define VICTOR_LED_FLASH 10
+#endif
+
+#ifndef VICTOR_LED_TWINKLE
+#define VICTOR_LED_TWINKLE 500
+#endif
 
 namespace Victor::Components {
   class BuiltinLed {
@@ -18,8 +23,8 @@ namespace Victor::Components {
     void turnOn();
     void turnOff();
     void toggle();
-    void flash(uint16_t duration = LED_FLASH_DURATION);
-    void twinkle(uint16_t duration = LED_TWINKLE_DURATION);
+    void flash(uint16_t duration = VICTOR_LED_FLASH);
+    void twinkle(uint16_t duration = VICTOR_LED_TWINKLE);
     void stop();
 
    private:

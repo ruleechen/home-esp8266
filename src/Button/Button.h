@@ -3,7 +3,9 @@
 
 #include <DigitalInput.h>
 
-#define BUTTON_THROTTLE_MILLIS 100
+#ifndef VICTOR_BUTTON_THROTTLE
+#define VICTOR_BUTTON_THROTTLE 100
+#endif
 
 namespace Victor::Components {
   class Button {

@@ -6,10 +6,9 @@
 
 namespace Victor::Components {
   class TimesCounter {
-    typedef std::function<void(uint8_t count)> TCountHandler;
-
    public:
     TimesCounter(unsigned long resetMillis);
+    typedef std::function<void(uint8_t count)> TCountHandler;
     TCountHandler onCount = nullptr;
     void count();
     void reset();
