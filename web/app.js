@@ -1427,5 +1427,5 @@ vic(() => {
   // foot
   const year = new Date().getFullYear();
   const foot = vic.query("div.foot");
-  foot.innerHTML = `<a target="_blank" href="https://github.com/ruleechen">© ${year} ${document.title}</a>`;
+  foot.innerHTML = `<span>&copy; Copyright ${year}</span> <a target="_blank" href="https://github.com/ruleechen">${_vic.firmwareName}</a>`;
 });
