@@ -6,26 +6,19 @@ namespace Victor::Components {
     _storage = storage;
     const auto model = _storage->load();
     setOutputState(model.outputIsOn);
-    _input = new DigitalInput(model.inputPin, model.inputTrueValue);
+    input = new DigitalInputButton(model.inputPin, model.inputTrueValue);
     _output = new DigitalOutput(model.outputPin, model.outputTrueValue);
     if (model.output2Pin > -1) {
       _output2 = new DigitalOutput(model.output2Pin, model.output2TrueValue);
     }
-    _button = new ActionButton(_input->getValue());
-    _button->onAction = [&](ButtonAction action) {
-      if (onInputAction != nullptr) {
-        onInputAction(action);
-      }
-    };
   }
 
   SwitchIO::~SwitchIO() {
     // ignore deleting external resource
     _storage = nullptr;
-    onInputAction = nullptr;
-    if (_input != nullptr) {
-      delete _input;
-      _input = nullptr;
+    if (input != nullptr) {
+      delete input;
+      input = nullptr;
     }
     if (_output != nullptr) {
       delete _output;
@@ -35,14 +28,10 @@ namespace Victor::Components {
       delete _output2;
       _output2 = nullptr;
     }
-    if (_button != nullptr) {
-      delete _button;
-      _button = nullptr;
-    }
   }
 
   void SwitchIO::loop() {
-    _button->update(_input->getValue());
+    input->loop();
   }
 
   bool SwitchIO::getOutputState() {
