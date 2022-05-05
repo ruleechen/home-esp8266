@@ -12,7 +12,7 @@
 
 namespace Victor::Components {
 
-  template <class TModel>
+  template <typename TModel>
   class FileStorage {
    public:
     FileStorage();
@@ -29,10 +29,10 @@ namespace Victor::Components {
     virtual void _deserializeFrom(TModel& model, const DynamicJsonDocument& doc);
   };
 
-  template <class TModel>
+  template <typename TModel>
   FileStorage<TModel>::FileStorage() {}
 
-  template <class TModel>
+  template <typename TModel>
   TModel FileStorage<TModel>::load() {
     if (_cache != nullptr) {
       return *_cache;
@@ -68,7 +68,7 @@ namespace Victor::Components {
     return model;
   }
 
-  template <class TModel>
+  template <typename TModel>
   bool FileStorage<TModel>::save(const TModel& model) {
     _cache = nullptr;
     // convert
@@ -90,15 +90,15 @@ namespace Victor::Components {
     return success;
   }
 
-  template <class TModel>
+  template <typename TModel>
   Console FileStorage<TModel>::_error() {
     return console.error().bracket(F("storage"));
   }
 
-  template <class TModel>
+  template <typename TModel>
   void FileStorage<TModel>::_serializeTo(const TModel& model, DynamicJsonDocument& doc) {}
 
-  template <class TModel>
+  template <typename TModel>
   void FileStorage<TModel>::_deserializeFrom(TModel& model, const DynamicJsonDocument& doc) {}
 
 } // namespace Victor::Components

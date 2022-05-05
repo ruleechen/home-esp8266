@@ -6,12 +6,13 @@ namespace Victor::Components {
     _storage = storage;
     const auto model = _storage->load();
     setOutputState(model.outputIsOn);
-    _input = new ActionButton(model.inputPin, model.inputTrueValue);
+    _input = new DigitalInput(model.inputPin, model.inputTrueValue);
     _output = new DigitalOutput(model.outputPin, model.outputTrueValue);
     if (model.output2Pin > -1) {
       _output2 = new DigitalOutput(model.output2Pin, model.output2TrueValue);
     }
-    _input->onAction = [&](ButtonAction action) {
+    _button = new ActionButton(_input->getValue());
+    _button->onAction = [&](ButtonAction action) {
       if (onInputAction != nullptr) {
         onInputAction(action);
       }
@@ -34,10 +35,14 @@ namespace Victor::Components {
       delete _output2;
       _output2 = nullptr;
     }
+    if (_button != nullptr) {
+      delete _button;
+      _button = nullptr;
+    }
   }
 
   void SwitchIO::loop() {
-    _input->loop();
+    _button->update(_input->getValue());
   }
 
   bool SwitchIO::getOutputState() {

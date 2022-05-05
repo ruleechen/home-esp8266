@@ -1,6 +1,7 @@
 #ifndef SwitchIO_h
 #define SwitchIO_h
 
+#include "DigitalInput.h"
 #include "DigitalOutput.h"
 #include "SwitchStorage.h"
 #include "Button/ActionButton.h"
@@ -18,9 +19,10 @@ namespace Victor::Components {
 
    private:
     SwitchStorage* _storage = nullptr;
-    ActionButton* _input = nullptr;
+    DigitalInput* _input = nullptr;
     DigitalOutput* _output = nullptr;
     DigitalOutput* _output2 = nullptr;
+    ActionButton* _button = nullptr;
   };
 
 } // namespace Victor::Components

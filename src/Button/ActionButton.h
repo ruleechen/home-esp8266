@@ -1,10 +1,10 @@
 #ifndef ActionButton_h
 #define ActionButton_h
 
-#include "Button/DigitalButton.h"
+#include "Button/Button.h"
 
-#ifndef VICTOR_ACTION_BUTTON_RELEASED
-#define VICTOR_ACTION_BUTTON_RELEASED 50
+#ifndef VICTOR_ACTION_BUTTON_DOUBLE
+#define VICTOR_ACTION_BUTTON_DOUBLE 400
 #endif
 
 #ifndef VICTOR_ACTION_BUTTON_RESTART
@@ -20,23 +20,20 @@ namespace Victor::Components {
   enum ButtonAction {
     ButtonActionNone = 0,
     ButtonActionPressed = 1,
-    ButtonActionReleased = 2,
-    ButtonActionRestart = 3,
-    ButtonActionRestore = 4,
+    ButtonActionDoublePressed = 2,
+    ButtonActionReleased = 3,
+    ButtonActionRestart = 4,
+    ButtonActionRestore = 5,
   };
 
-  class ActionButton {
+  class ActionButton : public Button<bool> {
    public:
-    ActionButton(uint8_t inputPin, uint8_t inputTrueValue = 0);
+    ActionButton(bool initState);
     ~ActionButton();
-    void loop();
+    bool isPressed() override;
     // events
     typedef std::function<void(ButtonAction action)> TActionHandler;
     TActionHandler onAction = nullptr;
-
-   private:
-    DigitalButton* _input = nullptr;
-    unsigned long _lastPressed = 0;
   };
 
 } // namespace Victor::Components

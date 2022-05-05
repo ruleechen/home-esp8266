@@ -1,45 +1,37 @@
-
 #include "ActionButton.h"
 
 namespace Victor::Components {
 
-  ActionButton::ActionButton(uint8_t inputPin, uint8_t inputTrueValue) {
-    _input = new DigitalButton(inputPin, inputTrueValue);
-    _input->onPressed = [&]() {
-      _lastPressed = millis();
+  ActionButton::ActionButton(bool initState) : Button(initState) {
+    onPressed = [&](const unsigned long timespan) {
       if (onAction != nullptr) {
-        onAction(ButtonActionPressed);
+        if (timespan <= VICTOR_ACTION_BUTTON_DOUBLE) {
+          onAction(ButtonActionDoublePressed);
+        } else {
+          onAction(ButtonActionPressed);
+        }
       }
     };
-    _input->onReleased = [&]() {
-      auto action = ButtonActionNone;
-      const auto duration = millis() - _lastPressed;
-      if (duration >= VICTOR_ACTION_BUTTON_RESTORE) {
-        action = ButtonActionRestore;
-      } else if (duration >= VICTOR_ACTION_BUTTON_RESTART) {
-        action = ButtonActionRestart;
-      } else if (duration >= VICTOR_ACTION_BUTTON_RELEASED) {
-        action = ButtonActionReleased;
-      }
-      if (
-        onAction != nullptr &&
-        action != ButtonActionNone
-      ) {
-        onAction(action);
+    onReleased = [&](const unsigned long timespan) {
+      if (onAction != nullptr) {
+        if (timespan >= VICTOR_ACTION_BUTTON_RESTORE) {
+          onAction(ButtonActionRestore);
+        } else if (timespan >= VICTOR_ACTION_BUTTON_RESTART) {
+          onAction(ButtonActionRestart);
+        } else {
+          onAction(ButtonActionReleased);
+        }
       }
     };
   }
 
   ActionButton::~ActionButton() {
+    Button<bool>::~Button();
     onAction = nullptr;
-    if (_input != nullptr) {
-      delete _input;
-      _input = nullptr;
-    }
   }
 
-  void ActionButton::loop() {
-    _input->loop();
+  bool ActionButton::isPressed() {
+    return _state == true;
   }
 
 } // namespace Victor::Components
