@@ -72,21 +72,7 @@ namespace Victor::Components {
   }
 
   void VictorRadio::receive(String value, uint8_t channel) {
-    // read id
-    auto idPart = String(F("none"));
-    auto valuePart = String(value);
-    if (value.indexOf(F("!")) == 4) {
-      idPart = value.substring(0, 4);
-      valuePart = value.substring(5);
-    }
-    // message
-    const RadioMessage message = {
-      .id = idPart,
-      .value = valuePart,
-      .channel = channel,
-      .timestamp = millis(),
-    };
-    // broadcase state
+    const auto message = _parseMessage(value, channel);
     radioStorage.broadcast(message);
     // press
     const auto timespan = message.timestamp - _lastReceived.timestamp;
@@ -262,6 +248,25 @@ namespace Victor::Components {
         break;
       }
     }
+  }
+
+  RadioMessage VictorRadio::_parseMessage(String value, uint8_t channel) {
+    // read id
+    auto idPart = String(F("none"));
+    auto valuePart = String(value);
+    if (value.indexOf(F("!")) == 4) {
+      idPart = value.substring(0, 4);
+      valuePart = value.substring(5);
+    }
+    // message
+    const RadioMessage message = {
+      .id = idPart,
+      .value = valuePart,
+      .channel = channel,
+      .timestamp = millis(),
+    };
+    // ret
+    return message;
   }
 
   RadioCommandParsed VictorRadio::_parseCommand(const RadioMessage& message) {

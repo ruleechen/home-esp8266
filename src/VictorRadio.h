@@ -50,6 +50,7 @@ namespace Victor::Components {
     void _handleReceived(const RadioMessage& message, RadioPressState press);
     void _proceedAction(const RadioRule& rule);
     void _proceedCommand(const RadioCommandParsed& command);
+    static RadioMessage _parseMessage(String value, uint8_t channel);
     static RadioCommandParsed _parseCommand(const RadioMessage& message);
   };
 } // namespace Victor::Components
