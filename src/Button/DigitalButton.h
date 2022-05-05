@@ -1,7 +1,7 @@
 #ifndef DigitalButton_h
 #define DigitalButton_h
 
-#include <DigitalInput.h>
+#include "DigitalInput.h"
 
 #ifndef VICTOR_DIGITAL_BUTTON_THROTTLE
 #define VICTOR_DIGITAL_BUTTON_THROTTLE 100

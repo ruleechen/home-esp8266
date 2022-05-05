@@ -1,7 +1,7 @@
 #ifndef SwitchIO_h
 #define SwitchIO_h
 
-#include <DigitalOutput.h>
+#include "DigitalOutput.h"
 #include "SwitchStorage.h"
 #include "Button/ActionButton.h"
 
