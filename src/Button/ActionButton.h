@@ -1,7 +1,7 @@
 #ifndef ActionButton_h
 #define ActionButton_h
 
-#include "Button/Button.h"
+#include "Button/DigitalButton.h"
 
 #ifndef VICTOR_ACTION_BUTTON_RELEASED
 #define VICTOR_ACTION_BUTTON_RELEASED 50
@@ -35,7 +35,7 @@ namespace Victor::Components {
     TActionHandler onAction = nullptr;
 
    private:
-    Button* _input = nullptr;
+    DigitalButton* _input = nullptr;
     unsigned long _lastPressed = 0;
   };
 

@@ -4,7 +4,7 @@
 namespace Victor::Components {
 
   ActionButton::ActionButton(uint8_t inputPin, uint8_t inputTrueValue) {
-    _input = new Button(inputPin, inputTrueValue);
+    _input = new DigitalButton(inputPin, inputTrueValue);
     _input->onPressed = [&]() {
       _lastPressed = millis();
       if (onAction != nullptr) {

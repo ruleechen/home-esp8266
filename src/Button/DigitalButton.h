@@ -1,17 +1,17 @@
-#ifndef Button_h
-#define Button_h
+#ifndef DigitalButton_h
+#define DigitalButton_h
 
 #include <DigitalInput.h>
 
-#ifndef VICTOR_BUTTON_THROTTLE
-#define VICTOR_BUTTON_THROTTLE 100
+#ifndef VICTOR_DIGITAL_BUTTON_THROTTLE
+#define VICTOR_DIGITAL_BUTTON_THROTTLE 100
 #endif
 
 namespace Victor::Components {
-  class Button {
+  class DigitalButton {
    public:
-    Button(uint8_t inputPin, uint8_t inputTrueValue = 0);
-    ~Button();
+    DigitalButton(uint8_t inputPin, uint8_t inputTrueValue = 0);
+    ~DigitalButton();
     void loop();
     bool getState();
     // events
@@ -27,4 +27,4 @@ namespace Victor::Components {
 
 } // namespace Victor::Components
 
-#endif // Button_h
+#endif // DigitalButton_h

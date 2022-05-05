@@ -1,13 +1,13 @@
-#include "Button.h"
+#include "DigitalButton.h"
 
 namespace Victor::Components {
 
-  Button::Button(uint8_t inputPin, uint8_t inputTrueValue) {
+  DigitalButton::DigitalButton(uint8_t inputPin, uint8_t inputTrueValue) {
     _input = new DigitalInput(inputPin, inputTrueValue);
     _state = getState();
   }
 
-  Button::~Button() {
+  DigitalButton::~DigitalButton() {
     onPressed = nullptr;
     onReleased = nullptr;
     if (_input != nullptr) {
@@ -16,9 +16,9 @@ namespace Victor::Components {
     }
   }
 
-  void Button::loop() {
+  void DigitalButton::loop() {
     const auto now = millis();
-    if (now - _lastLoop > VICTOR_BUTTON_THROTTLE) {
+    if (now - _lastLoop > VICTOR_DIGITAL_BUTTON_THROTTLE) {
       _lastLoop = now;
       const auto pressed = getState();
       if (pressed != _state) {
@@ -36,7 +36,7 @@ namespace Victor::Components {
     }
   }
 
-  bool Button::getState() {
+  bool DigitalButton::getState() {
     return _input->getValue();
   }
 
