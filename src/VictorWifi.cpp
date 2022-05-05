@@ -96,9 +96,9 @@ namespace Victor::Components {
   String VictorWifi::getHostName() {
     const auto id = getHostId();
     const auto model = appStorage.load();
-    const auto productName = model.name.length() > 0
-      ? model.name
-      : VICTOR_FIRMWARE_NAME;
+    const auto productName = model.name.isEmpty()
+      ? VICTOR_FIRMWARE_NAME
+      : model.name;
     return productName + F("-") + id;
   }
 
@@ -106,7 +106,12 @@ namespace Victor::Components {
     builtinLed.stop();
     _log().section(F("station")).section(F("got ip"), args.ip.toString());
     auto model = appStorage.load();
-    if (_joiningSsid && _joiningSsid != F("")) {
+    if (_joiningSsid.isEmpty()) {
+      // turn off AP only when it is not a new join
+      if (model.autoMode) {
+        setMode(WIFI_STA);
+      }
+    } else {
       // save new wifi credential
       if (
         model.wifiSsid != _joiningSsid ||
@@ -115,11 +120,6 @@ namespace Victor::Components {
         model.wifiSsid = _joiningSsid;
         model.wifiPass = _joiningPass;
         appStorage.save(model);
-      }
-    } else {
-      // turn off AP only when it is not a new join
-      if (model.autoMode) {
-        setMode(WIFI_STA);
       }
     }
   }

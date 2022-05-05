@@ -36,7 +36,7 @@ namespace Victor::Components {
 
    private:
     Button* _input = nullptr;
-    unsigned long _lastPress = 0;
+    unsigned long _lastPressed = 0;
   };
 
 } // namespace Victor::Components

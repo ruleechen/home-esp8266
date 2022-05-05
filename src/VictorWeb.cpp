@@ -351,7 +351,7 @@ namespace Victor::Components {
     const int32_t channel = payload[F("channel")];
     // res
     DynamicJsonDocument res(64);
-    if (!ssid || ssid == F("")) {
+    if (ssid.isEmpty()) {
       res[F("msg")] = F("input ssid to join");
     } else {
       victorWifi.join(ssid, password, channel, (uint8_t*)bssid.c_str());

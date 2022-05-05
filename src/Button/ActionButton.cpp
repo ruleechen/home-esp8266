@@ -6,14 +6,14 @@ namespace Victor::Components {
   ActionButton::ActionButton(uint8_t inputPin, uint8_t inputTrueValue) {
     _input = new Button(inputPin, inputTrueValue);
     _input->onPressed = [&]() {
-      _lastPress = millis();
+      _lastPressed = millis();
       if (onAction != nullptr) {
         onAction(ButtonActionPressed);
       }
     };
     _input->onReleased = [&]() {
-      const auto duration = millis() - _lastPress;
       auto action = ButtonActionNone;
+      const auto duration = millis() - _lastPressed;
       if (duration >= VICTOR_ACTION_BUTTON_RESTORE) {
         action = ButtonActionRestore;
       } else if (duration >= VICTOR_ACTION_BUTTON_RESTART) {

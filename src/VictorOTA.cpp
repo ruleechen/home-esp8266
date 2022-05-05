@@ -21,7 +21,6 @@ namespace Victor::Components {
   }
 
   void VictorOTA::update(const String& version, VOtaType type) {
-    ESPhttpUpdate.rebootOnUpdate(true);
     switch (type) {
       case VOta_All: {
         ESPhttpUpdate.rebootOnUpdate(false);
@@ -31,10 +30,12 @@ namespace Victor::Components {
         break;
       }
       case VOta_Sketch: {
+        ESPhttpUpdate.rebootOnUpdate(true);
         _updateSketch();
         break;
       }
       case VOta_FileSystem: {
+        ESPhttpUpdate.rebootOnUpdate(true);
         _updateFileSystem();
         break;
       }
