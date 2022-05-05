@@ -1,9 +1,9 @@
 
-#include "ToothpickButton.h"
+#include "ActionButton.h"
 
 namespace Victor::Components {
 
-  ToothpickButton::ToothpickButton(uint8_t inputPin, uint8_t inputTrueValue) {
+  ActionButton::ActionButton(uint8_t inputPin, uint8_t inputTrueValue) {
     _input = new Button(inputPin, inputTrueValue);
     _input->onPressed = [&]() {
       _lastPress = millis();
@@ -14,11 +14,11 @@ namespace Victor::Components {
     _input->onReleased = [&]() {
       const auto duration = millis() - _lastPress;
       auto action = ButtonActionNone;
-      if (duration >= VICTOR_BUTTON_RESTORE) {
+      if (duration >= VICTOR_ACTION_BUTTON_RESTORE) {
         action = ButtonActionRestore;
-      } else if (duration >= VICTOR_BUTTON_RESTART) {
+      } else if (duration >= VICTOR_ACTION_BUTTON_RESTART) {
         action = ButtonActionRestart;
-      } else if (duration >= VICTOR_BUTTON_RELEASED) {
+      } else if (duration >= VICTOR_ACTION_BUTTON_RELEASED) {
         action = ButtonActionReleased;
       }
       if (
@@ -30,7 +30,7 @@ namespace Victor::Components {
     };
   }
 
-  ToothpickButton::~ToothpickButton() {
+  ActionButton::~ActionButton() {
     onAction = nullptr;
     if (_input != nullptr) {
       delete _input;
@@ -38,7 +38,7 @@ namespace Victor::Components {
     }
   }
 
-  void ToothpickButton::loop() {
+  void ActionButton::loop() {
     _input->loop();
   }
 

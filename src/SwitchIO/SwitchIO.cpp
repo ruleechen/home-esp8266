@@ -6,7 +6,7 @@ namespace Victor::Components {
     _storage = storage;
     const auto model = _storage->load();
     setOutputState(model.outputIsOn);
-    _input = new ToothpickButton(model.inputPin, model.inputTrueValue);
+    _input = new ActionButton(model.inputPin, model.inputTrueValue);
     _output = new DigitalOutput(model.outputPin, model.outputTrueValue);
     if (model.output2Pin > -1) {
       _output2 = new DigitalOutput(model.output2Pin, model.output2TrueValue);

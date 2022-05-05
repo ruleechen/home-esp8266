@@ -1,18 +1,18 @@
-#ifndef ToothpickButton_h
-#define ToothpickButton_h
+#ifndef ActionButton_h
+#define ActionButton_h
 
 #include "Button/Button.h"
 
-#ifndef VICTOR_BUTTON_RELEASED
-#define VICTOR_BUTTON_RELEASED 50
+#ifndef VICTOR_ACTION_BUTTON_RELEASED
+#define VICTOR_ACTION_BUTTON_RELEASED 50
 #endif
 
-#ifndef VICTOR_BUTTON_RESTART
-#define VICTOR_BUTTON_RESTART 5 * 1000
+#ifndef VICTOR_ACTION_BUTTON_RESTART
+#define VICTOR_ACTION_BUTTON_RESTART 5 * 1000
 #endif
 
-#ifndef VICTOR_BUTTON_RESTORE
-#define VICTOR_BUTTON_RESTORE 10 * 1000
+#ifndef VICTOR_ACTION_BUTTON_RESTORE
+#define VICTOR_ACTION_BUTTON_RESTORE 10 * 1000
 #endif
 
 namespace Victor::Components {
@@ -25,10 +25,10 @@ namespace Victor::Components {
     ButtonActionRestore = 4,
   };
 
-  class ToothpickButton {
+  class ActionButton {
    public:
-    ToothpickButton(uint8_t inputPin, uint8_t inputTrueValue = 0);
-    ~ToothpickButton();
+    ActionButton(uint8_t inputPin, uint8_t inputTrueValue = 0);
+    ~ActionButton();
     void loop();
     // events
     typedef std::function<void(ButtonAction action)> TActionHandler;
@@ -41,4 +41,4 @@ namespace Victor::Components {
 
 } // namespace Victor::Components
 
-#endif // ToothpickButton_h
+#endif // ActionButton_h

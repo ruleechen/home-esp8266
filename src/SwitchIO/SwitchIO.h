@@ -3,7 +3,7 @@
 
 #include <DigitalOutput.h>
 #include "SwitchStorage.h"
-#include "Button/ToothpickButton.h"
+#include "Button/ActionButton.h"
 
 namespace Victor::Components {
   class SwitchIO {
@@ -14,11 +14,11 @@ namespace Victor::Components {
     bool getOutputState();
     void setOutputState(bool value);
     // events
-    ToothpickButton::TActionHandler onInputAction = nullptr;
+    ActionButton::TActionHandler onInputAction = nullptr;
 
    private:
     SwitchStorage* _storage = nullptr;
-    ToothpickButton* _input = nullptr;
+    ActionButton* _input = nullptr;
     DigitalOutput* _output = nullptr;
     DigitalOutput* _output2 = nullptr;
   };
