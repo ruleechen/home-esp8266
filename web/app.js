@@ -1425,7 +1425,7 @@ vic(() => {
   const root = vic.query("div.main");
   m.route(root, "/service", vic.getRoute());
   // foot
-  const year = new Date().getFullYear();
+  const year = new Date(_vic.unixTime * 1000).getFullYear();
   const foot = vic.query("div.foot");
-  foot.innerHTML = `<span>&copy; Copyright ${year}</span> <a target="_blank" href="https://github.com/ruleechen">${_vic.firmwareName}</a>`;
+  foot.innerHTML = `<span>&copy; Copyright 2020 - ${year}</span> <a target="_blank" href="https://github.com/ruleechen">${_vic.firmwareName}</a>`;
 });
