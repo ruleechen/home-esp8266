@@ -75,7 +75,7 @@ namespace Victor::Components {
     html.replace(F("{timestamp}"), String(UNIX_TIME));
   }
 
-  void VictorWeb::_getPageData(DynamicJsonDocument res) {
+  void VictorWeb::_getPageData(DynamicJsonDocument& res) {
     res[F("firmwareName")] = VICTOR_FIRMWARE_NAME;
     res[F("firmwareVersion")] = VICTOR_FIRMWARE_VERSION;
     res[F("unixTime")] = UNIX_TIME;
@@ -85,7 +85,7 @@ namespace Victor::Components {
     _server->send(200, F("text/html"), html);
   }
 
-  void VictorWeb::_sendJson(DynamicJsonDocument res) {
+  void VictorWeb::_sendJson(const DynamicJsonDocument& res) {
     String buf;
     serializeJson(res, buf);
     _server->send(200, F("application/json"), buf);
