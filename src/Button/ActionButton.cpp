@@ -30,8 +30,8 @@ namespace Victor::Components {
     onAction = nullptr;
   }
 
-  bool ActionButton::isPressed() {
-    return _state == true;
+  bool ActionButton::isPressed(bool state) {
+    return state == true;
   }
 
 } // namespace Victor::Components

@@ -30,7 +30,7 @@ namespace Victor::Components {
    public:
     ActionButton(bool initState);
     ~ActionButton();
-    bool isPressed() override;
+    bool isPressed(bool state) override;
     // events
     typedef std::function<void(ButtonAction action)> TActionHandler;
     TActionHandler onAction = nullptr;

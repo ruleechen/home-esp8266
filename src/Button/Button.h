@@ -14,7 +14,7 @@ namespace Victor::Components {
     // state
     virtual void update(TState state);
     virtual bool isEqual(TState state);
-    virtual bool isPressed();
+    virtual bool isPressed(TState state);
     // events
     typedef std::function<void(unsigned long timespan)> TEventHandler;
     TEventHandler onPressed = nullptr;
@@ -42,7 +42,7 @@ namespace Victor::Components {
       _state = state;
       const auto now = millis();
       const auto timespan = now - _lastPressed;
-      if (isPressed()) {
+      if (isPressed(_state)) {
         _lastPressed = now;
         if (onPressed != nullptr) {
           onPressed(timespan);
