@@ -6,12 +6,14 @@
 #include "VictorWifi.h"
 #include "VictorRadio.h"
 #include "VictorWeb.h"
+#include "Button/DigitalInputButton.h"
 
 using namespace Victor;
 using namespace Victor::Components;
 
 VictorWeb webPortal(80);
 VictorRadio radioPortal;
+DigitalInputButton* button;
 
 void setup(void) {
   console.begin(115200);
@@ -48,6 +50,21 @@ void setup(void) {
   };
   webPortal.setup();
 
+  // input button
+  button = new DigitalInputButton(0, 0);
+  button->onAction = [](const ButtonAction action) {
+    if (action == ButtonActionPressed) {
+      builtinLed.flash();
+    } else if (action == ButtonActionDoublePressed) {
+      builtinLed.flash(200);
+    } else if (action == ButtonActionRestart) {
+      ESP.restart();
+    } else if (action == ButtonActionRestore) {
+      ESP.eraseConfig();
+      ESP.restart();
+    }
+  };
+
   // setup wifi
   victorOTA.setup();
   victorWifi.setup();
@@ -60,6 +77,7 @@ void setup(void) {
 
 void loop(void) {
   webPortal.loop();
+  button->loop();
   // loop radio
   if (false) {
     auto value = String(F(""));
