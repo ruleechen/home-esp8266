@@ -95,6 +95,12 @@ namespace Victor::Components {
     return console.error().bracket(F("storage"));
   }
 
+  // template <typename TModel>
+  // void FileStorage<TModel>::_serializeTo(const TModel& model, DynamicJsonDocument& doc) {}
+
+  // template <typename TModel>
+  // void FileStorage<TModel>::_deserializeFrom(TModel& model, const DynamicJsonDocument& doc) {}
+
 } // namespace Victor::Components
 
 #endif // FileStorage_h

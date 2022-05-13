@@ -60,6 +60,11 @@ namespace Victor::Components {
     return state == _state;
   }
 
+  template <typename TState>
+  bool Button<TState>::isPressed(TState state) {
+    return false;
+  }
+
 } // namespace Victor::Components
 
 #endif // Button_h
