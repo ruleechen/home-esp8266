@@ -7,7 +7,7 @@
 #include "Console.h"
 #include "VictorOTA.h"
 #include "VictorWifi.h"
-#include "AppStorage.h"
+#include "AppStorage/AppStorage.h"
 #include "RadioStorage.h"
 
 #ifndef VICTOR_RADIO_DOUBLE_CLICK_FROM

@@ -580,12 +580,12 @@ const WifiListView = (() => {
     loading: true,
     bssid: null,
     founds: [{ bssid: "", ssid: "", channel: 0, rssi: 10 }],
-    password: "",
+    pswd: "",
     times: -1,
     status: -3, // unknown
   };
   const scan = () => {
-    state.password = vic.query("#txtPassword").value;
+    state.pswd = vic.query("#txtPswd").value;
     oninit();
   };
   const statusName = (code) => {
@@ -635,20 +635,20 @@ const WifiListView = (() => {
   };
   const join = () => {
     // validate
-    const passEl = vic.query("#txtPassword");
+    const passEl = vic.query("#txtPswd");
     const bssidEl = vic.query("input[type=radio]:checked");
     if (!bssidEl) {
       alert("Please select wifi to join");
       return;
     }
     state.bssid = bssidEl.value;
-    state.password = passEl.value;
+    state.pswd = passEl.value;
     // send request
     const ap = state.founds.find((x) => x.bssid === state.bssid);
     m.request({
       method: "POST",
       url: "/wifi/join",
-      body: Object.assign({}, { password: state.password }, ap),
+      body: Object.assign({}, { pswd: state.pswd }, ap),
     }).then((res) => {
       if (res.msg) {
         alert(res.msg);
@@ -706,11 +706,11 @@ const WifiListView = (() => {
             ]),
           }),
           m("p", [
-            m("label", { for: "txtPassword" }, "Password"),
+            m("label", { for: "txtPswd" }, "Password"),
             m("input[type=text]", {
-              id: "txtPassword",
+              id: "txtPswd",
               maxLength: 32,
-              value: state.password,
+              value: state.pswd,
             }),
           ]),
           m("p", [

@@ -2,7 +2,9 @@
 
 namespace Victor::Components {
 
-  void VictorWifi::setup() {
+  void VictorWifi::setup(const char* settingFile) {
+    _storage = new WifiStorage(settingFile);
+
     setMode(WIFI_AP_STA);
     WiFi.persistent(true);
     WiFi.setAutoConnect(true);
@@ -21,8 +23,8 @@ namespace Victor::Components {
     _gotIPHandler = WiFi.onStationModeGotIP(std::bind(&VictorWifi::_handleStaGotIP, this, std::placeholders::_1));
     _disconnectedHandler = WiFi.onStationModeDisconnected(std::bind(&VictorWifi::_handleStaDisconnected, this, std::placeholders::_1));
 
-    const auto model = appStorage.load();
-    WiFi.begin(model.wifiSsid, model.wifiPass);
+    const auto setting = _storage->load();
+    WiFi.begin(setting.ssid, setting.pswd);
 
     builtinLed.twinkle();
     _log().section(F("begin"))
@@ -64,11 +66,11 @@ namespace Victor::Components {
     }
   }
 
-  void VictorWifi::join(const String& ssid, const String& password, int32_t channel, uint8_t* bssid) {
+  void VictorWifi::join(const String& ssid, const String& pswd, int32_t channel, uint8_t* bssid) {
     _log().section(F("joining"), ssid);
     _joiningSsid = ssid;
-    _joiningPass = password;
-    WiFi.begin(ssid, password, channel, bssid, true);
+    _joiningPswd = pswd;
+    WiFi.begin(ssid, pswd, channel, bssid, true);
   }
 
   bool VictorWifi::isConnected() const {
@@ -95,31 +97,31 @@ namespace Victor::Components {
 
   String VictorWifi::getHostName() {
     const auto id = getHostId();
-    const auto model = appStorage.load();
-    const auto productName = model.name.isEmpty()
+    const auto setting = _storage->load();
+    const auto brand = setting.brand.isEmpty()
       ? VICTOR_FIRMWARE_NAME
-      : model.name;
-    return productName + F("-") + id;
+      : setting.brand;
+    return brand + id;
   }
 
   void VictorWifi::_handleStaGotIP(const WiFiEventStationModeGotIP& args) {
     builtinLed.stop();
     _log().section(F("station")).section(F("got ip"), args.ip.toString());
-    auto model = appStorage.load();
+    auto setting = _storage->load();
     if (_joiningSsid.isEmpty()) {
       // turn off AP only when it is not a new join
-      if (model.autoMode) {
+      if (setting.autoMode) {
         setMode(WIFI_STA);
       }
     } else {
       // save new wifi credential
       if (
-        model.wifiSsid != _joiningSsid ||
-        model.wifiPass != _joiningPass
+        setting.ssid != _joiningSsid ||
+        setting.pswd != _joiningPswd
       ) {
-        model.wifiSsid = _joiningSsid;
-        model.wifiPass = _joiningPass;
-        appStorage.save(model);
+        setting.ssid = _joiningSsid;
+        setting.pswd = _joiningPswd;
+        _storage->save(setting);
       }
     }
   }
@@ -127,8 +129,8 @@ namespace Victor::Components {
   void VictorWifi::_handleStaDisconnected(const WiFiEventStationModeDisconnected& args) {
     builtinLed.twinkle();
     _log().section(F("station"), F("disconnected"));
-    const auto model = appStorage.load();
-    if (model.autoMode) {
+    const auto setting = _storage->load();
+    if (setting.autoMode) {
       setMode(WIFI_AP_STA);
     }
   }

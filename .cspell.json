@@ -12,6 +12,7 @@
     "timespan",
     "println",
     "wifi",
+    "pswd",
     "ssid",
     "bssid",
     "rssi",

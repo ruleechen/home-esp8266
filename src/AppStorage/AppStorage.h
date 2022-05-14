@@ -5,23 +5,20 @@
 
 namespace Victor::Components {
 
-  struct AppModel {
+  struct AppSetting {
     String name;
     uint8_t ledPin = 2;     // 0 ~ 256
     bool ledOnHigh = false; // false: LOW, true: HIGH
     bool ledEnabled = true;
-    String wifiSsid;
-    String wifiPass;
-    bool autoMode = true;
   };
 
-  class AppStorage : public FileStorage<AppModel> {
+  class AppStorage : public FileStorage<AppSetting> {
    public:
-    AppStorage();
+    AppStorage(const char* filePath = "/app.json");
 
    protected:
-    void _serializeTo(const AppModel& model, DynamicJsonDocument& doc) override;
-    void _deserializeFrom(AppModel& model, const DynamicJsonDocument& doc) override;
+    void _serializeTo(const AppSetting& model, DynamicJsonDocument& doc) override;
+    void _deserializeFrom(AppSetting& model, const DynamicJsonDocument& doc) override;
   };
 
   // global
