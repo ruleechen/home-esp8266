@@ -347,14 +347,14 @@ namespace Victor::Components {
     // read
     const auto bssid = String(payload[F("bssid")]);
     const auto ssid = String(payload[F("ssid")]);
-    const auto password = String(payload[F("password")]);
+    const auto pswd = String(payload[F("pswd")]);
     const int32_t channel = payload[F("channel")];
     // res
     DynamicJsonDocument res(64);
     if (ssid.isEmpty()) {
       res[F("msg")] = F("input ssid to join");
     } else {
-      victorWifi.join(ssid, password, channel, (uint8_t*)bssid.c_str());
+      victorWifi.join(ssid, pswd, channel, (uint8_t*)bssid.c_str());
       res[F("join")] = 1;
     }
     _sendJson(res);
@@ -435,10 +435,10 @@ namespace Victor::Components {
   void VictorWeb::_handleRadioGet() {
     _dispatchRequestStart();
     DynamicJsonDocument res(512);
-    const auto model = radioStorage.load();
+    const auto setting = radioStorage.load();
     res[F("millis")] = millis();
-    res[F("inputPin")] = model.inputPin;
-    res[F("outputPin")] = model.outputPin;
+    res[F("inputPin")] = setting.inputPin;
+    res[F("outputPin")] = setting.outputPin;
     // last received
     const auto lastReceived = radioStorage.getLastReceived();
     const JsonObject lastReceivedObj = res.createNestedObject(F("lastReceived"));
@@ -460,10 +460,10 @@ namespace Victor::Components {
     const int8_t inputPin = payload[F("inputPin")];
     const int8_t outputPin = payload[F("outputPin")];
     // action
-    auto model = radioStorage.load();
-    model.inputPin = inputPin;
-    model.outputPin = outputPin;
-    radioStorage.save(model);
+    auto setting = radioStorage.load();
+    setting.inputPin = inputPin;
+    setting.outputPin = outputPin;
+    radioStorage.save(setting);
     // res
     DynamicJsonDocument res(64);
     res[F("msg")] = F("success");
@@ -475,9 +475,9 @@ namespace Victor::Components {
     _dispatchRequestStart();
     DynamicJsonDocument res(1024 + 512);
     // emits
-    const auto model = radioStorage.load();
+    const auto setting = radioStorage.load();
     const JsonArray emitArr = res.createNestedArray(F("emits"));
-    for (const auto& emit : model.emits) {
+    for (const auto& emit : setting.emits) {
       const JsonObject emitObj = emitArr.createNestedObject();
       emitObj[F("name")] = emit.name;
       emitObj[F("value")] = emit.value;
@@ -503,18 +503,18 @@ namespace Victor::Components {
     // read
     const auto emitItems = payload[F("emits")];
     // save
-    auto model = radioStorage.load();
-    model.emits.clear();
+    auto setting = radioStorage.load();
+    setting.emits.clear();
     for (size_t i = 0; i < emitItems.size(); i++) {
       const auto item = emitItems[i];
-      model.emits.push_back({
+      setting.emits.push_back({
         .name = item[F("name")],
         .value = item[F("value")],
         .channel = item[F("channel")],
         .press = RadioPressState(item[F("press")]),
       });
     }
-    radioStorage.save(model);
+    radioStorage.save(setting);
     // res
     DynamicJsonDocument res(64);
     res[F("msg")] = F("success");
@@ -545,9 +545,9 @@ namespace Victor::Components {
     _dispatchRequestStart();
     DynamicJsonDocument res(1024 + 512);
     // rules
-    const auto model = radioStorage.load();
+    const auto setting = radioStorage.load();
     const JsonArray ruleArr = res.createNestedArray(F("rules"));
-    for (const auto& rule : model.rules) {
+    for (const auto& rule : setting.rules) {
       const JsonObject ruleObj = ruleArr.createNestedObject();
       ruleObj[F("value")] = rule.value;
       ruleObj[F("channel")] = rule.channel;
@@ -573,18 +573,18 @@ namespace Victor::Components {
     // read
     const auto ruleItems = payload[F("rules")];
     // save
-    auto model = radioStorage.load();
-    model.rules.clear();
+    auto setting = radioStorage.load();
+    setting.rules.clear();
     for (size_t i = 0; i < ruleItems.size(); i++) {
       const auto item = ruleItems[i];
-      model.rules.push_back({
+      setting.rules.push_back({
         .value = item[F("value")],
         .channel = item[F("channel")],
         .press = RadioPressState(item[F("press")]),
         .action = RadioAction(item[F("action")]),
       });
     }
-    radioStorage.save(model);
+    radioStorage.save(setting);
     // res
     DynamicJsonDocument res(64);
     res[F("msg")] = F("success");
@@ -596,9 +596,9 @@ namespace Victor::Components {
     _dispatchRequestStart();
     DynamicJsonDocument res(1024 + 512);
     // commands
-    const auto model = radioStorage.load();
+    const auto setting = radioStorage.load();
     const JsonArray commandArr = res.createNestedArray(F("commands"));
-    for (const auto& command : model.commands) {
+    for (const auto& command : setting.commands) {
       const JsonObject commandObj = commandArr.createNestedObject();
       commandObj[F("entry")] = command.entry;
       commandObj[F("action")] = command.action;
@@ -618,17 +618,17 @@ namespace Victor::Components {
     // read
     const auto commandItems = payload[F("commands")];
     // save
-    auto model = radioStorage.load();
-    model.commands.clear();
+    auto setting = radioStorage.load();
+    setting.commands.clear();
     for (size_t i = 0; i < commandItems.size(); i++) {
       const auto item = commandItems[i];
-      model.commands.push_back({
+      setting.commands.push_back({
         .entry = RadioCommandEntry(item[F("entry")]),
         .action = item[F("action")],
         .press = RadioPressState(item[F("press")]),
       });
     }
-    radioStorage.save(model);
+    radioStorage.save(setting);
     // res
     DynamicJsonDocument res(64);
     res[F("msg")] = F("success");

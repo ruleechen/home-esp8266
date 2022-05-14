@@ -67,7 +67,7 @@ void setup(void) {
 
   // setup wifi
   victorOTA.setup();
-  victorWifi.setup();
+  victorWifi.setup("/wifi.json");
 
   // done
   console.log()

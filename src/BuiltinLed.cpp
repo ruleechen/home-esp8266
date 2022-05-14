@@ -18,10 +18,10 @@ namespace Victor::Components {
   }
 
   void BuiltinLed::setup() {
-    const auto model = appStorage.load();
-    if (model.ledEnabled) {
-      const auto trueValue = model.ledOnHigh ? HIGH : LOW;
-      _outputPin = new DigitalOutput(model.ledPin, trueValue);
+    const auto setting = appStorage.load();
+    if (setting.ledEnabled) {
+      const auto trueValue = setting.ledOnHigh ? HIGH : LOW;
+      _outputPin = new DigitalOutput(setting.ledPin, trueValue);
     }
   }
 

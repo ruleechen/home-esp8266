@@ -12,9 +12,9 @@ namespace Victor::Components {
   }
 
   void VictorRadio::emit(const String& name) {
-    const auto model = radioStorage.load();
-    if (model.outputPin > -1) {
-      for (const auto& emit : model.emits) {
+    const auto setting = radioStorage.load();
+    if (setting.outputPin > -1) {
+      for (const auto& emit : setting.emits) {
         if (emit.name == name) {
           _handleEmit(emit);
           break;
@@ -24,9 +24,9 @@ namespace Victor::Components {
   }
 
   void VictorRadio::emit(uint8_t index) {
-    const auto model = radioStorage.load();
-    if (model.outputPin > -1 && index < model.emits.size()) {
-      const auto emit = model.emits[index];
+    const auto setting = radioStorage.load();
+    if (setting.outputPin > -1 && index < setting.emits.size()) {
+      const auto emit = setting.emits[index];
       _handleEmit(emit);
     }
   }
@@ -111,8 +111,8 @@ namespace Victor::Components {
       .bracket(F("radio"))
       .section(F("detected pressed"), String(press));
     // check rules
-    const auto model = radioStorage.load();
-    for (const auto& rule : model.rules) {
+    const auto setting = radioStorage.load();
+    for (const auto& rule : setting.rules) {
       if (
         rule.value == message.value &&
         rule.channel == message.channel &&
@@ -123,7 +123,7 @@ namespace Victor::Components {
     }
     // check commands
     auto parsedCommand = _parseCommand(message);
-    for (const auto& command : model.commands) {
+    for (const auto& command : setting.commands) {
       if (
         command.entry == parsedCommand.entry &&
         command.action == parsedCommand.action &&
@@ -178,8 +178,8 @@ namespace Victor::Components {
             const auto credential = GlobalHelpers::splitString(command.parameters, F("/"));
             if (credential.size() == 2) {
               const auto ssid = credential[0];
-              const auto password = credential[1];
-              victorWifi.join(ssid, password, false);
+              const auto pswd = credential[1];
+              victorWifi.join(ssid, pswd, false);
             }
             break;
           }
@@ -208,9 +208,9 @@ namespace Victor::Components {
       case EntryApp: {
         switch (command.action) {
           case EntryAppName: {
-            auto model = appStorage.load();
-            model.name = command.parameters;
-            appStorage.save(model);
+            auto setting = appStorage.load();
+            setting.name = command.parameters;
+            appStorage.save(setting);
             break;
           }
           case EntryAppOTA: {

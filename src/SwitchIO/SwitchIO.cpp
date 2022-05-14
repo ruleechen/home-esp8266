@@ -2,15 +2,15 @@
 
 namespace Victor::Components {
 
-  SwitchIO::SwitchIO(SwitchStorage* storage) {
-    _storage = storage;
-    const auto model = _storage->load();
-    input = new DigitalInputButton(model.inputPin, model.inputTrueValue);
-    _output = new DigitalOutput(model.outputPin, model.outputTrueValue);
-    if (model.output2Pin > -1) {
-      _output2 = new DigitalOutput(model.output2Pin, model.output2TrueValue);
+  SwitchIO::SwitchIO(const char* settingFile) {
+    _storage = new SwitchStorage(settingFile);
+    const auto setting = _storage->load();
+    input = new DigitalInputButton(setting.inputPin, setting.inputTrueValue);
+    _output = new DigitalOutput(setting.outputPin, setting.outputTrueValue);
+    if (setting.output2Pin > -1) {
+      _output2 = new DigitalOutput(setting.output2Pin, setting.output2TrueValue);
     }
-    setOutputState(model.outputIsOn);
+    setOutputState(setting.outputIsOn);
   }
 
   SwitchIO::~SwitchIO() {
@@ -44,13 +44,13 @@ namespace Victor::Components {
       _output2->setValue(value);
     }
     // save output state
-    auto model = _storage->load();
+    auto setting = _storage->load();
     if (
-      model.saveOutput &&
-      model.outputIsOn != value
+      setting.saveOutput &&
+      setting.outputIsOn != value
     ) {
-      model.outputIsOn = value;
-      _storage->save(model);
+      setting.outputIsOn = value;
+      _storage->save(setting);
     }
   }
 

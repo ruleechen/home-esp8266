@@ -9,7 +9,7 @@
 namespace Victor::Components {
   class SwitchIO {
    public:
-    SwitchIO(SwitchStorage* storage);
+    SwitchIO(const char* settingFile = "/switch.json");
     ~SwitchIO();
     void loop();
     bool getOutputState();
