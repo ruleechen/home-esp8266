@@ -2,9 +2,8 @@
 
 namespace Victor::Components {
 
-  I2cStorage::I2cStorage(const char* filePath) {
-    _filePath = filePath;
-    _maxSize = 512;
+  I2cStorage::I2cStorage(const char* filePath) : FileStorage(filePath) {
+    _maxSize = 256;
   }
 
   void I2cStorage::_serializeTo(const I2cConfig& model, DynamicJsonDocument& doc) {

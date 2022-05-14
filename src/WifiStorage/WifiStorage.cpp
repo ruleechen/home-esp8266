@@ -2,8 +2,7 @@
 
 namespace Victor::Components {
 
-  WifiStorage::WifiStorage(const char* filePath) {
-    _filePath = filePath;
+  WifiStorage::WifiStorage(const char* filePath) : FileStorage(filePath) {
     _maxSize = 128;
     _enableCache = false;
   }

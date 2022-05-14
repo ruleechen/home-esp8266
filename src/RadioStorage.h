@@ -7,7 +7,7 @@
 namespace Victor::Components {
   class RadioStorage : public FileStorage<RadioModel> {
    public:
-    RadioStorage();
+    RadioStorage(const char* filePath = "/radio.json");
     void broadcast(RadioMessage message); // message object should be copied
     RadioMessage getLastReceived() const;
 

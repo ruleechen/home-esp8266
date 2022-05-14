@@ -2,8 +2,7 @@
 
 namespace Victor::Components {
 
-  AppStorage::AppStorage(const char* filePath) {
-    _filePath = filePath;
+  AppStorage::AppStorage(const char* filePath) : FileStorage(filePath) {
     _maxSize = 128;
     _enableCache = false;
   }

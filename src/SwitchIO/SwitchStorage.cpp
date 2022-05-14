@@ -2,9 +2,8 @@
 
 namespace Victor::Components {
 
-  SwitchStorage::SwitchStorage(const char* filePath) {
-    _filePath = filePath;
-    _maxSize = 512;
+  SwitchStorage::SwitchStorage(const char* filePath) : FileStorage(filePath) {
+    _maxSize = 256;
   }
 
   void SwitchStorage::_serializeTo(const SwitchConfig& model, DynamicJsonDocument& doc) {
