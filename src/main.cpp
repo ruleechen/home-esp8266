@@ -40,7 +40,7 @@ void setup(void) {
   webPortal.onRequestEnd = []() { builtinLed.toggle(); };
   webPortal.onRadioEmit = [](uint8_t index) { radioPortal.emit(index); };
   webPortal.onServiceGet = [](std::vector<TextValueModel>& states, std::vector<TextValueModel>& buttons) {
-    states.push_back({ .text = F("Text1"), .value = F("value1") });
+    states.push_back({  .text = F("Text1"),   .value = F("value1") });
     buttons.push_back({ .text = F("Button1"), .value = F("action1") });
   };
   webPortal.onServicePost = [](const String& value) {
@@ -66,7 +66,7 @@ void setup(void) {
   };
 
   // setup wifi
-  victorOTA.setup();
+  victorOTA.setup("/ota.json");
   victorWifi.setup("/wifi.json");
 
   // done

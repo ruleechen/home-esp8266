@@ -2,7 +2,8 @@
 
 namespace Victor::Components {
 
-  void VictorOTA::setup() {
+  void VictorOTA::setup(const char* settingFile) {
+    _storage = new OtaStorage(settingFile);
     // ESPhttpUpdate.setAuthorization(user, password);
     ESPhttpUpdate.setLedPin(LED_BUILTIN, LOW);
     // hook events
@@ -60,14 +61,16 @@ namespace Victor::Components {
 
   void VictorOTA::_updateSketch() {
     WiFiClient client;
+    const auto setting = _storage->load();
     const auto currentVersion = getCurrentVersion();
-    ESPhttpUpdate.update(client, F("http://wwww.rulee.cn/esp8266/firmware.bin"), currentVersion);
+    ESPhttpUpdate.update(client, setting.remote, currentVersion);
   }
 
   void VictorOTA::_updateFileSystem() {
     WiFiClient client;
+    const auto setting = _storage->load();
     const auto currentVersion = getCurrentVersion();
-    ESPhttpUpdate.updateFS(client, F("http://wwww.rulee.cn/esp8266/littlefs.bin"), currentVersion);
+    ESPhttpUpdate.updateFS(client, setting.remote, currentVersion);
   }
 
   void VictorOTA::_handleStart() {

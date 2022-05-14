@@ -5,6 +5,7 @@
 #include <Arduino.h>
 #include <ESP8266httpUpdate.h>
 #include "Console.h"
+#include "OtaStorage/OtaStorage.h"
 
 namespace Victor::Components {
 
@@ -16,13 +17,14 @@ namespace Victor::Components {
 
   class VictorOTA {
    public:
-    void setup();
+    void setup(const char* settingFile = "/ota.json");
     String getCurrentVersion() const;
     String checkNewVersion();
     void update(const String& version, VOtaType type);
     void trigger(VOtaType type);
 
    private:
+    OtaStorage* _storage = nullptr;
     void _updateSketch();
     void _updateFileSystem();
     void _handleStart();
