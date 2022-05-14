@@ -9,17 +9,19 @@ namespace Victor::Components {
 
   void AppStorage::_serializeTo(const AppSetting& model, DynamicJsonDocument& doc) {
     doc[F("name")] = model.name;
-    doc[F("led")][0] = model.ledPin;
-    doc[F("led")][1] = model.ledOnHigh;
-    doc[F("led")][2] = model.ledEnabled;
+    const auto ledArr = doc.createNestedArray(F("led"));
+    ledArr[0] = model.ledPin;
+    ledArr[1] = model.ledOnHigh ? 1 : 0;
+    ledArr[2] = model.ledEnabled ? 1 : 0;
   }
 
   void AppStorage::_deserializeFrom(AppSetting& model, const DynamicJsonDocument& doc) {
     const char* name = doc[F("name")];
     model.name = String(name);
-    model.ledPin = doc[F("led")][0];
-    model.ledOnHigh = doc[F("led")][1];
-    model.ledEnabled = doc[F("led")][2];
+    const auto ledArr = doc[F("led")];
+    model.ledPin = ledArr[0];
+    model.ledOnHigh = ledArr[1] == 1;
+    model.ledEnabled = ledArr[2] == 1;
   }
 
   // global
