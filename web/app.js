@@ -508,9 +508,9 @@ const FileItemView = (() => {
         m("h3", `${state.path} (${vic.bytes(state.size)})`),
         m("p", [m(m.route.Link, { href: "/fs/files" }, "< Files")]),
         state.limited
-          ? m("p.orange", "File size limited")
+          ? m("p.warn", "File size limited")
           : !state.editable
-          ? m("p.orange", "File not editable")
+          ? m("p.warn", "File not editable")
           : m("div.form", [
               m("p", [
                 m(
@@ -745,7 +745,7 @@ const WifiListView = (() => {
           ]),
           state.times >= 0
             ? m(
-                "p.green",
+                "p.info",
                 `Please wait... (${state.times})/${statusName(state.status)}`
               )
             : null,

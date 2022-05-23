@@ -138,10 +138,12 @@ table.cols2 tr th:nth-child(2) {
   animation: spinner .6s linear infinite;
 }
 
-.green {
-  color: #690;
+.info {
+  color: #669900;
 }
-
-.orange {
+.warn {
   color: orange;
+}
+.error {
+  color: red;
 }
