@@ -115,3 +115,7 @@ table.cols2 tr th:nth-child(2) {
   text-overflow: ellipsis;
   overflow: hidden;
 }
+
+.orange {
+  color: orange;
+}

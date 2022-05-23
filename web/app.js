@@ -427,7 +427,7 @@ const FileListView = (() => {
               m(
                 m.route.Link,
                 {
-                  href: m.buildPathname("/fs/files/:path", { path }),
+                  href: m.buildPathname("/fs/files/:path", { path, size }),
                 },
                 path
               ),
@@ -443,7 +443,8 @@ const FileListView = (() => {
 const FileItemView = (() => {
   const state = {
     loading: true,
-    file: { name: "", size: 0, content: "" },
+    limited: false,
+    file: { name: "", size: 0, editable: false, content: "" },
   };
   const request = (method, body) => {
     const path = m.route.param("path");
@@ -478,12 +479,16 @@ const FileItemView = (() => {
     }
   };
   const oninit = () => {
-    state.loading = true;
-    request("GET").then((res) => {
-      state.file = res;
-      state.loading = false;
-      m.redraw();
-    });
+    const size = parseInt(m.route.param("size"), 10);
+    state.limited = size > _vic.maxEditSize;
+    if (!state.limited) {
+      state.loading = true;
+      request("GET").then((res) => {
+        state.file = res;
+        state.loading = false;
+        m.redraw();
+      });
+    }
   };
   return {
     oninit,
@@ -495,16 +500,30 @@ const FileItemView = (() => {
         vic.getNav(),
         m("h3", `${state.file.name} (${state.file.size} bytes)`),
         m("p", [m(m.route.Link, { href: "/fs/files" }, "< Files")]),
-        m("div.form", [
-          m("p", [m("textarea", { cols: 50, rows: 10 }, state.file.content)]),
-          m("p", [
-            m("input[type=text]", { id: "txtSaveAs", placeholder: "Save As" }),
-          ]),
-          m("p", [
-            m("button.btn", { onclick: save }, "Save"),
-            m("button.btn.weak", { onclick: remove }, "Delete"),
-          ]),
-        ]),
+        state.limited
+          ? m("p.orange", "File size limited")
+          : !state.file.editable
+          ? m("p.orange", "File not editable")
+          : m("div.form", [
+              m("p", [
+                m(
+                  "textarea",
+                  { cols: 50, rows: 10, maxLength: _vic.maxEditSize },
+                  state.file.content
+                ),
+              ]),
+              m("p", [
+                m("input[type=text]", {
+                  id: "txtSaveAs",
+                  placeholder: "Save As",
+                }),
+              ]),
+              m("p", [
+                m("button.btn", { onclick: save }, "Save"),
+                m("button.btn.weak", { onclick: remove }, "Delete"),
+              ]),
+            ]),
+        n,
       ];
     },
   };

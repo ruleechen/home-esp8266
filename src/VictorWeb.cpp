@@ -76,9 +76,10 @@ namespace Victor::Components {
   }
 
   void VictorWeb::_getPageData(DynamicJsonDocument& res) {
+    res[F("unixTime")] = UNIX_TIME;
     res[F("firmwareName")] = VICTOR_FIRMWARE_NAME;
     res[F("firmwareVersion")] = VICTOR_FIRMWARE_VERSION;
-    res[F("unixTime")] = UNIX_TIME;
+    res[F("maxEditSize")] = VICTOR_FILE_SIZE_LIMIT;
   }
 
   void VictorWeb::_sendHtml(const String& html) {
@@ -231,13 +232,18 @@ namespace Victor::Components {
 
   void VictorWeb::_handleFileGet() {
     _dispatchRequestStart();
-    DynamicJsonDocument res(2048); // 2k
+    DynamicJsonDocument res(VICTOR_FILE_SIZE_LIMIT);
     const auto path = _server->arg(F("path"));
     auto file = LittleFS.open(path, "r");
     if (file) {
+      const auto name = String(file.name());
+      const auto editable = !name.endsWith(F(".gz"));
       res[F("size")] = file.size();
-      res[F("name")] = String(file.name());
-      res[F("content")] = file.readString();
+      res[F("name")] = name;
+      res[F("editable")] = editable;
+      if (editable) {
+        res[F("content")] = file.readString();
+      }
       file.close();
     } else {
       res[F("err")] = F("failed to open file");

@@ -13,6 +13,10 @@
 #include "VictorOTA.h"
 #include "VictorWifi.h"
 
+#ifndef VICTOR_FILE_SIZE_LIMIT
+#define VICTOR_FILE_SIZE_LIMIT 2048 // 2k
+#endif
+
 namespace Victor::Components {
 
   struct TextValueModel {
