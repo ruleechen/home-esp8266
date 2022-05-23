@@ -65,6 +65,16 @@ table.cols2 tr th:nth-child(2) {
   text-align: right;
 }
 
+.info {
+  color: #669900;
+}
+.warn {
+  color: orange;
+}
+.error {
+  color: red;
+}
+
 .head {
   background: #008184;
   color: #ffffff;
@@ -138,12 +148,8 @@ table.cols2 tr th:nth-child(2) {
   animation: spinner .6s linear infinite;
 }
 
-.info {
-  color: #669900;
-}
-.warn {
-  color: orange;
-}
-.error {
-  color: red;
+.message {
+  border: 1px solid;
+  padding: 5px;
+  margin-bottom: 5px;
 }

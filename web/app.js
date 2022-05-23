@@ -16,8 +16,9 @@
   win.addEventListener("DOMContentLoaded", run);
 })(window);
 
-vic.query = (selector) => document.querySelector(selector);
-vic.queryAll = (selector) => Array.from(document.querySelectorAll(selector));
+vic.query = (s) => document.querySelector(s);
+vic.queryAll = (s) => Array.from(document.querySelectorAll(s));
+vic.confirm = () => confirm("Are you sure you want to do it?");
 
 vic.bytes = (bytes) =>
   bytes >= 1024 * 1024
@@ -79,6 +80,11 @@ vic.getNav = () => {
   }
   return m("p.nav", items);
 };
+vic.navItem = (href, text) => {
+  const curr = m.route.get();
+  const match = curr === href || curr.indexOf(href + "/") === 0;
+  return m(m.route.Link, { href, class: match ? "match" : "" }, text);
+};
 
 vic._routeFns = [];
 vic.appendRoute = (fn) => vic._routeFns.push(fn);
@@ -95,15 +101,45 @@ vic.getRoute = () => {
   return config;
 };
 
-vic.confirm = () => confirm("Are you sure you want to do it?");
-
-vic.loading = () => [vic.getNav(), m("div.spinner")];
-
-vic.navItem = (href, text) => {
-  const curr = m.route.get();
-  const match = curr === href || curr.indexOf(href + "/") === 0;
-  return m(m.route.Link, { href, class: match ? "match" : "" }, text);
-};
+// state manager
+const smgr = ((win) => {
+  let d = { _ready: false, _info: null, _error: null };
+  const set = (state, ready) => {
+    d = state;
+    d._ready = !!ready;
+    d._info = null;
+    d._error = null;
+  };
+  const info = (msg) => {
+    d._info = msg;
+    win.m.redraw();
+  };
+  const error = (msg) => {
+    d._error = msg;
+    win.m.redraw();
+  };
+  const req = (opts) =>
+    win.m
+      .request(opts)
+      .then((res) => {
+        d._ready = true;
+        info(res.msg);
+        error(res.err);
+        return res;
+      })
+      .catch((err) => {
+        d._ready = true;
+        error(err);
+        return err;
+      });
+  const loading = () => (d._ready ? null : [vic.getNav(), m("div.spinner")]);
+  const message = () =>
+    [
+      d._info ? m("div.info.message", d._info) : null,
+      d._error ? m("div.error.message", d._error) : null,
+    ].filter((x) => !!x);
+  return { set, info, error, req, loading, message };
+})(window);
 
 vic.mSelect = (name, value, options) => {
   return m(
@@ -171,7 +207,7 @@ const ServiceView = (() => {
     buttons: [],
   };
   const oninit = () => {
-    state.ready = false;
+    smgr.set(state);
     m.request({
       method: "GET",
       url: "/service/get",
@@ -201,11 +237,12 @@ const ServiceView = (() => {
     oninit,
     view() {
       if (!state.ready) {
-        return vic.loading();
+        return smgr.loading();
       }
       return [
         vic.getNav(),
         m("h3", "Service"),
+        ...smgr.message(),
         vic.mTable({
           header: null,
           rows: state.states,
@@ -229,7 +266,7 @@ const SystemView = (() => {
     data: {},
   };
   const oninit = () => {
-    state.ready = false;
+    smgr.set(state);
     m.request({
       method: "GET",
       url: "/system/status",
@@ -243,13 +280,14 @@ const SystemView = (() => {
     oninit,
     view() {
       if (!state.ready) {
-        return vic.loading();
+        return smgr.loading();
       }
       const d = state.data;
       return [
         vic.getNav(),
         m("h3", "System"),
         m("p", [m(m.route.Link, { href: "/system/reset" }, "Reset")]),
+        ...smgr.message(),
         m("p", [
           vic.mTable({
             header: ["Status", ""],
@@ -299,7 +337,7 @@ const SystemResetView = (() => {
     ready: false,
   };
   const oninit = () => {
-    state.ready = false;
+    smgr.set(state);
     setTimeout(() => {
       state.ready = true;
       m.redraw();
@@ -328,12 +366,13 @@ const SystemResetView = (() => {
     oninit,
     view() {
       if (!state.ready) {
-        return vic.loading();
+        return smgr.loading();
       }
       return [
         vic.getNav(),
         m("p", [m(m.route.Link, { href: "/system" }, "< System")]),
         m("h3", "Reset (ESP)"),
+        ...smgr.message(),
         m("div.form", [
           vic.mCheckList(
             "esp",
@@ -357,7 +396,7 @@ const FileSystemView = (() => {
     data: {},
   };
   const oninit = () => {
-    state.ready = false;
+    smgr.set(state);
     m.request({
       method: "GET",
       url: "/fs",
@@ -371,13 +410,14 @@ const FileSystemView = (() => {
     oninit,
     view() {
       if (!state.ready) {
-        return vic.loading();
+        return smgr.loading();
       }
       const d = state.data;
       return [
         vic.getNav(),
         m("h3", "File System"),
         m("p", [m(m.route.Link, { href: "/fs/files" }, "Files")]),
+        ...smgr.message(),
         m("p", [
           vic.mTable({
             rows: [
@@ -401,7 +441,7 @@ const FileListView = (() => {
     files: [],
   };
   const oninit = () => {
-    state.ready = false;
+    smgr.set(state);
     m.request({
       method: "GET",
       url: "/files",
@@ -415,12 +455,13 @@ const FileListView = (() => {
     oninit,
     view() {
       if (!state.ready) {
-        return vic.loading();
+        return smgr.loading();
       }
       return [
         vic.getNav(),
         m("h3", "Files"),
         m("p", [m(m.route.Link, { href: "/fs" }, "< FS")]),
+        ...smgr.message(),
         m("p", [
           vic.mTable({
             rows: state.files.map(({ path, size }) => [
@@ -459,12 +500,12 @@ const FileItemView = (() => {
     });
   };
   const oninit = () => {
+    smgr.set(state, true);
     state.path = m.route.param("path");
     state.size = parseInt(m.route.param("size"), 10);
     state.limited = state.size > _vic.maxEditSize;
-    state.ready = true;
     if (!state.limited) {
-      state.ready = false;
+      smgr.set(state);
       request("GET").then(({ size, editable, content }) => {
         state.size = size;
         state.editable = editable;
@@ -501,12 +542,13 @@ const FileItemView = (() => {
     oninit,
     view() {
       if (!state.ready) {
-        return vic.loading();
+        return smgr.loading();
       }
       return [
         vic.getNav(),
         m("h3", `${state.path} (${vic.bytes(state.size)})`),
         m("p", [m(m.route.Link, { href: "/fs/files" }, "< Files")]),
+        ...smgr.message(),
         state.limited
           ? m("p.warn", "File size limited")
           : !state.editable
@@ -541,7 +583,7 @@ const WifiView = (() => {
     data: {},
   };
   const oninit = () => {
-    state.ready = false;
+    smgr.set(state);
     m.request({
       method: "GET",
       url: "/wifi",
@@ -555,7 +597,7 @@ const WifiView = (() => {
     oninit,
     view() {
       if (!state.ready) {
-        return vic.loading();
+        return smgr.loading();
       }
       const d = state.data;
       return [
@@ -566,6 +608,7 @@ const WifiView = (() => {
           m("span", " | "),
           m(m.route.Link, { href: "/wifi/mode" }, "Mode"),
         ]),
+        ...smgr.message(),
         m("p", [
           vic.mTable({
             rows: [
@@ -610,7 +653,7 @@ const WifiListView = (() => {
     status: -3, // unknown
   };
   const oninit = () => {
-    state.ready = false;
+    smgr.set(state);
     m.request({
       method: "GET",
       url: "/wifi/list",
@@ -709,12 +752,13 @@ const WifiListView = (() => {
     oninit,
     view() {
       if (!state.ready) {
-        return vic.loading();
+        return smgr.loading();
       }
       return [
         vic.getNav(),
         m("h3", "Join WiFi"),
         m("p", [m(m.route.Link, { href: "/wifi" }, "< WiFi")]),
+        ...smgr.message(),
         m("div.form", [
           vic.mTable({
             rows: state.founds.map((x) => [
@@ -761,7 +805,7 @@ const WifiModeView = (() => {
     mode: "",
   };
   const oninit = () => {
-    state.ready = true;
+    smgr.set(state, true);
   };
   const save = () => {
     const modeEl = vic.query("input[type=radio]:checked");
@@ -777,12 +821,13 @@ const WifiModeView = (() => {
     oninit,
     view() {
       if (!state.ready) {
-        return vic.loading();
+        return smgr.loading();
       }
       return [
         vic.getNav(),
         m("h3", "WiFi Mode"),
         m("p", [m(m.route.Link, { href: "/wifi" }, "< WiFi")]),
+        ...smgr.message(),
         m("div.form", [
           vic.mRadioList(
             "WifiMode",
@@ -807,7 +852,7 @@ const OtaView = (() => {
     data: {},
   };
   const oninit = () => {
-    state.ready = false;
+    smgr.set(state);
     m.request({
       method: "GET",
       url: "/ota",
@@ -836,13 +881,14 @@ const OtaView = (() => {
     oninit,
     view() {
       if (!state.ready) {
-        return vic.loading();
+        return smgr.loading();
       }
       const d = state.data;
       return [
         vic.getNav(),
         m("h3", "OTA"),
         m("p", [m(m.route.Link, { href: "/ota/otw" }, "Over Web")]),
+        ...smgr.message(),
         m("div.form", [
           m("p", [
             vic.mTable({
@@ -884,6 +930,7 @@ const OtaOtwView = {
       vic.getNav(),
       m("h3", "Over The Web"),
       m("p", [m(m.route.Link, { href: "/ota" }, "< OTA")]),
+      ...smgr.message(),
       m("div.form", [
         m("iframe", {
           width: "100%",
@@ -911,7 +958,7 @@ const RadioView = (() => {
     },
   };
   const oninit = () => {
-    state.ready = false;
+    smgr.set(state);
     m.request({
       method: "GET",
       url: "/radio",
@@ -943,7 +990,7 @@ const RadioView = (() => {
     oninit,
     view() {
       if (!state.ready) {
-        return vic.loading();
+        return smgr.loading();
       }
       return [
         vic.getNav(),
@@ -955,6 +1002,7 @@ const RadioView = (() => {
           m("span", " | "),
           m(m.route.Link, { href: "/radio/command" }, "Commands"),
         ]),
+        ...smgr.message(),
         vic.mTable({
           header: null,
           rows: [
@@ -1012,7 +1060,7 @@ const RadioEmitView = (() => {
     ],
   };
   const oninit = () => {
-    state.ready = false;
+    smgr.set(state);
     m.request({
       method: "GET",
       url: "/radio/emit",
@@ -1081,12 +1129,13 @@ const RadioEmitView = (() => {
     oninit,
     view() {
       if (!state.ready) {
-        return vic.loading();
+        return smgr.loading();
       }
       return [
         vic.getNav(),
         m("h3", "Radio Emits"),
         m("p", [m(m.route.Link, { href: "/radio" }, "< Radio")]),
+        ...smgr.message(),
         m("div.form", [
           vic.mTable({
             header: ["", "", "Name", "Value", "Channel", "Press"],
@@ -1165,7 +1214,7 @@ const RadioRuleView = (() => {
     ],
   };
   const oninit = () => {
-    state.ready = false;
+    smgr.set(state);
     m.request({
       method: "GET",
       url: "/radio/rule",
@@ -1219,12 +1268,13 @@ const RadioRuleView = (() => {
     oninit,
     view() {
       if (!state.ready) {
-        return vic.loading();
+        return smgr.loading();
       }
       return [
         vic.getNav(),
         m("h3", "Radio Rules"),
         m("p", [m(m.route.Link, { href: "/radio" }, "< Radio")]),
+        ...smgr.message(),
         m("div.form", [
           vic.mTable({
             header: ["", "Value", "Channel", "Press", "Action"],
@@ -1300,7 +1350,7 @@ const RadioCommandView = (() => {
     ],
   };
   const oninit = () => {
-    state.ready = false;
+    smgr.set(state);
     m.request({
       method: "GET",
       url: "/radio/command",
@@ -1353,12 +1403,13 @@ const RadioCommandView = (() => {
     oninit,
     view() {
       if (!state.ready) {
-        return vic.loading();
+        return smgr.loading();
       }
       return [
         vic.getNav(),
         m("h3", "Radio Commands"),
         m("p", [m(m.route.Link, { href: "/radio" }, "< Radio")]),
+        ...smgr.message(),
         m("div.form", [
           vic.mTable({
             header: ["", "Entry", "Press"],
