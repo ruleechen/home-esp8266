@@ -97,7 +97,7 @@ vic.getRoute = () => {
 
 vic.confirm = () => confirm("Are you sure you want to do it?");
 
-vic.getLoading = () => [vic.getNav(), m("div.spinner")];
+vic.loading = () => [vic.getNav(), m("div.spinner")];
 
 vic.navItem = (href, text) => {
   const curr = m.route.get();
@@ -201,7 +201,7 @@ const ServiceView = (() => {
     oninit,
     view() {
       if (!state.ready) {
-        return vic.getLoading();
+        return vic.loading();
       }
       return [
         vic.getNav(),
@@ -243,7 +243,7 @@ const SystemView = (() => {
     oninit,
     view() {
       if (!state.ready) {
-        return vic.getLoading();
+        return vic.loading();
       }
       const d = state.data;
       return [
@@ -328,7 +328,7 @@ const SystemResetView = (() => {
     oninit,
     view() {
       if (!state.ready) {
-        return vic.getLoading();
+        return vic.loading();
       }
       return [
         vic.getNav(),
@@ -371,7 +371,7 @@ const FileSystemView = (() => {
     oninit,
     view() {
       if (!state.ready) {
-        return vic.getLoading();
+        return vic.loading();
       }
       const d = state.data;
       return [
@@ -415,7 +415,7 @@ const FileListView = (() => {
     oninit,
     view() {
       if (!state.ready) {
-        return vic.getLoading();
+        return vic.loading();
       }
       return [
         vic.getNav(),
@@ -501,7 +501,7 @@ const FileItemView = (() => {
     oninit,
     view() {
       if (!state.ready) {
-        return vic.getLoading();
+        return vic.loading();
       }
       return [
         vic.getNav(),
@@ -555,7 +555,7 @@ const WifiView = (() => {
     oninit,
     view() {
       if (!state.ready) {
-        return vic.getLoading();
+        return vic.loading();
       }
       const d = state.data;
       return [
@@ -709,7 +709,7 @@ const WifiListView = (() => {
     oninit,
     view() {
       if (!state.ready) {
-        return vic.getLoading();
+        return vic.loading();
       }
       return [
         vic.getNav(),
@@ -777,7 +777,7 @@ const WifiModeView = (() => {
     oninit,
     view() {
       if (!state.ready) {
-        return vic.getLoading();
+        return vic.loading();
       }
       return [
         vic.getNav(),
@@ -836,7 +836,7 @@ const OtaView = (() => {
     oninit,
     view() {
       if (!state.ready) {
-        return vic.getLoading();
+        return vic.loading();
       }
       const d = state.data;
       return [
@@ -943,7 +943,7 @@ const RadioView = (() => {
     oninit,
     view() {
       if (!state.ready) {
-        return vic.getLoading();
+        return vic.loading();
       }
       return [
         vic.getNav(),
@@ -1081,7 +1081,7 @@ const RadioEmitView = (() => {
     oninit,
     view() {
       if (!state.ready) {
-        return vic.getLoading();
+        return vic.loading();
       }
       return [
         vic.getNav(),
@@ -1219,7 +1219,7 @@ const RadioRuleView = (() => {
     oninit,
     view() {
       if (!state.ready) {
-        return vic.getLoading();
+        return vic.loading();
       }
       return [
         vic.getNav(),
@@ -1353,7 +1353,7 @@ const RadioCommandView = (() => {
     oninit,
     view() {
       if (!state.ready) {
-        return vic.getLoading();
+        return vic.loading();
       }
       return [
         vic.getNav(),
