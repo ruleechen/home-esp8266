@@ -127,7 +127,6 @@ namespace Victor::Components {
     file.close();
     _solvePageTokens(html);
     html.replace(F("{appendHead}"), F(""));
-    html.replace(F("{appendBody}"), F(""));
     _sendHtml(html);
     _dispatchRequestEnd();
   }
