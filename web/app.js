@@ -166,17 +166,17 @@ vic.mCheckList = (name, values, list) =>
 
 const ServiceView = (() => {
   const state = {
-    loading: true,
+    ready: false,
     states: [],
     buttons: [],
   };
   const oninit = () => {
-    state.loading = true;
+    state.ready = false;
     m.request({
       method: "GET",
       url: "/service/get",
     }).then((res) => {
-      state.loading = false;
+      state.ready = true;
       state.states = res.states;
       state.buttons = res.buttons;
       m.redraw();
@@ -200,7 +200,7 @@ const ServiceView = (() => {
   return {
     oninit,
     view() {
-      if (state.loading) {
+      if (!state.ready) {
         return vic.getLoading();
       }
       return [
@@ -225,16 +225,16 @@ const ServiceView = (() => {
 
 const SystemView = (() => {
   const state = {
-    loading: true,
+    ready: false,
     data: {},
   };
   const oninit = () => {
-    state.loading = true;
+    state.ready = false;
     m.request({
       method: "GET",
       url: "/system/status",
     }).then((res) => {
-      state.loading = false;
+      state.ready = true;
       state.data = res;
       m.redraw();
     });
@@ -242,7 +242,7 @@ const SystemView = (() => {
   return {
     oninit,
     view() {
-      if (state.loading) {
+      if (!state.ready) {
         return vic.getLoading();
       }
       const d = state.data;
@@ -296,7 +296,14 @@ const SystemView = (() => {
 
 const SystemResetView = (() => {
   const state = {
-    loading: true,
+    ready: false,
+  };
+  const oninit = () => {
+    state.ready = false;
+    setTimeout(() => {
+      state.ready = true;
+      m.redraw();
+    }, 100);
   };
   const reset = () => {
     if (vic.confirm()) {
@@ -317,17 +324,10 @@ const SystemResetView = (() => {
       });
     }
   };
-  const oninit = () => {
-    state.loading = true;
-    setTimeout(() => {
-      state.loading = false;
-      m.redraw();
-    }, 100);
-  };
   return {
     oninit,
     view() {
-      if (state.loading) {
+      if (!state.ready) {
         return vic.getLoading();
       }
       return [
@@ -353,16 +353,16 @@ const SystemResetView = (() => {
 
 const FileSystemView = (() => {
   const state = {
-    loading: true,
+    ready: false,
     data: {},
   };
   const oninit = () => {
-    state.loading = true;
+    state.ready = false;
     m.request({
       method: "GET",
       url: "/fs",
     }).then((res) => {
-      state.loading = false;
+      state.ready = true;
       state.data = res;
       m.redraw();
     });
@@ -370,7 +370,7 @@ const FileSystemView = (() => {
   return {
     oninit,
     view() {
-      if (state.loading) {
+      if (!state.ready) {
         return vic.getLoading();
       }
       const d = state.data;
@@ -397,16 +397,16 @@ const FileSystemView = (() => {
 
 const FileListView = (() => {
   const state = {
-    loading: true,
+    ready: false,
     files: [],
   };
   const oninit = () => {
-    state.loading = true;
+    state.ready = false;
     m.request({
       method: "GET",
       url: "/files",
     }).then((res) => {
-      state.loading = false;
+      state.ready = true;
       state.files = res.files;
       m.redraw();
     });
@@ -414,7 +414,7 @@ const FileListView = (() => {
   return {
     oninit,
     view() {
-      if (state.loading) {
+      if (!state.ready) {
         return vic.getLoading();
       }
       return [
@@ -442,9 +442,12 @@ const FileListView = (() => {
 
 const FileItemView = (() => {
   const state = {
-    loading: true,
+    ready: false,
+    path: "",
+    size: 0,
     limited: false,
-    file: { name: "", size: 0, editable: false, content: "" },
+    editable: false,
+    content: "",
   };
   const request = (method, body) => {
     const path = m.route.param("path");
@@ -454,6 +457,22 @@ const FileItemView = (() => {
       params: { path },
       body,
     });
+  };
+  const oninit = () => {
+    state.path = m.route.param("path");
+    state.size = parseInt(m.route.param("size"), 10);
+    state.limited = state.size > _vic.maxEditSize;
+    state.ready = true;
+    if (!state.limited) {
+      state.ready = false;
+      request("GET").then(({ size, editable, content }) => {
+        state.size = size;
+        state.editable = editable;
+        state.content = content;
+        state.ready = true;
+        m.redraw();
+      });
+    }
   };
   const save = () => {
     request("POST", {
@@ -478,38 +497,26 @@ const FileItemView = (() => {
       });
     }
   };
-  const oninit = () => {
-    const size = parseInt(m.route.param("size"), 10);
-    state.limited = size > _vic.maxEditSize;
-    if (!state.limited) {
-      state.loading = true;
-      request("GET").then((res) => {
-        state.file = res;
-        state.loading = false;
-        m.redraw();
-      });
-    }
-  };
   return {
     oninit,
     view() {
-      if (state.loading) {
+      if (!state.ready) {
         return vic.getLoading();
       }
       return [
         vic.getNav(),
-        m("h3", `${state.file.name} (${state.file.size} bytes)`),
+        m("h3", `${state.path} (${vic.bytes(state.size)})`),
         m("p", [m(m.route.Link, { href: "/fs/files" }, "< Files")]),
         state.limited
           ? m("p.orange", "File size limited")
-          : !state.file.editable
+          : !state.editable
           ? m("p.orange", "File not editable")
           : m("div.form", [
               m("p", [
                 m(
                   "textarea",
-                  { cols: 50, rows: 10, maxLength: _vic.maxEditSize },
-                  state.file.content
+                  { cols: 50, rows: 15, maxLength: _vic.maxEditSize },
+                  state.content
                 ),
               ]),
               m("p", [
@@ -523,7 +530,6 @@ const FileItemView = (() => {
                 m("button.btn.weak", { onclick: remove }, "Delete"),
               ]),
             ]),
-        n,
       ];
     },
   };
@@ -531,16 +537,16 @@ const FileItemView = (() => {
 
 const WifiView = (() => {
   const state = {
-    loading: true,
+    ready: false,
     data: {},
   };
   const oninit = () => {
-    state.loading = true;
+    state.ready = false;
     m.request({
       method: "GET",
       url: "/wifi",
     }).then((res) => {
-      state.loading = false;
+      state.ready = true;
       state.data = res;
       m.redraw();
     });
@@ -548,7 +554,7 @@ const WifiView = (() => {
   return {
     oninit,
     view() {
-      if (state.loading) {
+      if (!state.ready) {
         return vic.getLoading();
       }
       const d = state.data;
@@ -596,12 +602,23 @@ const WifiView = (() => {
 
 const WifiListView = (() => {
   const state = {
-    loading: true,
+    ready: false,
     bssid: null,
     founds: [{ bssid: "", ssid: "", channel: 0, rssi: 10 }],
     pswd: "",
     times: -1,
     status: -3, // unknown
+  };
+  const oninit = () => {
+    state.ready = false;
+    m.request({
+      method: "GET",
+      url: "/wifi/list",
+    }).then((res) => {
+      state.ready = true;
+      Object.assign(state, res);
+      m.redraw();
+    });
   };
   const scan = () => {
     state.pswd = vic.query("#txtPswd").value;
@@ -688,21 +705,10 @@ const WifiListView = (() => {
       });
     }
   };
-  const oninit = () => {
-    state.loading = true;
-    m.request({
-      method: "GET",
-      url: "/wifi/list",
-    }).then((res) => {
-      state.loading = false;
-      Object.assign(state, res);
-      m.redraw();
-    });
-  };
   return {
     oninit,
     view() {
-      if (state.loading) {
+      if (!state.ready) {
         return vic.getLoading();
       }
       return [
@@ -739,8 +745,7 @@ const WifiListView = (() => {
           ]),
           state.times >= 0
             ? m(
-                "p",
-                { style: { color: "#690" } },
+                "p.green",
                 `Please wait... (${state.times})/${statusName(state.status)}`
               )
             : null,
@@ -752,11 +757,11 @@ const WifiListView = (() => {
 
 const WifiModeView = (() => {
   const state = {
-    loading: true,
+    ready: false,
     mode: "",
   };
   const oninit = () => {
-    state.loading = false;
+    state.ready = true;
   };
   const save = () => {
     const modeEl = vic.query("input[type=radio]:checked");
@@ -771,7 +776,7 @@ const WifiModeView = (() => {
   return {
     oninit,
     view() {
-      if (state.loading) {
+      if (!state.ready) {
         return vic.getLoading();
       }
       return [
@@ -798,8 +803,19 @@ const WifiModeView = (() => {
 
 const OtaView = (() => {
   const state = {
-    loading: true,
+    ready: false,
     data: {},
+  };
+  const oninit = () => {
+    state.ready = false;
+    m.request({
+      method: "GET",
+      url: "/ota",
+    }).then((res) => {
+      state.ready = true;
+      state.data = res;
+      m.redraw();
+    });
   };
   const fire = () => {
     const version = "";
@@ -816,21 +832,10 @@ const OtaView = (() => {
       }
     });
   };
-  const oninit = () => {
-    state.loading = true;
-    m.request({
-      method: "GET",
-      url: "/ota",
-    }).then((res) => {
-      state.loading = false;
-      state.data = res;
-      m.redraw();
-    });
-  };
   return {
     oninit,
     view() {
-      if (state.loading) {
+      if (!state.ready) {
         return vic.getLoading();
       }
       const d = state.data;
@@ -896,7 +901,7 @@ const OtaOtwView = {
 
 const RadioView = (() => {
   const state = {
-    loading: true,
+    ready: false,
     millis: 0,
     inputPin: -1,
     lastReceived: {
@@ -904,6 +909,20 @@ const RadioView = (() => {
       channel: 0,
       timestamp: 1,
     },
+  };
+  const oninit = () => {
+    state.ready = false;
+    m.request({
+      method: "GET",
+      url: "/radio",
+    }).then((res) => {
+      state.ready = true;
+      state.millis = res.millis;
+      state.inputPin = res.inputPin;
+      state.outputPin = res.outputPin;
+      state.lastReceived = res.lastReceived;
+      m.redraw();
+    });
   };
   const save = () => {
     const inputPin = vic.query("#txtInputPin").value;
@@ -920,24 +939,10 @@ const RadioView = (() => {
       }
     });
   };
-  const oninit = () => {
-    state.loading = true;
-    m.request({
-      method: "GET",
-      url: "/radio",
-    }).then((res) => {
-      state.loading = false;
-      state.millis = res.millis;
-      state.inputPin = res.inputPin;
-      state.outputPin = res.outputPin;
-      state.lastReceived = res.lastReceived;
-      m.redraw();
-    });
-  };
   return {
     oninit,
     view() {
-      if (state.loading) {
+      if (!state.ready) {
         return vic.getLoading();
       }
       return [
@@ -997,7 +1002,7 @@ const RadioView = (() => {
 
 const RadioEmitView = (() => {
   const state = {
-    loading: true,
+    ready: false,
     emits: [{ name: "", value: "", channel: 0, press: 1 }],
     lastReceived: { value: "", channel: 0 },
     pressOptions: [
@@ -1005,6 +1010,18 @@ const RadioEmitView = (() => {
       [2, "Double Click"],
       [3, "Long Press"],
     ],
+  };
+  const oninit = () => {
+    state.ready = false;
+    m.request({
+      method: "GET",
+      url: "/radio/emit",
+    }).then((res) => {
+      state.ready = true;
+      state.emits = res.emits;
+      state.lastReceived = res.lastReceived;
+      m.redraw();
+    });
   };
   const add = () => {
     state.emits.push({
@@ -1046,7 +1063,7 @@ const RadioEmitView = (() => {
     });
   };
   const send = (ev) => {
-    state.loading = true;
+    state.ready = false;
     const index = parseInt(ev.target.value, 10);
     m.request({
       method: "POST",
@@ -1056,26 +1073,14 @@ const RadioEmitView = (() => {
       if (res.err) {
         alert(res.err);
       }
-      state.loading = false;
-      m.redraw();
-    });
-  };
-  const oninit = () => {
-    state.loading = true;
-    m.request({
-      method: "GET",
-      url: "/radio/emit",
-    }).then((res) => {
-      state.loading = false;
-      state.emits = res.emits;
-      state.lastReceived = res.lastReceived;
+      state.ready = true;
       m.redraw();
     });
   };
   return {
     oninit,
     view() {
-      if (state.loading) {
+      if (!state.ready) {
         return vic.getLoading();
       }
       return [
@@ -1140,7 +1145,7 @@ const RadioEmitView = (() => {
 
 const RadioRuleView = (() => {
   const state = {
-    loading: true,
+    ready: false,
     rules: [{ value: "", channel: 0, press: 1, action: 1 }],
     lastReceived: { value: "", channel: 0 },
     pressOptions: [
@@ -1158,6 +1163,18 @@ const RadioRuleView = (() => {
       [6, "WiFi Reset"],
       [7, "ESP Restart"],
     ],
+  };
+  const oninit = () => {
+    state.ready = false;
+    m.request({
+      method: "GET",
+      url: "/radio/rule",
+    }).then((res) => {
+      state.ready = true;
+      state.rules = res.rules;
+      state.lastReceived = res.lastReceived;
+      m.redraw();
+    });
   };
   const add = () => {
     state.rules.push({
@@ -1198,22 +1215,10 @@ const RadioRuleView = (() => {
       }
     });
   };
-  const oninit = () => {
-    state.loading = true;
-    m.request({
-      method: "GET",
-      url: "/radio/rule",
-    }).then((res) => {
-      state.loading = false;
-      state.rules = res.rules;
-      state.lastReceived = res.lastReceived;
-      m.redraw();
-    });
-  };
   return {
     oninit,
     view() {
-      if (state.loading) {
+      if (!state.ready) {
         return vic.getLoading();
       }
       return [
@@ -1275,7 +1280,7 @@ const RadioRuleView = (() => {
 
 const RadioCommandView = (() => {
   const state = {
-    loading: true,
+    ready: false,
     commands: [{ entry: 1, action: 1, press: 1 }],
     entryActionOptions: [
       ["0-0", "None"],
@@ -1293,6 +1298,17 @@ const RadioCommandView = (() => {
       [2, "Double Click"],
       [3, "Long Press"],
     ],
+  };
+  const oninit = () => {
+    state.ready = false;
+    m.request({
+      method: "GET",
+      url: "/radio/command",
+    }).then((res) => {
+      state.ready = true;
+      state.commands = res.commands;
+      m.redraw();
+    });
   };
   const add = () => {
     const entryAction = state.entryActionOptions[0][0].split("-");
@@ -1333,21 +1349,10 @@ const RadioCommandView = (() => {
       }
     });
   };
-  const oninit = () => {
-    state.loading = true;
-    m.request({
-      method: "GET",
-      url: "/radio/command",
-    }).then((res) => {
-      state.loading = false;
-      state.commands = res.commands;
-      m.redraw();
-    });
-  };
   return {
     oninit,
     view() {
-      if (state.loading) {
+      if (!state.ready) {
         return vic.getLoading();
       }
       return [

@@ -116,6 +116,10 @@ table.cols2 tr th:nth-child(2) {
   overflow: hidden;
 }
 
+.green {
+  color: #690;
+}
+
 .orange {
   color: orange;
 }
