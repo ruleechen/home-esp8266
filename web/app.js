@@ -97,7 +97,7 @@ vic.getRoute = () => {
 
 vic.confirm = () => confirm("Are you sure you want to do it?");
 
-vic.getLoading = () => [vic.getNav(), m("div.loading", "Loading")];
+vic.getLoading = () => [vic.getNav(), m("div.spinner")];
 
 vic.navItem = (href, text) => {
   const curr = m.route.get();
