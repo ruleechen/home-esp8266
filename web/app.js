@@ -202,146 +202,140 @@ vic.mCheckList = (name, values, list) =>
 
 const ServiceView = (() => {
   const state = {
-    ready: false,
     states: [],
     buttons: [],
   };
   const oninit = () => {
     smgr.set(state);
-    m.request({
-      method: "GET",
-      url: "/service/get",
-    }).then((res) => {
-      state.ready = true;
-      state.states = res.states;
-      state.buttons = res.buttons;
-      m.redraw();
-    });
+    smgr
+      .req({
+        method: "GET",
+        url: "/service/get",
+      })
+      .then((res) => {
+        state.states = res.states;
+        state.buttons = res.buttons;
+        m.redraw();
+      });
   };
   const post = (ev) => {
     if (vic.confirm()) {
-      m.request({
-        method: "POST",
-        url: "/service/post",
-        body: { value: ev.target.value },
-      }).then((res) => {
-        if (res.err) {
-          alert(res.err);
-        } else {
-          oninit();
-        }
-      });
+      smgr
+        .req({
+          method: "POST",
+          url: "/service/post",
+          body: { value: ev.target.value },
+        })
+        .then((res) => {
+          if (res.err) {
+            alert(res.err);
+          } else {
+            oninit();
+          }
+        });
     }
   };
   return {
     oninit,
     view() {
-      if (!state.ready) {
-        return smgr.loading();
-      }
-      return [
-        vic.getNav(),
-        m("h3", "Service"),
-        ...smgr.message(),
-        vic.mTable({
-          header: null,
-          rows: state.states,
-        }),
-        m("div.form", [
-          m(
-            "p",
-            state.buttons.map(([text, value]) =>
-              m("button.btn.weak", { value, onclick: post }, text)
-            )
-          ),
-        ]),
-      ];
+      return (
+        smgr.loading() || [
+          vic.getNav(),
+          m("h3", "Service"),
+          ...smgr.message(),
+          vic.mTable({
+            header: null,
+            rows: state.states,
+          }),
+          m("div.form", [
+            m(
+              "p",
+              state.buttons.map(([text, value]) =>
+                m("button.btn.weak", { value, onclick: post }, text)
+              )
+            ),
+          ]),
+        ]
+      );
     },
   };
 })();
 
 const SystemView = (() => {
   const state = {
-    ready: false,
     data: {},
   };
   const oninit = () => {
     smgr.set(state);
-    m.request({
-      method: "GET",
-      url: "/system/status",
-    }).then((res) => {
-      state.ready = true;
-      state.data = res;
-      m.redraw();
-    });
+    smgr
+      .req({
+        method: "GET",
+        url: "/system/status",
+      })
+      .then((res) => {
+        state.data = res;
+        m.redraw();
+      });
   };
   return {
     oninit,
     view() {
-      if (!state.ready) {
-        return smgr.loading();
-      }
       const d = state.data;
-      return [
-        vic.getNav(),
-        m("h3", "System"),
-        m("p", [m(m.route.Link, { href: "/system/reset" }, "Reset")]),
-        ...smgr.message(),
-        m("p", [
-          vic.mTable({
-            header: ["Status", ""],
-            rows: [
-              ["Boot", vic.ago(d.millis, 0)],
-              ["Reset Reason", d.resetReason],
-              ["Free Stack", vic.bytes(d.freeStack)],
-              ["Free Heap", vic.bytes(d.freeHeap)],
-              ["Max Free Block Size", vic.bytes(d.maxFreeBlockSize)],
-              ["Heap Fragmentation", d.heapFragmentation],
-            ],
-          }),
-          vic.mTable({
-            header: ["Hardware", ""],
-            rows: [
-              ["Chip ID", d.chipId],
-              ["CPU Freq", `${d.cupFreqMHz} MHz`],
-              ["Flash ID", d.flashId],
-              ["Flash Size", vic.bytes(d.flashSize)],
-              ["Flash Size (Real)", vic.bytes(d.flashSizeReal)],
-              ["Flash Speed", `${d.flashSpeedMHz} MHz`],
-            ],
-          }),
-          vic.mTable({
-            header: ["Software", ""],
-            rows: [
-              [
-                "Sketch MD5",
-                m("span.ellipsis", { title: d.sketchMD5 }, d.sketchMD5),
+      return (
+        smgr.loading() || [
+          vic.getNav(),
+          m("h3", "System"),
+          m("p", [m(m.route.Link, { href: "/system/reset" }, "Reset")]),
+          ...smgr.message(),
+          m("p", [
+            vic.mTable({
+              header: ["Status", ""],
+              rows: [
+                ["Boot", vic.ago(d.millis, 0)],
+                ["Reset Reason", d.resetReason],
+                ["Free Stack", vic.bytes(d.freeStack)],
+                ["Free Heap", vic.bytes(d.freeHeap)],
+                ["Max Free Block Size", vic.bytes(d.maxFreeBlockSize)],
+                ["Heap Fragmentation", d.heapFragmentation],
               ],
-              ["Sketch Size", vic.bytes(d.sketchSize)],
-              ["Sketch Free Space", vic.bytes(d.sketchFreeSpace)],
-              ["SDK Version", d.sdkVersion],
-              ["Core Version", d.coreVersion],
-              ["Firmware Version", _vic.firmwareVersion],
-              ["Build Time", new Date(_vic.unixTime * 1000).toLocaleString()],
-            ],
-          }),
-        ]),
-      ];
+            }),
+            vic.mTable({
+              header: ["Hardware", ""],
+              rows: [
+                ["Chip ID", d.chipId],
+                ["CPU Freq", `${d.cupFreqMHz} MHz`],
+                ["Flash ID", d.flashId],
+                ["Flash Size", vic.bytes(d.flashSize)],
+                ["Flash Size (Real)", vic.bytes(d.flashSizeReal)],
+                ["Flash Speed", `${d.flashSpeedMHz} MHz`],
+              ],
+            }),
+            vic.mTable({
+              header: ["Software", ""],
+              rows: [
+                [
+                  "Sketch MD5",
+                  m("span.ellipsis", { title: d.sketchMD5 }, d.sketchMD5),
+                ],
+                ["Sketch Size", vic.bytes(d.sketchSize)],
+                ["Sketch Free Space", vic.bytes(d.sketchFreeSpace)],
+                ["SDK Version", d.sdkVersion],
+                ["Core Version", d.coreVersion],
+                ["Firmware Version", _vic.firmwareVersion],
+                ["Build Time", new Date(_vic.unixTime * 1000).toLocaleString()],
+              ],
+            }),
+          ]),
+        ]
+      );
     },
   };
 })();
 
 const SystemResetView = (() => {
-  const state = {
-    ready: false,
-  };
+  const state = {};
   const oninit = () => {
-    smgr.set(state);
-    setTimeout(() => {
-      state.ready = true;
-      m.redraw();
-    }, 100);
+    smgr.set(state, true);
   };
   const reset = () => {
     if (vic.confirm()) {
@@ -349,150 +343,148 @@ const SystemResetView = (() => {
         .queryAll("input[name=esp]:checked")
         .map((x) => x.value)
         .join(",");
-      m.request({
-        method: "POST",
-        url: "/system/reset",
-        body: { values },
-      }).then((res) => {
-        if (res.err) {
-          alert(res.err);
-        } else {
-          m.redraw();
-        }
-      });
+      smgr
+        .req({
+          method: "POST",
+          url: "/system/reset",
+          body: { values },
+        })
+        .then((res) => {
+          if (res.err) {
+            alert(res.err);
+          } else {
+            m.redraw();
+          }
+        });
     }
   };
   return {
     oninit,
     view() {
-      if (!state.ready) {
-        return smgr.loading();
-      }
-      return [
-        vic.getNav(),
-        m("p", [m(m.route.Link, { href: "/system" }, "< System")]),
-        m("h3", "Reset (ESP)"),
-        ...smgr.message(),
-        m("div.form", [
-          vic.mCheckList(
-            "esp",
-            [],
-            [
-              { value: "1", text: "Restart" },
-              { value: "2", text: "Reset" },
-              { value: "3", text: "Erase Config" },
-            ]
-          ),
-          m("p", [m("button.btn.weak", { onclick: reset }, "Submit")]),
-        ]),
-      ];
+      return (
+        smgr.loading() || [
+          vic.getNav(),
+          m("p", [m(m.route.Link, { href: "/system" }, "< System")]),
+          m("h3", "Reset (ESP)"),
+          ...smgr.message(),
+          m("div.form", [
+            vic.mCheckList(
+              "esp",
+              [],
+              [
+                { value: "1", text: "Restart" },
+                { value: "2", text: "Reset" },
+                { value: "3", text: "Erase Config" },
+              ]
+            ),
+            m("p", [m("button.btn.weak", { onclick: reset }, "Submit")]),
+          ]),
+        ]
+      );
     },
   };
 })();
 
 const FileSystemView = (() => {
   const state = {
-    ready: false,
     data: {},
   };
   const oninit = () => {
     smgr.set(state);
-    m.request({
-      method: "GET",
-      url: "/fs",
-    }).then((res) => {
-      state.ready = true;
-      state.data = res;
-      m.redraw();
-    });
+    smgr
+      .req({
+        method: "GET",
+        url: "/fs",
+      })
+      .then((res) => {
+        state.data = res;
+        m.redraw();
+      });
   };
   return {
     oninit,
     view() {
-      if (!state.ready) {
-        return smgr.loading();
-      }
       const d = state.data;
-      return [
-        vic.getNav(),
-        m("h3", "File System"),
-        m("p", [m(m.route.Link, { href: "/fs/files" }, "Files")]),
-        ...smgr.message(),
-        m("p", [
-          vic.mTable({
-            rows: [
-              ["Total", vic.bytes(d.totalBytes)],
-              ["Used", vic.bytes(d.usedBytes)],
-              ["Max Path Length", d.maxPathLength],
-              ["Max Open Files", d.maxOpenFiles],
-              ["Block Size", vic.bytes(d.blockSize)],
-              ["Page Size", vic.bytes(d.pageSize)],
-            ],
-          }),
-        ]),
-      ];
+      return (
+        smgr.loading() || [
+          vic.getNav(),
+          m("h3", "File System"),
+          m("p", [m(m.route.Link, { href: "/fs/files" }, "Files")]),
+          ...smgr.message(),
+          m("p", [
+            vic.mTable({
+              rows: [
+                ["Total", vic.bytes(d.totalBytes)],
+                ["Used", vic.bytes(d.usedBytes)],
+                ["Max Path Length", d.maxPathLength],
+                ["Max Open Files", d.maxOpenFiles],
+                ["Block Size", vic.bytes(d.blockSize)],
+                ["Page Size", vic.bytes(d.pageSize)],
+              ],
+            }),
+          ]),
+        ]
+      );
     },
   };
 })();
 
 const FileListView = (() => {
   const state = {
-    ready: false,
     files: [],
   };
   const oninit = () => {
     smgr.set(state);
-    m.request({
-      method: "GET",
-      url: "/files",
-    }).then((res) => {
-      state.ready = true;
-      state.files = res.files;
-      m.redraw();
-    });
+    smgr
+      .req({
+        method: "GET",
+        url: "/files",
+      })
+      .then((res) => {
+        state.files = res.files;
+        m.redraw();
+      });
   };
   return {
     oninit,
     view() {
-      if (!state.ready) {
-        return smgr.loading();
-      }
-      return [
-        vic.getNav(),
-        m("h3", "Files"),
-        m("p", [m(m.route.Link, { href: "/fs" }, "< FS")]),
-        ...smgr.message(),
-        m("p", [
-          vic.mTable({
-            rows: state.files.map(({ path, size }) => [
-              m(
-                m.route.Link,
-                {
-                  href: m.buildPathname("/fs/files/:path", { path, size }),
-                },
-                path
-              ),
-              vic.bytes(size),
-            ]),
-          }),
-        ]),
-      ];
+      return (
+        smgr.loading() || [
+          vic.getNav(),
+          m("h3", "Files"),
+          m("p", [m(m.route.Link, { href: "/fs" }, "< FS")]),
+          ...smgr.message(),
+          m("p", [
+            vic.mTable({
+              rows: state.files.map(({ path, size }) => [
+                m(
+                  m.route.Link,
+                  {
+                    href: m.buildPathname("/fs/files/:path", { path, size }),
+                  },
+                  path
+                ),
+                vic.bytes(size),
+              ]),
+            }),
+          ]),
+        ]
+      );
     },
   };
 })();
 
 const FileItemView = (() => {
   const state = {
-    ready: false,
     path: "",
     size: 0,
     limited: false,
     editable: false,
     content: "",
   };
-  const request = (method, body) => {
+  const fileReq = (method, body) => {
     const path = m.route.param("path");
-    return m.request({
+    return smgr.req({
       method,
       url: "/file",
       params: { path },
@@ -506,17 +498,16 @@ const FileItemView = (() => {
     state.limited = state.size > _vic.maxEditSize;
     if (!state.limited) {
       smgr.set(state);
-      request("GET").then(({ size, editable, content }) => {
+      fileReq("GET").then(({ size, editable, content }) => {
         state.size = size;
         state.editable = editable;
         state.content = content;
-        state.ready = true;
         m.redraw();
       });
     }
   };
   const save = () => {
-    request("POST", {
+    fileReq("POST", {
       content: vic.query("textarea").value,
       saveAs: vic.query("#txtSaveAs").value,
     }).then((res) => {
@@ -529,7 +520,7 @@ const FileItemView = (() => {
   };
   const remove = () => {
     if (vic.confirm()) {
-      request("DELETE").then((res) => {
+      fileReq("DELETE").then((res) => {
         if (res.err) {
           alert(res.err);
           return;
@@ -541,111 +532,108 @@ const FileItemView = (() => {
   return {
     oninit,
     view() {
-      if (!state.ready) {
-        return smgr.loading();
-      }
-      return [
-        vic.getNav(),
-        m("h3", `${state.path} (${vic.bytes(state.size)})`),
-        m("p", [m(m.route.Link, { href: "/fs/files" }, "< Files")]),
-        ...smgr.message(),
-        state.limited
-          ? m("p.warn", "File size limited")
-          : !state.editable
-          ? m("p.warn", "File not editable")
-          : m("div.form", [
-              m("p", [
-                m(
-                  "textarea",
-                  { cols: 50, rows: 15, maxLength: _vic.maxEditSize },
-                  state.content
-                ),
+      return (
+        smgr.loading() || [
+          vic.getNav(),
+          m("h3", `${state.path} (${vic.bytes(state.size)})`),
+          m("p", [m(m.route.Link, { href: "/fs/files" }, "< Files")]),
+          ...smgr.message(),
+          state.limited
+            ? m("p.warn", "File size limited")
+            : !state.editable
+            ? m("p.warn", "File not editable")
+            : m("div.form", [
+                m("p", [
+                  m(
+                    "textarea",
+                    { cols: 50, rows: 15, maxLength: _vic.maxEditSize },
+                    state.content
+                  ),
+                ]),
+                m("p", [
+                  m("input[type=text]", {
+                    id: "txtSaveAs",
+                    placeholder: "Save As",
+                  }),
+                ]),
+                m("p", [
+                  m("button.btn", { onclick: save }, "Save"),
+                  m("button.btn.weak", { onclick: remove }, "Delete"),
+                ]),
               ]),
-              m("p", [
-                m("input[type=text]", {
-                  id: "txtSaveAs",
-                  placeholder: "Save As",
-                }),
-              ]),
-              m("p", [
-                m("button.btn", { onclick: save }, "Save"),
-                m("button.btn.weak", { onclick: remove }, "Delete"),
-              ]),
-            ]),
-      ];
+        ]
+      );
     },
   };
 })();
 
 const WifiView = (() => {
   const state = {
-    ready: false,
     data: {},
   };
   const oninit = () => {
     smgr.set(state);
-    m.request({
-      method: "GET",
-      url: "/wifi",
-    }).then((res) => {
-      state.ready = true;
-      state.data = res;
-      m.redraw();
-    });
+    smgr
+      .req({
+        method: "GET",
+        url: "/wifi",
+      })
+      .then((res) => {
+        state.data = res;
+        m.redraw();
+      });
   };
   return {
     oninit,
     view() {
-      if (!state.ready) {
-        return smgr.loading();
-      }
       const d = state.data;
-      return [
-        vic.getNav(),
-        m("h3", "WiFi"),
-        m("p", [
-          m(m.route.Link, { href: "/wifi/list" }, "Join"),
-          m("span", " | "),
-          m(m.route.Link, { href: "/wifi/mode" }, "Mode"),
-        ]),
-        ...smgr.message(),
-        m("p", [
-          vic.mTable({
-            rows: [
-              [
-                "Local Host",
-                d.hostName
-                  ? m("a", { href: `http://${d.hostName}.local` }, d.hostName)
-                  : "",
+      return (
+        smgr.loading() || [
+          vic.getNav(),
+          m("h3", "WiFi"),
+          m("p", [
+            m(m.route.Link, { href: "/wifi/list" }, "Join"),
+            m("span", " | "),
+            m(m.route.Link, { href: "/wifi/mode" }, "Mode"),
+          ]),
+          ...smgr.message(),
+          m("p", [
+            vic.mTable({
+              rows: [
+                [
+                  "Local Host",
+                  d.hostName
+                    ? m("a", { href: `http://${d.hostName}.local` }, d.hostName)
+                    : "",
+                ],
+                ["MDNS", d.mdns ? "Running" : "-"],
+                ["Mode", d.mode],
+                ["Joined", d.joined ? `${d.joined} (${100 + d.rssi}%)` : "-"],
+                [
+                  "STA IP",
+                  d.staAddress
+                    ? m("a", { href: `http://${d.staAddress}` }, d.staAddress)
+                    : "-",
+                ],
+                ["STA MAC", d.staMacAddress],
+                [
+                  "AP IP",
+                  d.apAddress
+                    ? m("a", { href: `http://${d.apAddress}` }, d.apAddress)
+                    : "-",
+                ],
+                ["AP MAC", d.apMacAddress],
               ],
-              ["MDNS", d.mdns ? "Running" : "-"],
-              ["Mode", d.mode],
-              ["Joined", d.joined ? `${d.joined} (${100 + d.rssi}%)` : "-"],
-              [
-                "STA IP",
-                d.staAddress
-                  ? m("a", { href: `http://${d.staAddress}` }, d.staAddress)
-                  : "-",
-              ],
-              ["STA MAC", d.staMacAddress],
-              [
-                "AP IP",
-                d.apAddress
-                  ? m("a", { href: `http://${d.apAddress}` }, d.apAddress)
-                  : "-",
-              ],
-              ["AP MAC", d.apMacAddress],
-            ],
-          }),
-        ]),
-      ];
+            }),
+          ]),
+        ]
+      );
     },
   };
 })();
 
 const WifiListView = (() => {
   const state = {
-    ready: false,
     bssid: null,
     founds: [{ bssid: "", ssid: "", channel: 0, rssi: 10 }],
     pswd: "",
@@ -654,14 +642,15 @@ const WifiListView = (() => {
   };
   const oninit = () => {
     smgr.set(state);
-    m.request({
-      method: "GET",
-      url: "/wifi/list",
-    }).then((res) => {
-      state.ready = true;
-      Object.assign(state, res);
-      m.redraw();
-    });
+    smgr
+      .req({
+        method: "GET",
+        url: "/wifi/list",
+      })
+      .then((res) => {
+        Object.assign(state, res);
+        m.redraw();
+      });
   };
   const scan = () => {
     state.pswd = vic.query("#txtPswd").value;
@@ -688,10 +677,11 @@ const WifiListView = (() => {
     state.times = times;
     m.redraw();
     if (state.times > 0) {
-      m.request({
-        method: "GET",
-        url: "/wifi/join/status",
-      })
+      smgr
+        .req({
+          method: "GET",
+          url: "/wifi/join/status",
+        })
         .then((res) => {
           state.status = res.status;
           countNext();
@@ -724,84 +714,86 @@ const WifiListView = (() => {
     state.pswd = passEl.value;
     // send request
     const ap = state.founds.find((x) => x.bssid === state.bssid);
-    m.request({
-      method: "POST",
-      url: "/wifi/join",
-      body: Object.assign({}, { pswd: state.pswd }, ap),
-    }).then((res) => {
-      if (res.msg) {
-        alert(res.msg);
-      } else {
-        state.status = -3; // unknown
-        countStatus(60); // start monitor wifi join state
-      }
-    });
+    smgr
+      .req({
+        method: "POST",
+        url: "/wifi/join",
+        body: Object.assign({}, { pswd: state.pswd }, ap),
+      })
+      .then((res) => {
+        if (res.msg) {
+          alert(res.msg);
+        } else {
+          state.status = -3; // unknown
+          countStatus(60); // start monitor wifi join state
+        }
+      });
   };
   const reset = () => {
     if (vic.confirm()) {
-      m.request({
-        method: "POST",
-        url: "/wifi/reset",
-        body: {},
-      }).then(() => {
-        oninit();
-      });
+      smgr
+        .req({
+          method: "POST",
+          url: "/wifi/reset",
+          body: {},
+        })
+        .then(() => {
+          oninit();
+        });
     }
   };
   return {
     oninit,
     view() {
-      if (!state.ready) {
-        return smgr.loading();
-      }
-      return [
-        vic.getNav(),
-        m("h3", "Join WiFi"),
-        m("p", [m(m.route.Link, { href: "/wifi" }, "< WiFi")]),
-        ...smgr.message(),
-        m("div.form", [
-          vic.mTable({
-            rows: state.founds.map((x) => [
-              m("input", {
-                type: "radio",
-                name: "bssid",
-                id: x.bssid,
-                value: x.bssid,
-                checked: x.bssid === state.bssid,
-              }),
-              m("label", { for: x.bssid }, x.ssid),
-              m("label", { for: x.bssid }, x.bssid),
-              m("label", { for: x.bssid }, `${100 + x.rssi}%`), // the closer the value is to 0, the stronger the received signal has been.
-            ]),
-          }),
-          m("p", [
-            m("label", { for: "txtPswd" }, "Password"),
-            m("input[type=text]", {
-              id: "txtPswd",
-              maxLength: 32,
-              value: state.pswd,
+      return (
+        smgr.loading() || [
+          vic.getNav(),
+          m("h3", "Join WiFi"),
+          m("p", [m(m.route.Link, { href: "/wifi" }, "< WiFi")]),
+          ...smgr.message(),
+          m("div.form", [
+            vic.mTable({
+              rows: state.founds.map((x) => [
+                m("input", {
+                  type: "radio",
+                  name: "bssid",
+                  id: x.bssid,
+                  value: x.bssid,
+                  checked: x.bssid === state.bssid,
+                }),
+                m("label", { for: x.bssid }, x.ssid),
+                m("label", { for: x.bssid }, x.bssid),
+                m("label", { for: x.bssid }, `${100 + x.rssi}%`), // the closer the value is to 0, the stronger the received signal has been.
+              ]),
             }),
+            m("p", [
+              m("label", { for: "txtPswd" }, "Password"),
+              m("input[type=text]", {
+                id: "txtPswd",
+                maxLength: 32,
+                value: state.pswd,
+              }),
+            ]),
+            m("p", [
+              m("button.btn.weak", { onclick: reset }, "Reset"),
+              m("button.btn", { onclick: scan }, "Scan"),
+              m("button.btn", { onclick: join }, "Join"),
+            ]),
+            state.times >= 0
+              ? m(
+                  "p.info",
+                  `Please wait... (${state.times})/${statusName(state.status)}`
+                )
+              : null,
           ]),
-          m("p", [
-            m("button.btn.weak", { onclick: reset }, "Reset"),
-            m("button.btn", { onclick: scan }, "Scan"),
-            m("button.btn", { onclick: join }, "Join"),
-          ]),
-          state.times >= 0
-            ? m(
-                "p.info",
-                `Please wait... (${state.times})/${statusName(state.status)}`
-              )
-            : null,
-        ]),
-      ];
+        ]
+      );
     },
   };
 })();
 
 const WifiModeView = (() => {
   const state = {
-    ready: false,
     mode: "",
   };
   const oninit = () => {
@@ -809,117 +801,119 @@ const WifiModeView = (() => {
   };
   const save = () => {
     const modeEl = vic.query("input[type=radio]:checked");
-    m.request({
-      method: "POST",
-      url: "/wifi/mode",
-      body: { mode: parseInt(modeEl.value, 10) },
-    }).then(() => {
-      oninit();
-    });
+    smgr
+      .req({
+        method: "POST",
+        url: "/wifi/mode",
+        body: { mode: parseInt(modeEl.value, 10) },
+      })
+      .then(() => {
+        oninit();
+      });
   };
   return {
     oninit,
     view() {
-      if (!state.ready) {
-        return smgr.loading();
-      }
-      return [
-        vic.getNav(),
-        m("h3", "WiFi Mode"),
-        m("p", [m(m.route.Link, { href: "/wifi" }, "< WiFi")]),
-        ...smgr.message(),
-        m("div.form", [
-          vic.mRadioList(
-            "WifiMode",
-            [state.mode],
-            [
-              { value: "3", text: "AP+STA" },
-              { value: "2", text: "AP" },
-              { value: "1", text: "STA" },
-              { value: "0", text: "OFF" },
-            ]
-          ),
-          m("p", [m("button.btn", { onclick: save }, "Save")]),
-        ]),
-      ];
+      return (
+        smgr.loading() || [
+          vic.getNav(),
+          m("h3", "WiFi Mode"),
+          m("p", [m(m.route.Link, { href: "/wifi" }, "< WiFi")]),
+          ...smgr.message(),
+          m("div.form", [
+            vic.mRadioList(
+              "WifiMode",
+              [state.mode],
+              [
+                { value: "3", text: "AP+STA" },
+                { value: "2", text: "AP" },
+                { value: "1", text: "STA" },
+                { value: "0", text: "OFF" },
+              ]
+            ),
+            m("p", [m("button.btn", { onclick: save }, "Save")]),
+          ]),
+        ]
+      );
     },
   };
 })();
 
 const OtaView = (() => {
   const state = {
-    ready: false,
     data: {},
   };
   const oninit = () => {
     smgr.set(state);
-    m.request({
-      method: "GET",
-      url: "/ota",
-    }).then((res) => {
-      state.ready = true;
-      state.data = res;
-      m.redraw();
-    });
+    smgr
+      .req({
+        method: "GET",
+        url: "/ota",
+      })
+      .then((res) => {
+        state.data = res;
+        m.redraw();
+      });
   };
   const fire = () => {
     const version = "";
     const otaType = "";
-    m.request({
-      method: "POST",
-      url: "/ota/fire",
-      body: { version, otaType },
-    }).then((res) => {
-      if (res.err) {
-        alert(res.err);
-      } else {
-        m.redraw();
-      }
-    });
+    smgr
+      .req({
+        method: "POST",
+        url: "/ota/fire",
+        body: { version, otaType },
+      })
+      .then((res) => {
+        if (res.err) {
+          alert(res.err);
+        } else {
+          m.redraw();
+        }
+      });
   };
   return {
     oninit,
     view() {
-      if (!state.ready) {
-        return smgr.loading();
-      }
       const d = state.data;
-      return [
-        vic.getNav(),
-        m("h3", "OTA"),
-        m("p", [m(m.route.Link, { href: "/ota/otw" }, "Over Web")]),
-        ...smgr.message(),
-        m("div.form", [
-          m("p", [
-            vic.mTable({
-              rows: [
-                ["Flash Size", vic.bytes(d.flashSize)],
-                ["Flash Size (Real)", vic.bytes(d.flashSizeReal)],
-                ["Sketch Size", vic.bytes(d.sketchSize)],
-                ["Sketch Free Space", vic.bytes(d.sketchFreeSpace)],
-                ["Remote Latest", d.otaNewVersion],
-                ["Local Firmware", d.otaVersion],
-              ],
-            }),
-          ]),
-          vic.mRadioList(
-            "OtaType",
-            ["sketch"],
-            [
-              { value: "all", text: "All" },
-              { value: "sketch", text: "Sketch" },
-              { value: "fs", text: "File System" },
-            ]
-          ),
-          m("p", [
-            m(
-              "button.btn",
-              { onclick: fire },
-              "Load + Burn " + d.otaNewVersion
+      return (
+        smgr.loading() || [
+          vic.getNav(),
+          m("h3", "OTA"),
+          m("p", [m(m.route.Link, { href: "/ota/otw" }, "Over Web")]),
+          ...smgr.message(),
+          m("div.form", [
+            m("p", [
+              vic.mTable({
+                rows: [
+                  ["Flash Size", vic.bytes(d.flashSize)],
+                  ["Flash Size (Real)", vic.bytes(d.flashSizeReal)],
+                  ["Sketch Size", vic.bytes(d.sketchSize)],
+                  ["Sketch Free Space", vic.bytes(d.sketchFreeSpace)],
+                  ["Remote Latest", d.otaNewVersion],
+                  ["Local Firmware", d.otaVersion],
+                ],
+              }),
+            ]),
+            vic.mRadioList(
+              "OtaType",
+              ["sketch"],
+              [
+                { value: "all", text: "All" },
+                { value: "sketch", text: "Sketch" },
+                { value: "fs", text: "File System" },
+              ]
             ),
+            m("p", [
+              m(
+                "button.btn",
+                { onclick: fire },
+                "Load + Burn " + d.otaNewVersion
+              ),
+            ]),
           ]),
-        ]),
-      ];
+        ]
+      );
     },
   };
 })();
@@ -948,7 +942,6 @@ const OtaOtwView = {
 
 const RadioView = (() => {
   const state = {
-    ready: false,
     millis: 0,
     inputPin: -1,
     lastReceived: {
@@ -959,98 +952,99 @@ const RadioView = (() => {
   };
   const oninit = () => {
     smgr.set(state);
-    m.request({
-      method: "GET",
-      url: "/radio",
-    }).then((res) => {
-      state.ready = true;
-      state.millis = res.millis;
-      state.inputPin = res.inputPin;
-      state.outputPin = res.outputPin;
-      state.lastReceived = res.lastReceived;
-      m.redraw();
-    });
+    smgr
+      .req({
+        method: "GET",
+        url: "/radio",
+      })
+      .then((res) => {
+        state.millis = res.millis;
+        state.inputPin = res.inputPin;
+        state.outputPin = res.outputPin;
+        state.lastReceived = res.lastReceived;
+        m.redraw();
+      });
   };
   const save = () => {
     const inputPin = vic.query("#txtInputPin").value;
     const outputPin = vic.query("#txtOutputPin").value;
-    m.request({
-      method: "POST",
-      url: "/radio",
-      body: { inputPin, outputPin },
-    }).then((res) => {
-      if (res.err) {
-        alert(res.err);
-      } else {
-        oninit();
-      }
-    });
+    smgr
+      .req({
+        method: "POST",
+        url: "/radio",
+        body: { inputPin, outputPin },
+      })
+      .then((res) => {
+        if (res.err) {
+          alert(res.err);
+        } else {
+          oninit();
+        }
+      });
   };
   return {
     oninit,
     view() {
-      if (!state.ready) {
-        return smgr.loading();
-      }
-      return [
-        vic.getNav(),
-        m("h3", "Radio"),
-        m("p", [
-          m(m.route.Link, { href: "/radio/emit" }, "Emits"),
-          m("span", " | "),
-          m(m.route.Link, { href: "/radio/rule" }, "Rules"),
-          m("span", " | "),
-          m(m.route.Link, { href: "/radio/command" }, "Commands"),
-        ]),
-        ...smgr.message(),
-        vic.mTable({
-          header: null,
-          rows: [
-            [
-              "Last Received",
-              state.lastReceived.value
-                ? vic.ago(state.millis, state.lastReceived.timestamp) + " ago"
-                : "-",
-            ],
-            [
-              "Value",
-              state.lastReceived.value ? state.lastReceived.value : "-",
-            ],
-            [
-              "Channel",
-              state.lastReceived.value ? state.lastReceived.channel : "-",
-            ],
-          ],
-        }),
-        m("div.form", [
+      return (
+        smgr.loading() || [
+          vic.getNav(),
+          m("h3", "Radio"),
           m("p", [
-            m("label", { for: "txtInputPin" }, "Input Pin"),
-            m("input[type=number]", {
-              id: "txtInputPin",
-              min: -1,
-              max: 100,
-              value: state.inputPin,
-            }),
+            m(m.route.Link, { href: "/radio/emit" }, "Emits"),
+            m("span", " | "),
+            m(m.route.Link, { href: "/radio/rule" }, "Rules"),
+            m("span", " | "),
+            m(m.route.Link, { href: "/radio/command" }, "Commands"),
           ]),
-          m("p", [
-            m("label", { for: "txtOutputPin" }, "Output Pin"),
-            m("input[type=number]", {
-              id: "txtOutputPin",
-              min: -1,
-              max: 100,
-              value: state.outputPin,
-            }),
+          ...smgr.message(),
+          vic.mTable({
+            header: null,
+            rows: [
+              [
+                "Last Received",
+                state.lastReceived.value
+                  ? vic.ago(state.millis, state.lastReceived.timestamp) + " ago"
+                  : "-",
+              ],
+              [
+                "Value",
+                state.lastReceived.value ? state.lastReceived.value : "-",
+              ],
+              [
+                "Channel",
+                state.lastReceived.value ? state.lastReceived.channel : "-",
+              ],
+            ],
+          }),
+          m("div.form", [
+            m("p", [
+              m("label", { for: "txtInputPin" }, "Input Pin"),
+              m("input[type=number]", {
+                id: "txtInputPin",
+                min: -1,
+                max: 100,
+                value: state.inputPin,
+              }),
+            ]),
+            m("p", [
+              m("label", { for: "txtOutputPin" }, "Output Pin"),
+              m("input[type=number]", {
+                id: "txtOutputPin",
+                min: -1,
+                max: 100,
+                value: state.outputPin,
+              }),
+            ]),
+            m("p", [m("button.btn", { onclick: save }, "Save")]),
           ]),
-          m("p", [m("button.btn", { onclick: save }, "Save")]),
-        ]),
-      ];
+        ]
+      );
     },
   };
 })();
 
 const RadioEmitView = (() => {
   const state = {
-    ready: false,
     emits: [{ name: "", value: "", channel: 0, press: 1 }],
     lastReceived: { value: "", channel: 0 },
     pressOptions: [
@@ -1061,15 +1055,16 @@ const RadioEmitView = (() => {
   };
   const oninit = () => {
     smgr.set(state);
-    m.request({
-      method: "GET",
-      url: "/radio/emit",
-    }).then((res) => {
-      state.ready = true;
-      state.emits = res.emits;
-      state.lastReceived = res.lastReceived;
-      m.redraw();
-    });
+    smgr
+      .req({
+        method: "GET",
+        url: "/radio/emit",
+      })
+      .then((res) => {
+        state.emits = res.emits;
+        state.lastReceived = res.lastReceived;
+        m.redraw();
+      });
   };
   const add = () => {
     state.emits.push({
@@ -1098,103 +1093,103 @@ const RadioEmitView = (() => {
       channel: channelEls[i].value,
       press: pressIdEls[i].value,
     }));
-    m.request({
-      method: "POST",
-      url: "/radio/emit",
-      body: { emits },
-    }).then((res) => {
-      if (res.err) {
-        alert(res.err);
-      } else {
-        oninit();
-      }
-    });
+    smgr
+      .req({
+        method: "POST",
+        url: "/radio/emit",
+        body: { emits },
+      })
+      .then((res) => {
+        if (res.err) {
+          alert(res.err);
+        } else {
+          oninit();
+        }
+      });
   };
   const send = (ev) => {
-    state.ready = false;
     const index = parseInt(ev.target.value, 10);
-    m.request({
-      method: "POST",
-      url: "/radio/emit/send",
-      body: { index },
-    }).then((res) => {
-      if (res.err) {
-        alert(res.err);
-      }
-      state.ready = true;
-      m.redraw();
-    });
+    smgr
+      .req({
+        method: "POST",
+        url: "/radio/emit/send",
+        body: { index },
+      })
+      .then((res) => {
+        if (res.err) {
+          alert(res.err);
+        }
+        m.redraw();
+      });
   };
   return {
     oninit,
     view() {
-      if (!state.ready) {
-        return smgr.loading();
-      }
-      return [
-        vic.getNav(),
-        m("h3", "Radio Emits"),
-        m("p", [m(m.route.Link, { href: "/radio" }, "< Radio")]),
-        ...smgr.message(),
-        m("div.form", [
-          vic.mTable({
-            header: ["", "", "Name", "Value", "Channel", "Press"],
-            rows: state.emits.map((emit, index) => [
-              m(
-                "button.btn.weak",
-                {
-                  name: "Remove",
-                  value: index,
-                  onclick: remove,
-                },
-                "Remove"
-              ),
-              m(
-                "button.btn",
-                { name: "Send", value: index, onclick: send },
-                "Send"
-              ),
-              m("input[type=text]", {
-                name: "Name",
-                value: emit.name,
-                maxLength: 8,
-                style: { width: "40px" },
-              }),
-              m("input[type=text]", {
-                name: "Value",
-                value: emit.value,
-                maxLength: 8,
-                style: { width: "60px" },
-              }),
-              m("input[type=number]", {
-                name: "Channel",
-                value: emit.channel,
-                min: -1,
-                max: 100,
-              }),
-              vic.mSelect(
-                "PressId",
-                emit.press,
-                state.pressOptions.map((x) => ({
-                  value: x[0],
-                  text: x[1],
-                }))
-              ),
+      return (
+        smgr.loading() || [
+          vic.getNav(),
+          m("h3", "Radio Emits"),
+          m("p", [m(m.route.Link, { href: "/radio" }, "< Radio")]),
+          ...smgr.message(),
+          m("div.form", [
+            vic.mTable({
+              header: ["", "", "Name", "Value", "Channel", "Press"],
+              rows: state.emits.map((emit, index) => [
+                m(
+                  "button.btn.weak",
+                  {
+                    name: "Remove",
+                    value: index,
+                    onclick: remove,
+                  },
+                  "Remove"
+                ),
+                m(
+                  "button.btn",
+                  { name: "Send", value: index, onclick: send },
+                  "Send"
+                ),
+                m("input[type=text]", {
+                  name: "Name",
+                  value: emit.name,
+                  maxLength: 8,
+                  style: { width: "40px" },
+                }),
+                m("input[type=text]", {
+                  name: "Value",
+                  value: emit.value,
+                  maxLength: 8,
+                  style: { width: "60px" },
+                }),
+                m("input[type=number]", {
+                  name: "Channel",
+                  value: emit.channel,
+                  min: -1,
+                  max: 100,
+                }),
+                vic.mSelect(
+                  "PressId",
+                  emit.press,
+                  state.pressOptions.map((x) => ({
+                    value: x[0],
+                    text: x[1],
+                  }))
+                ),
+              ]),
+            }),
+            m("p", [
+              m("button.btn", { onclick: add }, "Add+"),
+              m("button.btn", { onclick: save }, "Save"),
             ]),
-          }),
-          m("p", [
-            m("button.btn", { onclick: add }, "Add+"),
-            m("button.btn", { onclick: save }, "Save"),
           ]),
-        ]),
-      ];
+        ]
+      );
     },
   };
 })();
 
 const RadioRuleView = (() => {
   const state = {
-    ready: false,
     rules: [{ value: "", channel: 0, press: 1, action: 1 }],
     lastReceived: { value: "", channel: 0 },
     pressOptions: [
@@ -1215,15 +1210,16 @@ const RadioRuleView = (() => {
   };
   const oninit = () => {
     smgr.set(state);
-    m.request({
-      method: "GET",
-      url: "/radio/rule",
-    }).then((res) => {
-      state.ready = true;
-      state.rules = res.rules;
-      state.lastReceived = res.lastReceived;
-      m.redraw();
-    });
+    smgr
+      .req({
+        method: "GET",
+        url: "/radio/rule",
+      })
+      .then((res) => {
+        state.rules = res.rules;
+        state.lastReceived = res.lastReceived;
+        m.redraw();
+      });
   };
   const add = () => {
     state.rules.push({
@@ -1252,85 +1248,85 @@ const RadioRuleView = (() => {
       press: pressIdEls[i].value,
       action: actionIdEls[i].value,
     }));
-    m.request({
-      method: "POST",
-      url: "/radio/rule",
-      body: { rules },
-    }).then((res) => {
-      if (res.err) {
-        alert(res.err);
-      } else {
-        oninit();
-      }
-    });
+    smgr
+      .req({
+        method: "POST",
+        url: "/radio/rule",
+        body: { rules },
+      })
+      .then((res) => {
+        if (res.err) {
+          alert(res.err);
+        } else {
+          oninit();
+        }
+      });
   };
   return {
     oninit,
     view() {
-      if (!state.ready) {
-        return smgr.loading();
-      }
-      return [
-        vic.getNav(),
-        m("h3", "Radio Rules"),
-        m("p", [m(m.route.Link, { href: "/radio" }, "< Radio")]),
-        ...smgr.message(),
-        m("div.form", [
-          vic.mTable({
-            header: ["", "Value", "Channel", "Press", "Action"],
-            rows: state.rules.map((rule, index) => [
-              m(
-                "button.btn.weak",
-                {
-                  name: "Remove",
-                  value: index,
-                  onclick: remove,
-                },
-                "Remove"
-              ),
-              m("input[type=text]", {
-                name: "Value",
-                value: rule.value,
-                maxLength: 8,
-                style: { width: "60px" },
-              }),
-              m("input[type=number]", {
-                name: "Channel",
-                value: rule.channel,
-                min: -1,
-                max: 100,
-              }),
-              vic.mSelect(
-                "PressId",
-                rule.press,
-                state.pressOptions.map((x) => ({
-                  value: x[0],
-                  text: x[1],
-                }))
-              ),
-              vic.mSelect(
-                "ActionId",
-                rule.action,
-                state.actionOptions.map((x) => ({
-                  value: x[0],
-                  text: x[1],
-                }))
-              ),
+      return (
+        smgr.loading() || [
+          vic.getNav(),
+          m("h3", "Radio Rules"),
+          m("p", [m(m.route.Link, { href: "/radio" }, "< Radio")]),
+          ...smgr.message(),
+          m("div.form", [
+            vic.mTable({
+              header: ["", "Value", "Channel", "Press", "Action"],
+              rows: state.rules.map((rule, index) => [
+                m(
+                  "button.btn.weak",
+                  {
+                    name: "Remove",
+                    value: index,
+                    onclick: remove,
+                  },
+                  "Remove"
+                ),
+                m("input[type=text]", {
+                  name: "Value",
+                  value: rule.value,
+                  maxLength: 8,
+                  style: { width: "60px" },
+                }),
+                m("input[type=number]", {
+                  name: "Channel",
+                  value: rule.channel,
+                  min: -1,
+                  max: 100,
+                }),
+                vic.mSelect(
+                  "PressId",
+                  rule.press,
+                  state.pressOptions.map((x) => ({
+                    value: x[0],
+                    text: x[1],
+                  }))
+                ),
+                vic.mSelect(
+                  "ActionId",
+                  rule.action,
+                  state.actionOptions.map((x) => ({
+                    value: x[0],
+                    text: x[1],
+                  }))
+                ),
+              ]),
+            }),
+            m("p", [
+              m("button.btn", { onclick: add }, "Add+"),
+              m("button.btn", { onclick: save }, "Save"),
             ]),
-          }),
-          m("p", [
-            m("button.btn", { onclick: add }, "Add+"),
-            m("button.btn", { onclick: save }, "Save"),
           ]),
-        ]),
-      ];
+        ]
+      );
     },
   };
 })();
 
 const RadioCommandView = (() => {
   const state = {
-    ready: false,
     commands: [{ entry: 1, action: 1, press: 1 }],
     entryActionOptions: [
       ["0-0", "None"],
@@ -1351,14 +1347,15 @@ const RadioCommandView = (() => {
   };
   const oninit = () => {
     smgr.set(state);
-    m.request({
-      method: "GET",
-      url: "/radio/command",
-    }).then((res) => {
-      state.ready = true;
-      state.commands = res.commands;
-      m.redraw();
-    });
+    smgr
+      .req({
+        method: "GET",
+        url: "/radio/command",
+      })
+      .then((res) => {
+        state.commands = res.commands;
+        m.redraw();
+      });
   };
   const add = () => {
     const entryAction = state.entryActionOptions[0][0].split("-");
@@ -1387,66 +1384,67 @@ const RadioCommandView = (() => {
         press: pressIdEls[i].value,
       };
     });
-    m.request({
-      method: "POST",
-      url: "/radio/command",
-      body: { commands },
-    }).then((res) => {
-      if (res.err) {
-        alert(res.err);
-      } else {
-        oninit();
-      }
-    });
+    smgr
+      .req({
+        method: "POST",
+        url: "/radio/command",
+        body: { commands },
+      })
+      .then((res) => {
+        if (res.err) {
+          alert(res.err);
+        } else {
+          oninit();
+        }
+      });
   };
   return {
     oninit,
     view() {
-      if (!state.ready) {
-        return smgr.loading();
-      }
-      return [
-        vic.getNav(),
-        m("h3", "Radio Commands"),
-        m("p", [m(m.route.Link, { href: "/radio" }, "< Radio")]),
-        ...smgr.message(),
-        m("div.form", [
-          vic.mTable({
-            header: ["", "Entry", "Press"],
-            rows: state.commands.map((command, index) => [
-              m(
-                "button.btn.weak",
-                {
-                  name: "Remove",
-                  value: index,
-                  onclick: remove,
-                },
-                "Remove"
-              ),
-              vic.mSelect(
-                "EntryAction",
-                "" + command.entry + "-" + command.action,
-                state.entryActionOptions.map((x) => ({
-                  value: x[0],
-                  text: x[1],
-                }))
-              ),
-              vic.mSelect(
-                "PressId",
-                command.press,
-                state.pressOptions.map((x) => ({
-                  value: x[0],
-                  text: x[1],
-                }))
-              ),
+      return (
+        smgr.loading() || [
+          vic.getNav(),
+          m("h3", "Radio Commands"),
+          m("p", [m(m.route.Link, { href: "/radio" }, "< Radio")]),
+          ...smgr.message(),
+          m("div.form", [
+            vic.mTable({
+              header: ["", "Entry", "Press"],
+              rows: state.commands.map((command, index) => [
+                m(
+                  "button.btn.weak",
+                  {
+                    name: "Remove",
+                    value: index,
+                    onclick: remove,
+                  },
+                  "Remove"
+                ),
+                vic.mSelect(
+                  "EntryAction",
+                  "" + command.entry + "-" + command.action,
+                  state.entryActionOptions.map((x) => ({
+                    value: x[0],
+                    text: x[1],
+                  }))
+                ),
+                vic.mSelect(
+                  "PressId",
+                  command.press,
+                  state.pressOptions.map((x) => ({
+                    value: x[0],
+                    text: x[1],
+                  }))
+                ),
+              ]),
+            }),
+            m("p", [
+              m("button.btn", { onclick: add }, "Add+"),
+              m("button.btn", { onclick: save }, "Save"),
             ]),
-          }),
-          m("p", [
-            m("button.btn", { onclick: add }, "Add+"),
-            m("button.btn", { onclick: save }, "Save"),
           ]),
-        ]),
-      ];
+        ]
+      );
     },
   };
 })();
