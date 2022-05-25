@@ -227,9 +227,7 @@ const ServiceView = (() => {
           body: { value: ev.target.value },
         })
         .then((res) => {
-          if (res.err) {
-            alert(res.err);
-          } else {
+          if (!res.err) {
             oninit();
           }
         });
@@ -343,19 +341,11 @@ const SystemResetView = (() => {
         .queryAll("input[name=esp]:checked")
         .map((x) => x.value)
         .join(",");
-      smgr
-        .req({
-          method: "POST",
-          url: "/system/reset",
-          body: { values },
-        })
-        .then((res) => {
-          if (res.err) {
-            alert(res.err);
-          } else {
-            m.redraw();
-          }
-        });
+      smgr.req({
+        method: "POST",
+        url: "/system/reset",
+        body: { values },
+      });
     }
   };
   return {
@@ -478,9 +468,8 @@ const FileItemView = (() => {
   const state = {
     path: "",
     size: 0,
-    limited: false,
-    editable: false,
     content: "",
+    editable: false,
   };
   const fileReq = (method, body) => {
     const path = m.route.param("path");
@@ -495,15 +484,21 @@ const FileItemView = (() => {
     smgr.set(state, true);
     state.path = m.route.param("path");
     state.size = parseInt(m.route.param("size"), 10);
-    state.limited = state.size > _vic.maxEditSize;
-    if (!state.limited) {
+    state.editable = state.size <= _vic.maxEditSize;
+    if (state.editable) {
       smgr.set(state);
       fileReq("GET").then(({ size, editable, content }) => {
         state.size = size;
-        state.editable = editable;
         state.content = content;
-        m.redraw();
+        state.editable = editable;
+        if (editable) {
+          m.redraw();
+        } else {
+          smgr.error("File not editable");
+        }
       });
+    } else {
+      smgr.error("File size limited");
     }
   };
   const save = () => {
@@ -511,9 +506,7 @@ const FileItemView = (() => {
       content: vic.query("textarea").value,
       saveAs: vic.query("#txtSaveAs").value,
     }).then((res) => {
-      if (res.err) {
-        alert(res.err);
-      } else {
+      if (!res.err) {
         oninit();
       }
     });
@@ -521,11 +514,9 @@ const FileItemView = (() => {
   const remove = () => {
     if (vic.confirm()) {
       fileReq("DELETE").then((res) => {
-        if (res.err) {
-          alert(res.err);
-          return;
+        if (!res.err) {
+          m.route.set("/fs/files");
         }
-        m.route.set("/fs/files");
       });
     }
   };
@@ -538,29 +529,26 @@ const FileItemView = (() => {
           m("h3", `${state.path} (${vic.bytes(state.size)})`),
           m("p", [m(m.route.Link, { href: "/fs/files" }, "< Files")]),
           ...smgr.message(),
-          state.limited
-            ? m("p.warn", "File size limited")
-            : !state.editable
-            ? m("p.warn", "File not editable")
-            : m("div.form", [
-                m("p", [
-                  m(
-                    "textarea",
-                    { cols: 50, rows: 15, maxLength: _vic.maxEditSize },
-                    state.content
-                  ),
-                ]),
-                m("p", [
-                  m("input[type=text]", {
-                    id: "txtSaveAs",
-                    placeholder: "Save As",
-                  }),
-                ]),
-                m("p", [
-                  m("button.btn", { onclick: save }, "Save"),
-                  m("button.btn.weak", { onclick: remove }, "Delete"),
-                ]),
+          state.editable &&
+            m("div.form", [
+              m("p", [
+                m(
+                  "textarea",
+                  { cols: 50, rows: 15, maxLength: _vic.maxEditSize },
+                  state.content
+                ),
               ]),
+              m("p", [
+                m("input[type=text]", {
+                  id: "txtSaveAs",
+                  placeholder: "Save As",
+                }),
+              ]),
+              m("p", [
+                m("button.btn", { onclick: save }, "Save"),
+                m("button.btn.weak", { onclick: remove }, "Delete"),
+              ]),
+            ]),
         ]
       );
     },
@@ -707,7 +695,7 @@ const WifiListView = (() => {
     const passEl = vic.query("#txtPswd");
     const bssidEl = vic.query("input[type=radio]:checked");
     if (!bssidEl) {
-      alert("Please select wifi to join");
+      smgr.error("Please select wifi to join");
       return;
     }
     state.bssid = bssidEl.value;
@@ -721,9 +709,7 @@ const WifiListView = (() => {
         body: Object.assign({}, { pswd: state.pswd }, ap),
       })
       .then((res) => {
-        if (res.msg) {
-          alert(res.msg);
-        } else {
+        if (!res.msg) {
           state.status = -3; // unknown
           countStatus(60); // start monitor wifi join state
         }
@@ -858,19 +844,11 @@ const OtaView = (() => {
   const fire = () => {
     const version = "";
     const otaType = "";
-    smgr
-      .req({
-        method: "POST",
-        url: "/ota/fire",
-        body: { version, otaType },
-      })
-      .then((res) => {
-        if (res.err) {
-          alert(res.err);
-        } else {
-          m.redraw();
-        }
-      });
+    smgr.req({
+      method: "POST",
+      url: "/ota/fire",
+      body: { version, otaType },
+    });
   };
   return {
     oninit,
@@ -975,9 +953,7 @@ const RadioView = (() => {
         body: { inputPin, outputPin },
       })
       .then((res) => {
-        if (res.err) {
-          alert(res.err);
-        } else {
+        if (!res.err) {
           oninit();
         }
       });
@@ -1100,27 +1076,18 @@ const RadioEmitView = (() => {
         body: { emits },
       })
       .then((res) => {
-        if (res.err) {
-          alert(res.err);
-        } else {
+        if (!res.err) {
           oninit();
         }
       });
   };
   const send = (ev) => {
     const index = parseInt(ev.target.value, 10);
-    smgr
-      .req({
-        method: "POST",
-        url: "/radio/emit/send",
-        body: { index },
-      })
-      .then((res) => {
-        if (res.err) {
-          alert(res.err);
-        }
-        m.redraw();
-      });
+    smgr.req({
+      method: "POST",
+      url: "/radio/emit/send",
+      body: { index },
+    });
   };
   return {
     oninit,
@@ -1255,9 +1222,7 @@ const RadioRuleView = (() => {
         body: { rules },
       })
       .then((res) => {
-        if (res.err) {
-          alert(res.err);
-        } else {
+        if (!res.err) {
           oninit();
         }
       });
@@ -1391,9 +1356,7 @@ const RadioCommandView = (() => {
         body: { commands },
       })
       .then((res) => {
-        if (res.err) {
-          alert(res.err);
-        } else {
+        if (!res.err) {
           oninit();
         }
       });
