@@ -123,14 +123,16 @@ const smgr = ((win) => {
       .request(opts)
       .then((res) => {
         d._ready = true;
-        info(res.msg);
-        error(res.err);
-        return res;
+        info(res && res.msg);
+        error(res && res.err);
+        return res && res.err
+          ? Promise.reject() // stop the following `then()`
+          : res;
       })
       .catch((err) => {
         d._ready = true;
-        error(err);
-        return err;
+        error(err instanceof Error ? err.stack : err);
+        return Promise.reject(); // stop the following `then()`
       });
   const loading = () => (d._ready ? null : [vic.getNav(), m("div.spinner")]);
   const message = () =>
@@ -226,10 +228,8 @@ const ServiceView = (() => {
           url: "/service/post",
           body: { value: ev.target.value },
         })
-        .then((res) => {
-          if (!res.err) {
-            oninit();
-          }
+        .then(() => {
+          oninit();
         });
     }
   };
@@ -505,18 +505,14 @@ const FileItemView = (() => {
     fileReq("POST", {
       content: vic.query("textarea").value,
       saveAs: vic.query("#txtSaveAs").value,
-    }).then((res) => {
-      if (!res.err) {
-        oninit();
-      }
+    }).then(() => {
+      oninit();
     });
   };
   const remove = () => {
     if (vic.confirm()) {
-      fileReq("DELETE").then((res) => {
-        if (!res.err) {
-          m.route.set("/fs/files");
-        }
+      fileReq("DELETE").then(() => {
+        m.route.set("/fs/files");
       });
     }
   };
@@ -665,11 +661,10 @@ const WifiListView = (() => {
     state.times = times;
     m.redraw();
     if (state.times > 0) {
-      smgr
-        .req({
-          method: "GET",
-          url: "/wifi/join/status",
-        })
+      m.request({
+        method: "GET",
+        url: "/wifi/join/status",
+      })
         .then((res) => {
           state.status = res.status;
           countNext();
@@ -700,7 +695,7 @@ const WifiListView = (() => {
     }
     state.bssid = bssidEl.value;
     state.pswd = passEl.value;
-    // send request
+    // join
     const ap = state.founds.find((x) => x.bssid === state.bssid);
     smgr
       .req({
@@ -952,10 +947,8 @@ const RadioView = (() => {
         url: "/radio",
         body: { inputPin, outputPin },
       })
-      .then((res) => {
-        if (!res.err) {
-          oninit();
-        }
+      .then(() => {
+        oninit();
       });
   };
   return {
@@ -1075,10 +1068,8 @@ const RadioEmitView = (() => {
         url: "/radio/emit",
         body: { emits },
       })
-      .then((res) => {
-        if (!res.err) {
-          oninit();
-        }
+      .then(() => {
+        oninit();
       });
   };
   const send = (ev) => {
@@ -1221,10 +1212,8 @@ const RadioRuleView = (() => {
         url: "/radio/rule",
         body: { rules },
       })
-      .then((res) => {
-        if (!res.err) {
-          oninit();
-        }
+      .then(() => {
+        oninit();
       });
   };
   return {
@@ -1355,10 +1344,8 @@ const RadioCommandView = (() => {
         url: "/radio/command",
         body: { commands },
       })
-      .then((res) => {
-        if (!res.err) {
-          oninit();
-        }
+      .then(() => {
+        oninit();
       });
   };
   return {
