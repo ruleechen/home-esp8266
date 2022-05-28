@@ -15,6 +15,8 @@ VictorWeb webPortal(80);
 VictorRadio radioPortal;
 DigitalInputButton* button;
 
+bool debugEnabled = false;
+
 void setup(void) {
   console.begin(115200);
   if (!LittleFS.begin()) {
@@ -57,6 +59,8 @@ void setup(void) {
       builtinLed.flash();
     } else if (action == ButtonActionDoublePressed) {
       builtinLed.flash(200);
+      debugEnabled = !debugEnabled;
+      victorWifi.enableAP(debugEnabled);
     } else if (action == ButtonActionRestart) {
       ESP.restart();
     } else if (action == ButtonActionRestore) {

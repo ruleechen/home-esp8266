@@ -52,6 +52,12 @@ namespace Victor::Components {
     }
   }
 
+  void VictorWifi::enableAP(bool enable) {
+    WiFi.enableAP(enable);
+    const auto mode = getMode();
+    _log().section(F("mode"), modeName(mode));
+  }
+
   String VictorWifi::modeName(WiFiMode_t mode) {
     if (mode == WIFI_STA) {
       return F("STA");
