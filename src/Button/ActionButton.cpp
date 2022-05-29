@@ -4,7 +4,7 @@ namespace Victor::Components {
 
   ActionButton::ActionButton(bool initState) : Button(initState) {
     onPressed = [&](const unsigned long timespan) {
-      if (onAction != nullptr) {
+      if (onAction != nullptr && timespan > VICTOR_ACTION_BUTTON_DEBOUNCE) {
         onAction(ButtonActionPressed);
         if (
           VICTOR_ACTION_BUTTON_DOUBLE_MIN < timespan &&
@@ -15,7 +15,7 @@ namespace Victor::Components {
       }
     };
     onReleased = [&](const unsigned long timespan) {
-      if (onAction != nullptr) {
+      if (onAction != nullptr && timespan > VICTOR_ACTION_BUTTON_DEBOUNCE) {
         onAction(ButtonActionReleased);
         if (timespan >= VICTOR_ACTION_BUTTON_RESTORE_MIN) {
           onAction(ButtonActionRestore);
