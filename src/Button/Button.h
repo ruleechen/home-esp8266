@@ -12,7 +12,7 @@ namespace Victor::Components {
     Button(TState state);
     virtual ~Button();
     // state
-    virtual void update(TState state);
+    virtual void update(TState state, unsigned long timestamp = 0);
     virtual bool isEqual(TState state);
     virtual bool isPressed(TState state);
     // events
@@ -37,10 +37,10 @@ namespace Victor::Components {
   }
 
   template <typename TState>
-  void Button<TState>::update(TState state) {
+  void Button<TState>::update(TState state, unsigned long timestamp) {
     if (!isEqual(state)) {
       _state = state;
-      const auto now = millis();
+      const auto now = timestamp > 0 ? timestamp : millis();
       const auto timespan = now - _lastPressed;
       if (isPressed(_state)) {
         _lastPressed = now;
