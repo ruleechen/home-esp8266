@@ -29,11 +29,13 @@ namespace Victor::Components {
   }
 
   void DigitalInterruptButton::loop() {
-    if (_contexts.size() > 0) {
-      // apply
-      for (size_t i = 0; i < _contexts.size(); i++) {
-        const auto item = _contexts[i];
-        _button->update(item.inputValue, item.timestamp);
+    if (_contexts.size() > 1) {
+      // every loop apply 2 interrupt contexts
+      for (size_t i = 0; i + 1 < _contexts.size(); i = i + 2) {
+        const auto item1 = _contexts[i];
+        const auto item2 = _contexts[i + 1];
+        _button->update(item1.inputValue, item1.timestamp);
+        _button->update(item2.inputValue, item2.timestamp);
       }
       // reset
       _contexts.clear();
