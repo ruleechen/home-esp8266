@@ -6,8 +6,10 @@
 #include "DigitalInput.h"
 #include "Button/ActionButton.h"
 
+// should be a plural
+// double click has maximum 4 times change
 #ifndef VICTOR_DIGITAL_INPUT_MAX_CHANGES
-#define VICTOR_DIGITAL_INPUT_MAX_CHANGES 5
+#define VICTOR_DIGITAL_INPUT_MAX_CHANGES 4
 #endif
 
 namespace Victor::Components {
@@ -29,7 +31,7 @@ namespace Victor::Components {
     ActionButton* _button = nullptr;
     // interrupt
     static DigitalInput* _input;
-    static bool _lastInputValue;
+    volatile static bool _lastInputValue;
     static std::vector<InterruptContext> _contexts;
     static void IRAM_ATTR _interruptHandler();
   };

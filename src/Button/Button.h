@@ -26,8 +26,8 @@ namespace Victor::Components {
   };
 
   template <typename TState>
-  Button<TState>::Button(TState state) {
-    _state = state;
+  Button<TState>::Button(TState initState) {
+    _state = initState;
   }
 
   template <typename TState>

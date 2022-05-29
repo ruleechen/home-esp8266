@@ -60,6 +60,9 @@ void setup(void) {
   // button = new DigitalInputButton(0, 0);
   button = new DigitalInterruptButton(0, 0);
   button->onAction = [](const ButtonAction action) {
+    console.log()
+      .bracket(F("button"))
+      .section(F("action"), String(action));
     if (action == ButtonActionPressed) {
       builtinLed.flash();
     } else if (action == ButtonActionDoublePressed) {
@@ -72,9 +75,6 @@ void setup(void) {
       ESP.eraseConfig();
       ESP.restart();
     }
-    console.log()
-      .bracket(F("button"))
-      .section(F("action"), String(action));
   };
 
   // done

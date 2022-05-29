@@ -41,8 +41,8 @@ namespace Victor::Components {
   }
 
   DigitalInput* DigitalInterruptButton::_input = nullptr;
-  bool DigitalInterruptButton::_lastInputValue = false;
-  std::vector<InterruptContext> DigitalInterruptButton::_contexts = {};
+  volatile bool DigitalInterruptButton::_lastInputValue = false;
+  std::vector<InterruptContext> DigitalInterruptButton::_contexts = std::vector<InterruptContext>(VICTOR_DIGITAL_INPUT_MAX_CHANGES);
 
   void IRAM_ATTR DigitalInterruptButton::_interruptHandler() {
     if (_contexts.size() < VICTOR_DIGITAL_INPUT_MAX_CHANGES) {
