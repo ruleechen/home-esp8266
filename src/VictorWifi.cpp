@@ -54,8 +54,17 @@ namespace Victor::Components {
 
   void VictorWifi::enableAP(bool enable) {
     WiFi.enableAP(enable);
+    enableLightSleep(!enable);
     const auto mode = getMode();
     _log().section(F("mode"), modeName(mode));
+  }
+
+  void VictorWifi::enableLightSleep(bool enable) {
+    if (enable) {
+      WiFi.setSleepMode(WIFI_LIGHT_SLEEP);
+    } else {
+      WiFi.setSleepMode(WIFI_MODEM_SLEEP);
+    }
   }
 
   String VictorWifi::modeName(WiFiMode_t mode) {
@@ -118,6 +127,7 @@ namespace Victor::Components {
       // turn off AP only when it is not a new join
       if (setting.autoMode) {
         setMode(WIFI_STA);
+        enableLightSleep(true);
       }
     } else {
       // save new wifi credential
@@ -138,6 +148,7 @@ namespace Victor::Components {
     const auto setting = _storage->load();
     if (setting.autoMode) {
       setMode(WIFI_AP_STA);
+      enableLightSleep(false);
     }
   }
 

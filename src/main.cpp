@@ -14,8 +14,8 @@ using namespace Victor::Components;
 
 VictorWeb webPortal(80);
 VictorRadio radioPortal;
-DigitalInputButton* button;
-// DigitalInterruptButton* button;
+// DigitalInputButton* button;
+DigitalInterruptButton* button;
 
 bool debugEnabled = false;
 
@@ -57,8 +57,8 @@ void setup(void) {
   webPortal.setup();
 
   // input button
-  button = new DigitalInputButton(0, 0);
-  // button = new DigitalInterruptButton(0, 0);
+  // button = new DigitalInputButton(0, 0);
+  button = new DigitalInterruptButton(0, 0);
   button->onAction = [](const ButtonAction action) {
     if (action == ButtonActionPressed) {
       builtinLed.flash();
@@ -96,5 +96,8 @@ void loop(void) {
       .bracket(F("radio"))
       .section(F("received"), value)
       .section(F("from channel"), String(channel));
+  }
+  if (!debugEnabled) {
+    delay(5 * 1000);
   }
 }
