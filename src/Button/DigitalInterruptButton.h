@@ -29,6 +29,7 @@ namespace Victor::Components {
     ActionButton* _button = nullptr;
     // interrupt
     static DigitalInput* _input;
+    static bool _lastInputValue;
     static std::vector<InterruptContext> _contexts;
     static void IRAM_ATTR _interruptHandler();
   };

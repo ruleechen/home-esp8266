@@ -5,6 +5,7 @@ namespace Victor::Components {
   DigitalInterruptButton::DigitalInterruptButton(uint8_t inputPin, uint8_t inputTrueValue) {
     // interrupt
     _input = new DigitalInput(inputPin, inputTrueValue);
+    _lastInputValue = _input->getValue();
     attachInterrupt(digitalPinToInterrupt(inputPin), _interruptHandler, CHANGE);
     // button
     _button = new ActionButton(_input->getValue());
@@ -29,29 +30,34 @@ namespace Victor::Components {
 
   void DigitalInterruptButton::loop() {
     if (_contexts.size() > 0) {
-      // execute
+      // apply
       for (size_t i = 0; i < _contexts.size(); i++) {
         const auto item = _contexts[i];
         _button->update(item.inputValue, item.timestamp);
       }
-      // reset interrupt
+      // reset
       _contexts.clear();
     }
   }
 
   DigitalInput* DigitalInterruptButton::_input = nullptr;
+  bool DigitalInterruptButton::_lastInputValue = false;
   std::vector<InterruptContext> DigitalInterruptButton::_contexts = {};
 
   void IRAM_ATTR DigitalInterruptButton::_interruptHandler() {
     if (_contexts.size() < VICTOR_DIGITAL_INPUT_MAX_CHANGES) {
-      const InterruptContext context = {
-        .inputValue = _input->getValue(),
-        .timestamp = millis(),
-      };
-      _contexts.push_back(context);
-      console.log()
-        .bracket("interrupt")
-        .section(String(context.inputValue));
+      const auto inputValue = _input->getValue();
+      if (inputValue != _lastInputValue) {
+        _lastInputValue = inputValue;
+        const InterruptContext context = {
+          .inputValue = inputValue,
+          .timestamp = millis(),
+        };
+        _contexts.push_back(context);
+        console.log()
+          .bracket("interrupt")
+          .section(String(inputValue));
+      }
     }
   }
 
