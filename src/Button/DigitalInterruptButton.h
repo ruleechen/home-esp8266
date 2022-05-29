@@ -30,7 +30,7 @@ namespace Victor::Components {
     // interrupt
     static DigitalInput* _input;
     static std::vector<InterruptContext> _contexts;
-    static void _interruptHandler();
+    static void IRAM_ATTR _interruptHandler();
   };
 
 } // namespace Victor::Components

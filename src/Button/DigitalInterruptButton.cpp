@@ -42,7 +42,7 @@ namespace Victor::Components {
   DigitalInput* DigitalInterruptButton::_input = nullptr;
   std::vector<InterruptContext> DigitalInterruptButton::_contexts = {};
 
-  void DigitalInterruptButton::_interruptHandler() {
+  void IRAM_ATTR DigitalInterruptButton::_interruptHandler() {
     if (_contexts.size() < VICTOR_DIGITAL_INPUT_MAX_CHANGES) {
       const InterruptContext context = {
         .inputValue = _input->getValue(),
