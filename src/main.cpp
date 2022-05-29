@@ -7,6 +7,7 @@
 #include "VictorRadio.h"
 #include "VictorWeb.h"
 #include "Button/DigitalInputButton.h"
+#include "Button/DigitalInterruptButton.h"
 
 using namespace Victor;
 using namespace Victor::Components;
@@ -14,6 +15,7 @@ using namespace Victor::Components;
 VictorWeb webPortal(80);
 VictorRadio radioPortal;
 DigitalInputButton* button;
+// DigitalInterruptButton* button;
 
 bool debugEnabled = false;
 
@@ -27,6 +29,8 @@ void setup(void) {
 
   builtinLed.setup();
   builtinLed.turnOn();
+  victorOTA.setup("/ota.json");
+  victorWifi.setup("/wifi.json");
 
   // setup radio
   radioPortal.onEmit = [](const RadioEmit& emit) {
@@ -54,11 +58,12 @@ void setup(void) {
 
   // input button
   button = new DigitalInputButton(0, 0);
+  // button = new DigitalInterruptButton(0, 0);
   button->onAction = [](const ButtonAction action) {
     if (action == ButtonActionPressed) {
       builtinLed.flash();
     } else if (action == ButtonActionDoublePressed) {
-      builtinLed.flash(200);
+      builtinLed.flash(500);
       debugEnabled = !debugEnabled;
       victorWifi.enableAP(debugEnabled);
     } else if (action == ButtonActionRestart) {
@@ -67,11 +72,10 @@ void setup(void) {
       ESP.eraseConfig();
       ESP.restart();
     }
+    console.log()
+      .bracket(F("button"))
+      .section(F("action"), String(action));
   };
-
-  // setup wifi
-  victorOTA.setup("/ota.json");
-  victorWifi.setup("/wifi.json");
 
   // done
   console.log()
