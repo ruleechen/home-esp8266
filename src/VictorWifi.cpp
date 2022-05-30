@@ -60,11 +60,17 @@ namespace Victor::Components {
   }
 
   void VictorWifi::enableLightSleep(bool enable) {
+    _lightSleepEnabled = true;
     if (enable) {
       WiFi.setSleepMode(WIFI_LIGHT_SLEEP);
     } else {
       WiFi.setSleepMode(WIFI_MODEM_SLEEP);
     }
+  }
+
+  bool VictorWifi::isLightSleepMode() {
+    // no other logic here as this is being called on loop
+    return _lightSleepEnabled;
   }
 
   String VictorWifi::modeName(WiFiMode_t mode) {

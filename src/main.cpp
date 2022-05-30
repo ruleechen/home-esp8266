@@ -17,8 +17,6 @@ VictorRadio radioPortal;
 // DigitalInputButton* button;
 DigitalInterruptButton* button;
 
-bool debugEnabled = false;
-
 void setup(void) {
   console.begin(115200);
   if (!LittleFS.begin()) {
@@ -67,8 +65,8 @@ void setup(void) {
       builtinLed.flash();
     } else if (action == ButtonActionDoublePressed) {
       builtinLed.flash(500);
-      debugEnabled = !debugEnabled;
-      victorWifi.enableAP(debugEnabled);
+      const auto enable = victorWifi.isLightSleepMode();
+      victorWifi.enableAP(enable); // toggle enabling ap
     } else if (action == ButtonActionRestart) {
       ESP.restart();
     } else if (action == ButtonActionRestore) {
@@ -97,7 +95,7 @@ void loop(void) {
       .section(F("received"), value)
       .section(F("from channel"), String(channel));
   }
-  if (!debugEnabled) {
-    delay(5 * 1000);
+  if (victorWifi.isLightSleepMode()) {
+    delay(1000);
   }
 }
