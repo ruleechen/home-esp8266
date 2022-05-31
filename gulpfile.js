@@ -1,9 +1,16 @@
+const yargs = require("yargs");
 const del = require("del");
 const gulp = require("gulp");
 const gzip = require("gulp-gzip");
 const uglify = require("gulp-uglify");
 const cleanCSS = require("gulp-clean-css");
 const rename = require("gulp-rename");
+
+const {
+  argv: { pioEnv },
+} = yargs.string("pioEnv");
+
+const isRelease = pioEnv === "release";
 
 const resource = {
   css: ["web/*.css"],
@@ -29,9 +36,11 @@ function copy_gzip() {
 }
 
 function styles() {
-  return gulp
-    .src(resource.css)
-    .pipe(cleanCSS())
+  let stream = gulp.src(resource.css);
+  if (isRelease) {
+    stream = stream.pipe(cleanCSS());
+  }
+  return stream
     .pipe(
       rename({
         suffix: ".min",
@@ -42,9 +51,11 @@ function styles() {
 }
 
 function scripts() {
-  return gulp
-    .src(resource.js)
-    .pipe(uglify())
+  let stream = gulp.src(resource.js);
+  if (isRelease) {
+    stream = stream.pipe(uglify());
+  }
+  return stream
     .pipe(
       rename({
         suffix: ".min",
