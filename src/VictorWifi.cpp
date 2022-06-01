@@ -60,7 +60,7 @@ namespace Victor::Components {
   }
 
   void VictorWifi::enableLightSleep(bool enable) {
-    _lightSleepEnabled = true;
+    _lightSleepEnabled = enable;
     if (enable) {
       WiFi.setSleepMode(WIFI_LIGHT_SLEEP);
     } else {
@@ -69,7 +69,8 @@ namespace Victor::Components {
   }
 
   bool VictorWifi::isLightSleepMode() {
-    // no other logic here as this is being called on loop
+    // no other logic here to keep it fast
+    // as this is being called by arduino loop for detecting delay or not
     return _lightSleepEnabled;
   }
 
