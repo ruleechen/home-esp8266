@@ -8,15 +8,15 @@ namespace Victor::Components {
 
   void SwitchStorage::_serializeTo(const SwitchConfig& model, DynamicJsonDocument& doc) {
     // input pin
-    const JsonArray inputArr = doc.createNestedArray(F("i"));
+    const JsonArray inputArr = doc.createNestedArray(F("input"));
     inputArr[0] = model.inputPin;
     inputArr[1] = model.inputTrueValue;
     // output pin
-    const JsonArray outputArr = doc.createNestedArray(F("o"));
+    const JsonArray outputArr = doc.createNestedArray(F("output"));
     outputArr[0] = model.outputPin;
     outputArr[1] = model.outputTrueValue;
     // output2 pin
-    const JsonArray output2Arr = doc.createNestedArray(F("o2"));
+    const JsonArray output2Arr = doc.createNestedArray(F("output2"));
     output2Arr[0] = model.output2Pin;
     output2Arr[1] = model.output2TrueValue;
     // output state
@@ -27,15 +27,15 @@ namespace Victor::Components {
 
   void SwitchStorage::_deserializeFrom(SwitchConfig& model, const DynamicJsonDocument& doc) {
     // input pin
-    const auto inputArr = doc[F("i")];
+    const auto inputArr = doc[F("input")];
     model.inputPin = inputArr[0];
     model.inputTrueValue = inputArr[1];
     // output pin
-    const auto outputArr = doc[F("o")];
+    const auto outputArr = doc[F("output")];
     model.outputPin = outputArr[0];
     model.outputTrueValue = outputArr[1];
     // output2 pin
-    const auto output2Arr = doc[F("o2")];
+    const auto output2Arr = doc[F("output2")];
     model.output2Pin = output2Arr[0];
     model.output2TrueValue = output2Arr[1];
     // output state
