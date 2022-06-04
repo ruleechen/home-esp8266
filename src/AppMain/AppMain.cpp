@@ -35,24 +35,22 @@ namespace Victor::Components {
 
     if (features.web) {
       webPortal = new VictorWeb(80);
+      webPortal->onRequestStart = []() { builtinLed.toggle(); };
+      webPortal->onRequestEnd = []() { builtinLed.toggle(); };
+      webPortal->onRadioEmit = [&](uint8_t index) { radioPortal->emit(index); };
+      webPortal->onPageData = [&](DynamicJsonDocument& res) { res[F("hasRadio")] = (radioPortal != nullptr); };
+      webPortal->setup();
     }
 
     if (features.radio) {
       radioPortal = new VictorRadio();
     }
-
-    // setup web
-    webPortal->onRequestStart = []() { builtinLed.toggle(); };
-    webPortal->onRequestEnd = []() { builtinLed.toggle(); };
-    webPortal->onRadioEmit = [&](uint8_t index) { radioPortal->emit(index); };
-    webPortal->onPageData = [&](DynamicJsonDocument& res) {
-      res[F("hasRadio")] = (radioPortal != nullptr);
-    };
-    webPortal->setup();
   }
 
   void AppMain::loop(int8_t sleepMode) {
-    webPortal->loop();
+    if (webPortal != nullptr) {
+      webPortal->loop();
+    }
     // sleep
     if (sleepMode == -1) {
       sleepMode = victorWifi.isLightSleepMode();
