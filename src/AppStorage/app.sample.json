@@ -1,1 +1,1 @@
-{"name":"app-name","led":[2,0,1]}
+{"name":"app-name","sleep":200,"led":[2,0,1]}

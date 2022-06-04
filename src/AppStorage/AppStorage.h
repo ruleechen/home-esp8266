@@ -7,6 +7,7 @@ namespace Victor::Components {
 
   struct AppSetting {
     String name;
+    uint16_t sleepMillis = 200;
     uint8_t ledPin = 2;     // 0 ~ 256
     bool ledOnHigh = false; // false: LOW, true: HIGH
     bool ledEnabled = true;
