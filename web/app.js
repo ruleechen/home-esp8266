@@ -1416,8 +1416,6 @@ vic.appendNav((items) =>
     vic.navItem("/fs", "FS"),
     m("span", " | "),
     vic.navItem("/ota", "OTA"),
-    m("span", " | "),
-    vic.navItem("/radio", "Radio"),
   ])
 );
 
@@ -1434,13 +1432,23 @@ vic.appendRoute((config) =>
     "/fs/files/:path": FileItemView,
     "/ota": OtaView,
     "/ota/otw": OtaOtwView,
-    "/radio": RadioView,
-    "/radio/emit": RadioEmitView,
-    "/radio/rule": RadioRuleView,
-    "/radio/command": RadioCommandView,
     "/404": NotfoundView,
   })
 );
+
+if (_vic.hasRadio) {
+  vic.appendNav((items) =>
+    items.concat([m("span", " | "), vic.navItem("/radio", "Radio")])
+  );
+  vic.appendRoute((config) =>
+    Object.assign(config, {
+      "/radio": RadioView,
+      "/radio/emit": RadioEmitView,
+      "/radio/rule": RadioRuleView,
+      "/radio/command": RadioCommandView,
+    })
+  );
+}
 
 // start
 vic(() => {

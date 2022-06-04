@@ -43,6 +43,7 @@ void setup(void) {
   webPortal.onRequestStart = []() { builtinLed.toggle(); };
   webPortal.onRequestEnd = []() { builtinLed.toggle(); };
   webPortal.onRadioEmit = [](uint8_t index) { radioPortal.emit(index); };
+  webPortal.onPageData = [](DynamicJsonDocument& res) { res[F("hasRadio")] = true; };
   webPortal.onServiceGet = [](std::vector<TextValueModel>& states, std::vector<TextValueModel>& buttons) {
     states.push_back({  .text = F("Text1"),   .value = F("value1") });
     buttons.push_back({ .text = F("Button1"), .value = F("action1") });

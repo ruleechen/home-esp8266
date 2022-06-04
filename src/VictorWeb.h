@@ -34,6 +34,8 @@ namespace Victor::Components {
     typedef std::function<void()> TServerEventHandler;
     TServerEventHandler onRequestStart = nullptr;
     TServerEventHandler onRequestEnd = nullptr;
+    typedef std::function<void(DynamicJsonDocument& res)> TPageDataHandler;
+    TPageDataHandler onPageData = nullptr;
     // radio events
     typedef std::function<void(uint8_t index)> TRadioEmitHandler;
     TRadioEmitHandler onRadioEmit = nullptr;

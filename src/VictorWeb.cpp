@@ -80,6 +80,9 @@ namespace Victor::Components {
     res[F("firmwareName")] = VICTOR_FIRMWARE_NAME;
     res[F("firmwareVersion")] = VICTOR_FIRMWARE_VERSION;
     res[F("maxEditSize")] = VICTOR_FILE_SIZE_LIMIT;
+    if (onPageData != nullptr) {
+      onPageData(res);
+    }
   }
 
   void VictorWeb::_sendHtml(const String& html) {
