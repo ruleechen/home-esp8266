@@ -2,37 +2,26 @@
 
 #include "Console.h"
 #include "BuiltinLed.h"
-#include "VictorOTA.h"
-#include "VictorWifi.h"
-#include "VictorRadio.h"
-#include "VictorWeb.h"
-#include "Button/DigitalInputButton.h"
+// #include "Button/DigitalInputButton.h"
 #include "Button/DigitalInterruptButton.h"
+#include "AppMain.h"
 
 using namespace Victor;
 using namespace Victor::Components;
 
-VictorWeb webPortal(80);
-VictorRadio radioPortal;
+AppMain* appMain;
 // DigitalInputButton* button;
 DigitalInterruptButton* button;
 
 void setup(void) {
-  console.begin(115200);
-  if (!LittleFS.begin()) {
-    console.error()
-      .bracket(F("fs"))
-      .section(F("mount failed"));
-  }
-
-  const auto appSetting = appStorage.load();
-  builtinLed.setup(appSetting.led);
-  builtinLed.turnOn();
-  victorOTA.setup("/ota.json");
-  victorWifi.setup("/wifi.json");
+  appMain = new AppMain();
+  appMain->setup({
+    .web = true,
+    .radio = true,
+  });
 
   // setup radio
-  radioPortal.onEmit = [](const RadioEmit& emit) {
+  appMain->radioPortal->onEmit = [](const RadioEmit& emit) {
     builtinLed.flash();
     console.log()
       .bracket(F("radio"))
@@ -41,20 +30,15 @@ void setup(void) {
   };
 
   // setup web
-  webPortal.onRequestStart = []() { builtinLed.toggle(); };
-  webPortal.onRequestEnd = []() { builtinLed.toggle(); };
-  webPortal.onRadioEmit = [](uint8_t index) { radioPortal.emit(index); };
-  webPortal.onPageData = [](DynamicJsonDocument& res) { res[F("hasRadio")] = true; };
-  webPortal.onServiceGet = [](std::vector<TextValueModel>& states, std::vector<TextValueModel>& buttons) {
+  appMain->webPortal->onServiceGet = [](std::vector<TextValueModel>& states, std::vector<TextValueModel>& buttons) {
     states.push_back({  .text = F("Text1"),   .value = F("value1") });
     buttons.push_back({ .text = F("Button1"), .value = F("action1") });
   };
-  webPortal.onServicePost = [](const String& value) {
+  appMain->webPortal->onServicePost = [](const String& value) {
     console.log()
       .bracket(F("service"))
       .section(F("post"), value);
   };
-  webPortal.setup();
 
   // input button
   // button = new DigitalInputButton(0, 0);
@@ -84,21 +68,17 @@ void setup(void) {
 }
 
 void loop(void) {
-  webPortal.loop();
+  appMain->loop();
   button->loop();
   // loop radio
   if (false) {
     auto value = String(F(""));
     uint8_t channel = 1;
-    radioPortal.receive(value, channel);
+    appMain->radioPortal->receive(value, channel);
     builtinLed.flash();
     console.log()
       .bracket(F("radio"))
       .section(F("received"), value)
       .section(F("from channel"), String(channel));
-  }
-  // sleep
-  if (victorWifi.isLightSleepMode()) {
-    delay(1000);
   }
 }
