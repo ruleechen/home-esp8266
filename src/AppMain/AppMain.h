@@ -5,8 +5,8 @@
 #include "BuiltinLed.h"
 #include "VictorOTA.h"
 #include "VictorWifi.h"
-#include "VictorRadio.h"
 #include "VictorWeb.h"
+#include "VictorRadio.h"
 
 namespace Victor::Components {
 
@@ -20,7 +20,7 @@ namespace Victor::Components {
     AppMain();
     ~AppMain();
     void setup(AppFeatures features);
-    void loop(int8_t sleepMode = -1);
+    void loop(int8_t sleepMode = 0);
     VictorWeb* webPortal = nullptr;
     VictorRadio* radioPortal = nullptr;
 
