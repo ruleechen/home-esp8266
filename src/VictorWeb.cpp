@@ -51,15 +51,17 @@ namespace Victor::Components {
     _server->on(F("/wifi/reset"), HTTP_POST, std::bind(&VictorWeb::_handleWifiReset, this));
     _server->on(F("/ota"), HTTP_GET, std::bind(&VictorWeb::_handleOta, this));
     _server->on(F("/ota/fire"), HTTP_POST, std::bind(&VictorWeb::_handleOtaFire, this));
-    _server->on(F("/radio"), HTTP_GET, std::bind(&VictorWeb::_handleRadioGet, this));
-    _server->on(F("/radio"), HTTP_POST, std::bind(&VictorWeb::_handleRadioSave, this));
-    _server->on(F("/radio/emit"), HTTP_GET, std::bind(&VictorWeb::_handleRadioEmitGet, this));
-    _server->on(F("/radio/emit"), HTTP_POST, std::bind(&VictorWeb::_handleRadioEmitSave, this));
-    _server->on(F("/radio/emit/send"), HTTP_POST, std::bind(&VictorWeb::_handleRadioEmitSend, this));
-    _server->on(F("/radio/rule"), HTTP_GET, std::bind(&VictorWeb::_handleRadioRuleGet, this));
-    _server->on(F("/radio/rule"), HTTP_POST, std::bind(&VictorWeb::_handleRadioRuleSave, this));
-    _server->on(F("/radio/command"), HTTP_GET, std::bind(&VictorWeb::_handleRadioCommandGet, this));
-    _server->on(F("/radio/command"), HTTP_POST, std::bind(&VictorWeb::_handleRadioCommandSave, this));
+    #if VICTOR_FEATURES_RADIO == 1
+      _server->on(F("/radio"), HTTP_GET, std::bind(&VictorWeb::_handleRadioGet, this));
+      _server->on(F("/radio"), HTTP_POST, std::bind(&VictorWeb::_handleRadioSave, this));
+      _server->on(F("/radio/emit"), HTTP_GET, std::bind(&VictorWeb::_handleRadioEmitGet, this));
+      _server->on(F("/radio/emit"), HTTP_POST, std::bind(&VictorWeb::_handleRadioEmitSave, this));
+      _server->on(F("/radio/emit/send"), HTTP_POST, std::bind(&VictorWeb::_handleRadioEmitSend, this));
+      _server->on(F("/radio/rule"), HTTP_GET, std::bind(&VictorWeb::_handleRadioRuleGet, this));
+      _server->on(F("/radio/rule"), HTTP_POST, std::bind(&VictorWeb::_handleRadioRuleSave, this));
+      _server->on(F("/radio/command"), HTTP_GET, std::bind(&VictorWeb::_handleRadioCommandGet, this));
+      _server->on(F("/radio/command"), HTTP_POST, std::bind(&VictorWeb::_handleRadioCommandSave, this));
+    #endif
     _server->on(F("/service/get"), HTTP_GET, std::bind(&VictorWeb::_handleServiceGet, this));
     _server->on(F("/service/post"), HTTP_POST, std::bind(&VictorWeb::_handleServicePost, this));
   }
@@ -440,209 +442,211 @@ namespace Victor::Components {
     _dispatchRequestEnd();
   }
 
-  void VictorWeb::_handleRadioGet() {
-    _dispatchRequestStart();
-    DynamicJsonDocument res(512);
-    const auto setting = radioStorage.load();
-    res[F("millis")] = millis();
-    res[F("inputPin")] = setting.inputPin;
-    res[F("outputPin")] = setting.outputPin;
-    // last received
-    const auto lastReceived = radioStorage.getLastReceived();
-    const JsonObject lastReceivedObj = res.createNestedObject(F("lastReceived"));
-    lastReceivedObj[F("value")] = lastReceived.value;
-    lastReceivedObj[F("channel")] = lastReceived.channel;
-    lastReceivedObj[F("timestamp")] = lastReceived.timestamp;
-    // end
-    _sendJson(res);
-    _dispatchRequestEnd();
-  }
-
-  void VictorWeb::_handleRadioSave() {
-    _dispatchRequestStart();
-    // payload
-    const auto payloadJson = _server->arg(F("plain"));
-    DynamicJsonDocument payload(64);
-    deserializeJson(payload, payloadJson);
-    // read
-    const int8_t inputPin = payload[F("inputPin")];
-    const int8_t outputPin = payload[F("outputPin")];
-    // action
-    auto setting = radioStorage.load();
-    setting.inputPin = inputPin;
-    setting.outputPin = outputPin;
-    radioStorage.save(setting);
-    // res
-    DynamicJsonDocument res(64);
-    res[F("msg")] = F("success");
-    _sendJson(res);
-    _dispatchRequestEnd();
-  }
-
-  void VictorWeb::_handleRadioEmitGet() {
-    _dispatchRequestStart();
-    DynamicJsonDocument res(1024 + 512);
-    // emits
-    const auto setting = radioStorage.load();
-    const JsonArray emitArr = res.createNestedArray(F("emits"));
-    for (const auto& emit : setting.emits) {
-      const JsonObject emitObj = emitArr.createNestedObject();
-      emitObj[F("name")] = emit.name;
-      emitObj[F("value")] = emit.value;
-      emitObj[F("channel")] = emit.channel;
-      emitObj[F("press")] = emit.press;
+  #if VICTOR_FEATURES_RADIO == 1
+    void VictorWeb::_handleRadioGet() {
+      _dispatchRequestStart();
+      DynamicJsonDocument res(512);
+      const auto setting = radioStorage.load();
+      res[F("millis")] = millis();
+      res[F("inputPin")] = setting.inputPin;
+      res[F("outputPin")] = setting.outputPin;
+      // last received
+      const auto lastReceived = radioStorage.getLastReceived();
+      const JsonObject lastReceivedObj = res.createNestedObject(F("lastReceived"));
+      lastReceivedObj[F("value")] = lastReceived.value;
+      lastReceivedObj[F("channel")] = lastReceived.channel;
+      lastReceivedObj[F("timestamp")] = lastReceived.timestamp;
+      // end
+      _sendJson(res);
+      _dispatchRequestEnd();
     }
-    // last received
-    const auto lastReceived = radioStorage.getLastReceived();
-    const JsonObject lastReceivedObj = res.createNestedObject(F("lastReceived"));
-    lastReceivedObj[F("value")] = lastReceived.value;
-    lastReceivedObj[F("channel")] = lastReceived.channel;
-    // end
-    _sendJson(res);
-    _dispatchRequestEnd();
-  }
 
-  void VictorWeb::_handleRadioEmitSave() {
-    _dispatchRequestStart();
-    // payload
-    const auto payloadJson = _server->arg(F("plain"));
-    DynamicJsonDocument payload(1024 + 512);
-    deserializeJson(payload, payloadJson);
-    // read
-    const auto emitItems = payload[F("emits")];
-    // save
-    auto setting = radioStorage.load();
-    setting.emits.clear();
-    for (size_t i = 0; i < emitItems.size(); i++) {
-      const auto item = emitItems[i];
-      setting.emits.push_back({
-        .name = item[F("name")],
-        .value = item[F("value")],
-        .channel = item[F("channel")],
-        .press = RadioPressState(item[F("press")]),
-      });
-    }
-    radioStorage.save(setting);
-    // res
-    DynamicJsonDocument res(64);
-    res[F("msg")] = F("success");
-    _sendJson(res);
-    _dispatchRequestEnd();
-  }
-
-  void VictorWeb::_handleRadioEmitSend() {
-    _dispatchRequestEnd();
-    // payload
-    const auto payloadJson = _server->arg(F("plain"));
-    DynamicJsonDocument payload(64);
-    deserializeJson(payload, payloadJson);
-    // read
-    const uint8_t index = payload[F("index")];
-    DynamicJsonDocument res(64);
-    if (onRadioEmit != nullptr) {
-      onRadioEmit(index);
+    void VictorWeb::_handleRadioSave() {
+      _dispatchRequestStart();
+      // payload
+      const auto payloadJson = _server->arg(F("plain"));
+      DynamicJsonDocument payload(64);
+      deserializeJson(payload, payloadJson);
+      // read
+      const int8_t inputPin = payload[F("inputPin")];
+      const int8_t outputPin = payload[F("outputPin")];
+      // action
+      auto setting = radioStorage.load();
+      setting.inputPin = inputPin;
+      setting.outputPin = outputPin;
+      radioStorage.save(setting);
+      // res
+      DynamicJsonDocument res(64);
       res[F("msg")] = F("success");
-    } else {
-      res[F("err")] = F("onRadioEmit is required");
+      _sendJson(res);
+      _dispatchRequestEnd();
     }
-    _sendJson(res);
-    _dispatchRequestEnd();
-  }
 
-  void VictorWeb::_handleRadioRuleGet() {
-    _dispatchRequestStart();
-    DynamicJsonDocument res(1024 + 512);
-    // rules
-    const auto setting = radioStorage.load();
-    const JsonArray ruleArr = res.createNestedArray(F("rules"));
-    for (const auto& rule : setting.rules) {
-      const JsonObject ruleObj = ruleArr.createNestedObject();
-      ruleObj[F("value")] = rule.value;
-      ruleObj[F("channel")] = rule.channel;
-      ruleObj[F("press")] = rule.press;
-      ruleObj[F("action")] = rule.action;
+    void VictorWeb::_handleRadioEmitGet() {
+      _dispatchRequestStart();
+      DynamicJsonDocument res(1024 + 512);
+      // emits
+      const auto setting = radioStorage.load();
+      const JsonArray emitArr = res.createNestedArray(F("emits"));
+      for (const auto& emit : setting.emits) {
+        const JsonObject emitObj = emitArr.createNestedObject();
+        emitObj[F("name")] = emit.name;
+        emitObj[F("value")] = emit.value;
+        emitObj[F("channel")] = emit.channel;
+        emitObj[F("press")] = emit.press;
+      }
+      // last received
+      const auto lastReceived = radioStorage.getLastReceived();
+      const JsonObject lastReceivedObj = res.createNestedObject(F("lastReceived"));
+      lastReceivedObj[F("value")] = lastReceived.value;
+      lastReceivedObj[F("channel")] = lastReceived.channel;
+      // end
+      _sendJson(res);
+      _dispatchRequestEnd();
     }
-    // last received
-    const auto lastReceived = radioStorage.getLastReceived();
-    const JsonObject lastReceivedObj = res.createNestedObject(F("lastReceived"));
-    lastReceivedObj[F("value")] = lastReceived.value;
-    lastReceivedObj[F("channel")] = lastReceived.channel;
-    // end
-    _sendJson(res);
-    _dispatchRequestEnd();
-  }
 
-  void VictorWeb::_handleRadioRuleSave() {
-    _dispatchRequestStart();
-    // payload
-    const auto payloadJson = _server->arg(F("plain"));
-    DynamicJsonDocument payload(1024 + 512);
-    deserializeJson(payload, payloadJson);
-    // read
-    const auto ruleItems = payload[F("rules")];
-    // save
-    auto setting = radioStorage.load();
-    setting.rules.clear();
-    for (size_t i = 0; i < ruleItems.size(); i++) {
-      const auto item = ruleItems[i];
-      setting.rules.push_back({
-        .value = item[F("value")],
-        .channel = item[F("channel")],
-        .press = RadioPressState(item[F("press")]),
-        .action = RadioAction(item[F("action")]),
-      });
+    void VictorWeb::_handleRadioEmitSave() {
+      _dispatchRequestStart();
+      // payload
+      const auto payloadJson = _server->arg(F("plain"));
+      DynamicJsonDocument payload(1024 + 512);
+      deserializeJson(payload, payloadJson);
+      // read
+      const auto emitItems = payload[F("emits")];
+      // save
+      auto setting = radioStorage.load();
+      setting.emits.clear();
+      for (size_t i = 0; i < emitItems.size(); i++) {
+        const auto item = emitItems[i];
+        setting.emits.push_back({
+          .name = item[F("name")],
+          .value = item[F("value")],
+          .channel = item[F("channel")],
+          .press = RadioPressState(item[F("press")]),
+        });
+      }
+      radioStorage.save(setting);
+      // res
+      DynamicJsonDocument res(64);
+      res[F("msg")] = F("success");
+      _sendJson(res);
+      _dispatchRequestEnd();
     }
-    radioStorage.save(setting);
-    // res
-    DynamicJsonDocument res(64);
-    res[F("msg")] = F("success");
-    _sendJson(res);
-    _dispatchRequestEnd();
-  }
 
-  void VictorWeb::_handleRadioCommandGet() {
-    _dispatchRequestStart();
-    DynamicJsonDocument res(1024 + 512);
-    // commands
-    const auto setting = radioStorage.load();
-    const JsonArray commandArr = res.createNestedArray(F("commands"));
-    for (const auto& command : setting.commands) {
-      const JsonObject commandObj = commandArr.createNestedObject();
-      commandObj[F("entry")] = command.entry;
-      commandObj[F("action")] = command.action;
-      commandObj[F("press")] = command.press;
+    void VictorWeb::_handleRadioEmitSend() {
+      _dispatchRequestEnd();
+      // payload
+      const auto payloadJson = _server->arg(F("plain"));
+      DynamicJsonDocument payload(64);
+      deserializeJson(payload, payloadJson);
+      // read
+      const uint8_t index = payload[F("index")];
+      DynamicJsonDocument res(64);
+      if (onRadioEmit != nullptr) {
+        onRadioEmit(index);
+        res[F("msg")] = F("success");
+      } else {
+        res[F("err")] = F("onRadioEmit is required");
+      }
+      _sendJson(res);
+      _dispatchRequestEnd();
     }
-    // end
-    _sendJson(res);
-    _dispatchRequestEnd();
-  }
 
-  void VictorWeb::_handleRadioCommandSave() {
-    _dispatchRequestStart();
-    // payload
-    const auto payloadJson = _server->arg(F("plain"));
-    DynamicJsonDocument payload(1024 + 512);
-    deserializeJson(payload, payloadJson);
-    // read
-    const auto commandItems = payload[F("commands")];
-    // save
-    auto setting = radioStorage.load();
-    setting.commands.clear();
-    for (size_t i = 0; i < commandItems.size(); i++) {
-      const auto item = commandItems[i];
-      setting.commands.push_back({
-        .entry = RadioCommandEntry(item[F("entry")]),
-        .action = item[F("action")],
-        .press = RadioPressState(item[F("press")]),
-      });
+    void VictorWeb::_handleRadioRuleGet() {
+      _dispatchRequestStart();
+      DynamicJsonDocument res(1024 + 512);
+      // rules
+      const auto setting = radioStorage.load();
+      const JsonArray ruleArr = res.createNestedArray(F("rules"));
+      for (const auto& rule : setting.rules) {
+        const JsonObject ruleObj = ruleArr.createNestedObject();
+        ruleObj[F("value")] = rule.value;
+        ruleObj[F("channel")] = rule.channel;
+        ruleObj[F("press")] = rule.press;
+        ruleObj[F("action")] = rule.action;
+      }
+      // last received
+      const auto lastReceived = radioStorage.getLastReceived();
+      const JsonObject lastReceivedObj = res.createNestedObject(F("lastReceived"));
+      lastReceivedObj[F("value")] = lastReceived.value;
+      lastReceivedObj[F("channel")] = lastReceived.channel;
+      // end
+      _sendJson(res);
+      _dispatchRequestEnd();
     }
-    radioStorage.save(setting);
-    // res
-    DynamicJsonDocument res(64);
-    res[F("msg")] = F("success");
-    _sendJson(res);
-    _dispatchRequestEnd();
-  }
+
+    void VictorWeb::_handleRadioRuleSave() {
+      _dispatchRequestStart();
+      // payload
+      const auto payloadJson = _server->arg(F("plain"));
+      DynamicJsonDocument payload(1024 + 512);
+      deserializeJson(payload, payloadJson);
+      // read
+      const auto ruleItems = payload[F("rules")];
+      // save
+      auto setting = radioStorage.load();
+      setting.rules.clear();
+      for (size_t i = 0; i < ruleItems.size(); i++) {
+        const auto item = ruleItems[i];
+        setting.rules.push_back({
+          .value = item[F("value")],
+          .channel = item[F("channel")],
+          .press = RadioPressState(item[F("press")]),
+          .action = RadioAction(item[F("action")]),
+        });
+      }
+      radioStorage.save(setting);
+      // res
+      DynamicJsonDocument res(64);
+      res[F("msg")] = F("success");
+      _sendJson(res);
+      _dispatchRequestEnd();
+    }
+
+    void VictorWeb::_handleRadioCommandGet() {
+      _dispatchRequestStart();
+      DynamicJsonDocument res(1024 + 512);
+      // commands
+      const auto setting = radioStorage.load();
+      const JsonArray commandArr = res.createNestedArray(F("commands"));
+      for (const auto& command : setting.commands) {
+        const JsonObject commandObj = commandArr.createNestedObject();
+        commandObj[F("entry")] = command.entry;
+        commandObj[F("action")] = command.action;
+        commandObj[F("press")] = command.press;
+      }
+      // end
+      _sendJson(res);
+      _dispatchRequestEnd();
+    }
+
+    void VictorWeb::_handleRadioCommandSave() {
+      _dispatchRequestStart();
+      // payload
+      const auto payloadJson = _server->arg(F("plain"));
+      DynamicJsonDocument payload(1024 + 512);
+      deserializeJson(payload, payloadJson);
+      // read
+      const auto commandItems = payload[F("commands")];
+      // save
+      auto setting = radioStorage.load();
+      setting.commands.clear();
+      for (size_t i = 0; i < commandItems.size(); i++) {
+        const auto item = commandItems[i];
+        setting.commands.push_back({
+          .entry = RadioCommandEntry(item[F("entry")]),
+          .action = item[F("action")],
+          .press = RadioPressState(item[F("press")]),
+        });
+      }
+      radioStorage.save(setting);
+      // res
+      DynamicJsonDocument res(64);
+      res[F("msg")] = F("success");
+      _sendJson(res);
+      _dispatchRequestEnd();
+    }
+  #endif
 
   void VictorWeb::_handleServiceGet() {
     _dispatchRequestStart();

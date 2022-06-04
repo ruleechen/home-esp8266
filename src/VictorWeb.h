@@ -9,7 +9,9 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266HTTPUpdateServer.h>
-#include "RadioStorage.h"
+#if VICTOR_FEATURES_RADIO == 1
+  #include "RadioStorage.h"
+#endif
 #include "VictorOTA.h"
 #include "VictorWifi.h"
 
@@ -37,8 +39,10 @@ namespace Victor::Components {
     typedef std::function<void(DynamicJsonDocument& res)> TPageDataHandler;
     TPageDataHandler onPageData = nullptr;
     // radio events
-    typedef std::function<void(uint8_t index)> TRadioEmitHandler;
-    TRadioEmitHandler onRadioEmit = nullptr;
+    #if VICTOR_FEATURES_RADIO == 1
+      typedef std::function<void(uint8_t index)> TRadioEmitHandler;
+      TRadioEmitHandler onRadioEmit = nullptr;
+    #endif
     // service
     typedef std::function<void(std::vector<TextValueModel>& states, std::vector<TextValueModel>& buttons)> TServiceGetHandler;
     typedef std::function<void(const String& value)> TServicePostHandler;
@@ -72,15 +76,17 @@ namespace Victor::Components {
     void _handleOta();
     void _handleOtaFire();
     void _handleNotFound();
-    void _handleRadioGet();
-    void _handleRadioSave();
-    void _handleRadioEmitGet();
-    void _handleRadioEmitSave();
-    void _handleRadioEmitSend();
-    void _handleRadioRuleGet();
-    void _handleRadioRuleSave();
-    void _handleRadioCommandGet();
-    void _handleRadioCommandSave();
+    #if VICTOR_FEATURES_RADIO == 1
+      void _handleRadioGet();
+      void _handleRadioSave();
+      void _handleRadioEmitGet();
+      void _handleRadioEmitSave();
+      void _handleRadioEmitSend();
+      void _handleRadioRuleGet();
+      void _handleRadioRuleSave();
+      void _handleRadioCommandGet();
+      void _handleRadioCommandSave();
+    #endif
     void _handleServiceGet();
     void _handleServicePost();
   };
