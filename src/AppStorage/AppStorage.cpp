@@ -11,9 +11,9 @@ namespace Victor::Components {
     doc[F("name")] = model.name;
     doc[F("sleep")] = model.sleepMillis;
     const auto ledArr = doc.createNestedArray(F("led"));
-    ledArr[0] = model.ledPin;
-    ledArr[1] = model.ledOnHigh ? 1 : 0;
-    ledArr[2] = model.ledEnabled ? 1 : 0;
+    ledArr[0] = model.led.pin;
+    ledArr[1] = model.led.onHigh ? 1 : 0;
+    ledArr[2] = model.led.enabled ? 1 : 0;
   }
 
   void AppStorage::_deserializeFrom(AppSetting& model, const DynamicJsonDocument& doc) {
@@ -21,9 +21,11 @@ namespace Victor::Components {
     model.name = String(name);
     model.sleepMillis = doc[F("sleep")];
     const auto ledArr = doc[F("led")];
-    model.ledPin = ledArr[0];
-    model.ledOnHigh = ledArr[1] == 1;
-    model.ledEnabled = ledArr[2] == 1;
+    model.led = {
+      .pin = ledArr[0],
+      .onHigh = ledArr[1] == 1,
+      .enabled = ledArr[2] == 1,
+    };
   }
 
   // global

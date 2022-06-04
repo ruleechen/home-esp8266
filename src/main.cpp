@@ -25,7 +25,8 @@ void setup(void) {
       .section(F("mount failed"));
   }
 
-  builtinLed.setup();
+  const auto appSetting = appStorage.load();
+  builtinLed.setup(appSetting.led);
   builtinLed.turnOn();
   victorOTA.setup("/ota.json");
   victorWifi.setup("/wifi.json");
