@@ -5,17 +5,21 @@ namespace Victor::Components {
   AppMain::AppMain() {}
 
   AppMain::~AppMain() {
-    if (webPortal != nullptr) {
-      delete webPortal;
-      webPortal = nullptr;
-    }
-    if (radioPortal != nullptr) {
-      delete radioPortal;
-      radioPortal = nullptr;
-    }
+    #if VICTOR_FEATURES_WEB == 1
+      if (webPortal != nullptr) {
+        delete webPortal;
+        webPortal = nullptr;
+      }
+    #endif
+    #if VICTOR_FEATURES_RADIO == 1
+      if (radioPortal != nullptr) {
+        delete radioPortal;
+        radioPortal = nullptr;
+      }
+    #endif
   }
 
-  void AppMain::setup(AppFeatures features) {
+  void AppMain::setup() {
     console.begin(115200);
 
     if (!LittleFS.begin()) {
@@ -33,24 +37,24 @@ namespace Victor::Components {
     victorOTA.setup("/ota.json");
     victorWifi.setup("/wifi.json");
 
-    if (features.web) {
+    #if VICTOR_FEATURES_WEB == 1
       webPortal = new VictorWeb(80);
       webPortal->onRequestStart = []() { builtinLed.toggle(); };
       webPortal->onRequestEnd = []() { builtinLed.toggle(); };
       webPortal->onRadioEmit = [&](uint8_t index) { radioPortal->emit(index); };
       webPortal->onPageData = [&](DynamicJsonDocument& res) { res[F("hasRadio")] = (radioPortal != nullptr); };
       webPortal->setup();
-    }
+    #endif
 
-    if (features.radio) {
+    #if VICTOR_FEATURES_RADIO == 1
       radioPortal = new VictorRadio();
-    }
+    #endif
   }
 
   void AppMain::loop(int8_t sleepMode) {
-    if (webPortal != nullptr) {
+    #if VICTOR_FEATURES_WEB == 1
       webPortal->loop();
-    }
+    #endif
     // sleep
     if (sleepMode == -1) {
       sleepMode = victorWifi.isLightSleepMode();

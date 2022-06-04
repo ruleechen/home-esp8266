@@ -1,8 +1,8 @@
 #include <Arduino.h>
 
+#include "AppMain/AppMain.h"
 // #include "Button/DigitalInputButton.h"
 #include "Button/DigitalInterruptButton.h"
-#include "AppMain/AppMain.h"
 
 using namespace Victor;
 using namespace Victor::Components;
@@ -13,10 +13,7 @@ DigitalInterruptButton* button;
 
 void setup(void) {
   appMain = new AppMain();
-  appMain->setup({
-    .web = true,
-    .radio = true,
-  });
+  appMain->setup();
 
   // setup radio
   appMain->radioPortal->onEmit = [](const RadioEmit& emit) {
