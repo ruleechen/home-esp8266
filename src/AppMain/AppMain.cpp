@@ -41,8 +41,10 @@ namespace Victor::Components {
       webPortal = new VictorWeb(80);
       webPortal->onRequestStart = []() { builtinLed.toggle(); };
       webPortal->onRequestEnd = []() { builtinLed.toggle(); };
-      webPortal->onRadioEmit = [&](uint8_t index) { radioPortal->emit(index); };
-      webPortal->onPageData = [&](DynamicJsonDocument& res) { res[F("hasRadio")] = (radioPortal != nullptr); };
+      #if VICTOR_FEATURES_RADIO == 1
+        webPortal->onRadioEmit = [&](uint8_t index) { radioPortal->emit(index); };
+        webPortal->onPageData = [&](DynamicJsonDocument& res) { res[F("hasRadio")] = (radioPortal != nullptr); };
+      #endif
       webPortal->setup();
     #endif
 
