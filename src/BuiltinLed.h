@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <Ticker.h>
 #include "DigitalOutput.h"
-#include "AppStorage/AppStorage.h"
+#include "AppMain/AppStorage.h"
 
 #ifndef VICTOR_BUILTIN_LED_FLASH
 #define VICTOR_BUILTIN_LED_FLASH 10

@@ -4,7 +4,7 @@
 #include "BuiltinLed.h"
 // #include "Button/DigitalInputButton.h"
 #include "Button/DigitalInterruptButton.h"
-#include "AppMain.h"
+#include "AppMain/AppMain.h"
 
 using namespace Victor;
 using namespace Victor::Components;
