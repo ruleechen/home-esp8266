@@ -19,15 +19,15 @@ void setup(void) {
       .section(F("mount failed"));
   }
 
-  builtinLed.setup();
+  const auto appSetting = appStorage.load();
+  builtinLed.setup(appSetting.led);
   builtinLed.turnOn();
+  victorOTA.setup("/ota.json");
+  victorWifi.setup("/wifi.json");
 
   webPortal.onRequestStart = []() { builtinLed.toggle(); };
   webPortal.onRequestEnd = []() { builtinLed.toggle(); };
   webPortal.setup();
-
-  victorOTA.setup();
-  victorWifi.setup();
 
   console.log()
     .bracket(F("setup"))

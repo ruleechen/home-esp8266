@@ -14,8 +14,8 @@ namespace Victor::Components {
    private:
     void _registerHandlers() override;
     void _solvePageTokens(String& html) override;
-    void _handleServiceList();
-    void _handleServiceSave();
+    void _handleSampleGet();
+    void _handleSamplePost();
   };
 } // namespace Victor::Components
 

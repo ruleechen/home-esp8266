@@ -11,19 +11,19 @@ namespace Victor::Components {
     VictorWeb::_registerHandlers();
     _server->serveStatic("/fav.ico", LittleFS, "/web/fav.ico", "max-age=43200");
     _server->serveStatic("/test.min.js", LittleFS, "/web/test.min.js");
-    _server->on(F("/service/list"), HTTP_GET, std::bind(&WebPortal::_handleServiceList, this));
-    _server->on(F("/service/save"), HTTP_POST, std::bind(&WebPortal::_handleServiceSave, this));
+    _server->on(F("/sample/get"), HTTP_GET, std::bind(&WebPortal::_handleSampleGet, this));
+    _server->on(F("/sample/post"), HTTP_POST, std::bind(&WebPortal::_handleSamplePost, this));
   }
 
   void WebPortal::_solvePageTokens(String& html) {
     VictorWeb::_solvePageTokens(html);
     html.replace(F("{appendHead}"), F("\
       <link rel=\"icon\" href=\"fav.ico\">\
-      <script src=\"victoria.min.js\"></script>\
+      <script src=\"test.min.js\"></script>\
     "));
   }
 
-  void WebPortal::_handleServiceList() {
+  void WebPortal::_handleSampleGet() {
     _dispatchRequestStart();
     DynamicJsonDocument res(512);
     const JsonArray serviceArr = res.createNestedArray(F("services"));
@@ -34,7 +34,7 @@ namespace Victor::Components {
     _dispatchRequestEnd();
   }
 
-  void WebPortal::_handleServiceSave() {
+  void WebPortal::_handleSamplePost() {
     _dispatchRequestStart();
     // payload
     const auto payloadJson = _server->arg(F("plain"));

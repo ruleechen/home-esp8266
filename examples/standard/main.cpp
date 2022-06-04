@@ -21,8 +21,11 @@ void setup(void) {
       .section(F("mount failed"));
   }
 
-  builtinLed.setup();
+  const auto appSetting = appStorage.load();
+  builtinLed.setup(appSetting.led);
   builtinLed.turnOn();
+  victorOTA.setup("/ota.json");
+  victorWifi.setup("/wifi.json");
 
   radioPortal.onEmit = [](const RadioEmit& emit) {
     builtinLed.flash();
@@ -37,9 +40,6 @@ void setup(void) {
   webPortal.onRequestEnd = []() { builtinLed.toggle(); };
   webPortal.onRadioEmit = [](uint8_t index) { radioPortal.emit(index); };
   webPortal.setup();
-
-  victorOTA.setup();
-  victorWifi.setup();
 
   console.log()
     .bracket(F("setup"))
