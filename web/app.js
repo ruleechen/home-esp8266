@@ -173,7 +173,7 @@ vic.mTable = (data) => {
       data.rows.map((row) =>
         m(
           "tr",
-          row.map((cell) => m("td", [cell]))
+          row.map((cell) => m("td", [m.trust(cell)]))
         )
       )
     );
