@@ -120,7 +120,7 @@ namespace Victor::Components {
     _dispatchRequestStart();
     DynamicJsonDocument res(512);
     res[F("uri")] = _server->uri();
-    res[F("err")] = F("not found");
+    res[F("err")] = F("notfound");
     _sendJson(res);
     _dispatchRequestEnd();
   }

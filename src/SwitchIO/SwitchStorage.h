@@ -7,14 +7,14 @@ namespace Victor::Components {
 
   struct SwitchConfig {
     // input pin
-    int8_t inputPin = -1;
-    uint8_t inputTrueValue = 0;  // LOW
+    int8_t inputPin = -1; // (-127 ~ 128)
+    uint8_t inputTrueValue = 0; // (0 ~ 256) LOW
     // output pin
-    int8_t outputPin = -1;
-    uint8_t outputTrueValue = 0; // LOW
+    int8_t outputPin = -1; // (-127 ~ 128)
+    uint8_t outputTrueValue = 0; // (0 ~ 256) LOW
     // output2 pin
-    int8_t output2Pin = -1;
-    uint8_t output2TrueValue = 0; // LOW
+    int8_t output2Pin = -1; // (-127 ~ 128)
+    uint8_t output2TrueValue = 0; // (0 ~ 256) LOW
     // output state
     bool saveOutput = false;
     bool outputIsOn = false;

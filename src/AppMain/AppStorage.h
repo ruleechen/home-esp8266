@@ -6,14 +6,14 @@
 namespace Victor::Components {
 
   struct LedSetting {
-    uint8_t pin = 2;     // 0 ~ 256
+    uint8_t pin = 2;     // (0 ~ 256)
     bool onHigh = false; // false: LOW, true: HIGH
     bool enabled = true;
   };
 
   struct AppSetting {
     String name;
-    uint16_t sleepMillis = 200; // for light sleep mode
+    uint16_t sleepMillis = 200; // (0 ~ 65535) for light sleep mode
     LedSetting led;
   };
 

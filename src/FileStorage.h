@@ -86,7 +86,7 @@ namespace Victor::Components {
         _error().section(F("open failed"));
       }
     } else {
-      _error().section(F("not found"), _filePath);
+      _error().section(F("notfound"), _filePath);
     }
     if (_enableCache) {
       _cache = &model;
@@ -118,7 +118,9 @@ namespace Victor::Components {
 
   template <typename TModel>
   Console FileStorage<TModel>::_error() {
-    return console.error().bracket(F("storage"));
+    return console.error()
+      .bracket(F("storage"))
+      .bracket(String(_filePath));
   }
 
   // template <typename TModel>
