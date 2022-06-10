@@ -11,7 +11,7 @@ using namespace Victor::Components;
 AppMain* appMain;
 // DigitalInputButton* button;
 DigitalInterruptButton* button;
-IntervalOver twoSecond(2000);
+IntervalOver twoSeconds(2000);
 
 void setup(void) {
   appMain = new AppMain();
@@ -65,7 +65,7 @@ void setup(void) {
 }
 
 void loop(void) {
-  if (twoSecond.isOver()) {
+  if (twoSeconds.isOver()) {
     console.log("over");
   }
   appMain->loop();
