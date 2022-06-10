@@ -45,7 +45,7 @@ namespace Victor::Components {
     Ticker* _ticker = nullptr;
     RadioEmit _lastEmitted = {};
     RadioMessage _lastReceived = {};
-    RadioPressState _lastPressState = PressStateAwait;
+    RadioPressState _lastPressState = PRESS_STATE_AWAIT;
     void _handleEmit(const RadioEmit& emit);
     void _handleReceived(const RadioMessage& message, RadioPressState press);
     void _proceedAction(const RadioRule& rule);

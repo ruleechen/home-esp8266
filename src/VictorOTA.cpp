@@ -21,21 +21,21 @@ namespace Victor::Components {
     return F("99.4.99");
   }
 
-  void VictorOTA::update(const String& version, VOtaType type) {
+  void VictorOTA::update(const String& version, OtaType type) {
     switch (type) {
-      case VOta_All: {
+      case OTA_ALL: {
         ESPhttpUpdate.rebootOnUpdate(false);
         _updateSketch();
         ESPhttpUpdate.rebootOnUpdate(true);
         _updateFileSystem();
         break;
       }
-      case VOta_Sketch: {
+      case OTA_SKETCH: {
         ESPhttpUpdate.rebootOnUpdate(true);
         _updateSketch();
         break;
       }
-      case VOta_FileSystem: {
+      case OTA_FS: {
         ESPhttpUpdate.rebootOnUpdate(true);
         _updateFileSystem();
         break;
@@ -46,7 +46,7 @@ namespace Victor::Components {
     }
   }
 
-  void VictorOTA::trigger(VOtaType type) {
+  void VictorOTA::trigger(OtaType type) {
     // versions
     auto currentVersion = getCurrentVersion();
     auto newVersion = checkNewVersion();

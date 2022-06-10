@@ -44,15 +44,15 @@ void setup(void) {
     console.log()
       .bracket(F("button"))
       .section(F("action"), String(action));
-    if (action == ButtonActionPressed) {
+    if (action == BUTTON_ACTION_PRESSED) {
       builtinLed.flash();
-    } else if (action == ButtonActionDoublePressed) {
+    } else if (action == BUTTON_ACTION_DOUBLE_PRESSED) {
       builtinLed.flash(500);
       const auto enable = victorWifi.isLightSleepMode();
       victorWifi.enableAP(enable); // toggle enabling ap
-    } else if (action == ButtonActionRestart) {
+    } else if (action == BUTTON_ACTION_RESTART) {
       ESP.restart();
-    } else if (action == ButtonActionRestore) {
+    } else if (action == BUTTON_ACTION_RESTORE) {
       ESP.eraseConfig();
       ESP.restart();
     }

@@ -46,25 +46,25 @@ namespace Victor::Components {
       .press = emit.press,
     };
     switch (emit.press) {
-      case PressStateClick: {
+      case PRESS_STATE_CLICK: {
         onEmit(_lastEmitted);
         break;
       }
-      case PressStateDoubleClick: {
+      case PRESS_STATE_DOUBLE_CLICK: {
         onEmit(_lastEmitted);
         _ticker->once_ms(300, [this]{
           this->onEmit(this->_lastEmitted);
         });
         break;
       }
-      case PressStateLongPress: {
+      case PRESS_STATE_LONG_PRESS: {
         onEmit(_lastEmitted);
         _ticker->once_ms(2000, [this]{
           this->onEmit(this->_lastEmitted);
         });
         break;
       }
-      case PressStateAwait:
+      case PRESS_STATE_AWAIT:
       default: {
         break;
       }
@@ -82,24 +82,24 @@ namespace Victor::Components {
     ) {
       RadioMessage empty {};
       _lastReceived = empty;
-      _lastPressState = PressStateAwait;
+      _lastPressState = PRESS_STATE_AWAIT;
     }
     if (
-      _lastPressState != PressStateClick &&
+      _lastPressState != PRESS_STATE_CLICK &&
       (_lastReceived.value != message.value || _lastReceived.channel != message.channel)
     ) {
-      _handleReceived(message, PressStateClick);
+      _handleReceived(message, PRESS_STATE_CLICK);
     } else if (
-      _lastPressState != PressStateDoubleClick &&
+      _lastPressState != PRESS_STATE_DOUBLE_CLICK &&
       timespan >= VICTOR_RADIO_DOUBLE_CLICK_FROM &&
       timespan < VICTOR_RADIO_DOUBLE_CLICK_TO
     ) {
-      _handleReceived(_lastReceived, PressStateDoubleClick);
+      _handleReceived(_lastReceived, PRESS_STATE_DOUBLE_CLICK);
     } else if (
-      _lastPressState != PressStateLongPress &&
+      _lastPressState != PRESS_STATE_LONG_PRESS &&
       (timespan >= VICTOR_RADIO_LONG_PRESS)
     ) {
-      _handleReceived(_lastReceived, PressStateLongPress);
+      _handleReceived(_lastReceived, PRESS_STATE_LONG_PRESS);
     }
   }
 
@@ -142,19 +142,19 @@ namespace Victor::Components {
       }
     }
     switch (rule.action) {
-      case RadioActionWiFiSta: {
+      case RADIO_ACTION_WIFI_STA: {
         victorWifi.setMode(WIFI_STA);
         break;
       }
-      case RadioActionWiFiStaAp: {
+      case RADIO_ACTION_WIFI_STA_AP: {
         victorWifi.setMode(WIFI_AP_STA);
         break;
       }
-      case RadioActionWiFiReset: {
+      case RADIO_ACTION_WIFI_RESET: {
         victorWifi.reset();
         break;
       }
-      case RadioActionEspRestart: {
+      case RADIO_ACTION_ESP_RESTART: {
         ESP.restart();
         break;
       }
@@ -172,9 +172,9 @@ namespace Victor::Components {
       }
     }
     switch (command.entry) {
-      case EntryWifi: {
+      case ENTRY_WIFI: {
         switch (command.action) {
-          case EntryWifiJoin: {
+          case ENTRY_WIFI_JOIN: {
             const auto credential = GlobalHelpers::splitString(command.parameters, F("/"));
             if (credential.size() == 2) {
               const auto ssid = credential[0];
@@ -183,7 +183,7 @@ namespace Victor::Components {
             }
             break;
           }
-          case EntryWifiMode: {
+          case ENTRY_WIFI_MODE: {
             const auto hasAP = command.parameters.indexOf(F("ap")) > -1;
             const auto hasSTA = command.parameters.indexOf(F("sta")) > -1;
             const auto isOff = command.parameters == F("off");
@@ -193,11 +193,11 @@ namespace Victor::Components {
             else if (isOff) { victorWifi.setMode(WIFI_OFF); }
             break;
           }
-          case EntryWifiReset: {
+          case ENTRY_WIFI_RESET: {
             victorWifi.reset();
             break;
           }
-          case EntryWifiNone:
+          case ENTRY_WIFI_NONE:
           default: {
             break;
           }
@@ -205,23 +205,23 @@ namespace Victor::Components {
         break;
       }
 
-      case EntryApp: {
+      case ENTRY_APP: {
         switch (command.action) {
-          case EntryAppName: {
+          case ENTRY_APP_NAME: {
             auto setting = appStorage.load();
             setting.name = command.parameters;
             appStorage.save(setting);
             break;
           }
-          case EntryAppOTA: {
+          case ENTRY_APP_OTA: {
             const auto otaType =
-              command.parameters == F("all") ? VOta_All :
-              command.parameters == F("fs") ? VOta_FileSystem :
-              command.parameters == F("sketch") ? VOta_Sketch : VOta_Sketch;
+              command.parameters == F("all") ? OTA_ALL :
+              command.parameters == F("fs") ? OTA_FS :
+              command.parameters == F("sketch") ? OTA_SKETCH : OTA_SKETCH;
             victorOTA.trigger(otaType);
             break;
           }
-          case EntryAppNone:
+          case ENTRY_APP_NONE:
           default: {
             break;
           }
@@ -229,13 +229,13 @@ namespace Victor::Components {
         break;
       }
 
-      case EntryEsp: {
+      case ENTRY_ESP: {
         switch (command.action) {
-          case EntryEspRestart: {
+          case ENTRY_ESP_RESTART: {
             ESP.restart();
             break;
           }
-          case EntryEspNone:
+          case ENTRY_ESP_NONE:
           default: {
             break;
           }
@@ -243,7 +243,7 @@ namespace Victor::Components {
         break;
       }
 
-      case EntryNone:
+      case ENTRY_NONE:
       default: {
         break;
       }
@@ -278,32 +278,32 @@ namespace Victor::Components {
       const auto entry = parts[0];
       const auto action = parts[1];
       if (entry == F("wifi")) {
-        command.entry = EntryWifi;
+        command.entry = ENTRY_WIFI;
         if (action == F("join")) {
-          command.action = EntryWifiJoin;
+          command.action = ENTRY_WIFI_JOIN;
         } else if (action == F("mode")) {
-          command.action = EntryWifiMode;
+          command.action = ENTRY_WIFI_MODE;
         } else if (action == F("reset")) {
-          command.action = EntryWifiReset;
+          command.action = ENTRY_WIFI_RESET;
         }
       } else if (entry == F("app")) {
-        command.entry = EntryApp;
+        command.entry = ENTRY_APP;
         if (action == F("name")) {
-          command.action = EntryAppName;
+          command.action = ENTRY_APP_NAME;
         } else if (action == F("ota")) {
-          command.action = EntryAppOTA;
+          command.action = ENTRY_APP_OTA;
         }
       } else if (entry == F("esp")) {
-        command.entry = EntryEsp;
+        command.entry = ENTRY_ESP;
         if (action == F("restart")) {
-          command.action = EntryEspRestart;
+          command.action = ENTRY_ESP_RESTART;
         }
       } else if (entry == F("boolean")) {
-        command.entry = EntryBoolean;
+        command.entry = ENTRY_BOOLEAN;
         if (action == F("set")) {
-          command.action = EntryBooleanSet;
+          command.action = ENTRY_BOOLEAN_SET;
         } else if (action == F("toggle")) {
-          command.action = EntryBooleanToggle;
+          command.action = ENTRY_BOOLEAN_TOGGLE;
         }
       }
       if (parts.size() >= 3) {

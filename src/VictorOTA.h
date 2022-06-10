@@ -9,10 +9,10 @@
 
 namespace Victor::Components {
 
-  enum VOtaType {
-    VOta_All = 0,
-    VOta_Sketch = 1,
-    VOta_FileSystem = 2,
+  enum OtaType {
+    OTA_ALL = 0,
+    OTA_SKETCH = 1,
+    OTA_FS = 2,
   };
 
   class VictorOTA {
@@ -20,8 +20,8 @@ namespace Victor::Components {
     void setup(const char* settingFile = "/ota.json");
     String getCurrentVersion() const;
     String checkNewVersion();
-    void update(const String& version, VOtaType type);
-    void trigger(VOtaType type);
+    void update(const String& version, OtaType type);
+    void trigger(OtaType type);
 
    private:
     OtaStorage* _storage = nullptr;

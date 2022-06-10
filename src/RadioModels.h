@@ -14,73 +14,73 @@ namespace Victor::Components {
   };
 
   enum RadioAction {
-    RadioActionNone = 0,
-    RadioActionTrue = 1,
-    RadioActionFalse = 2,
-    RadioActionToggle = 3,
-    RadioActionWiFiSta = 4,
-    RadioActionWiFiStaAp = 5,
-    RadioActionWiFiReset = 6,
-    RadioActionEspRestart = 7,
+    RADIO_ACTION_NONE = 0,
+    RADIO_ACTION_TRUE = 1,
+    RADIO_ACTION_FALSE = 2,
+    RADIO_ACTION_TOGGLE = 3,
+    RADIO_ACTION_WIFI_STA = 4,
+    RADIO_ACTION_WIFI_STA_AP = 5,
+    RADIO_ACTION_WIFI_RESET = 6,
+    RADIO_ACTION_ESP_RESTART = 7,
   };
 
   enum RadioPressState {
-    PressStateAwait = 0,
-    PressStateClick = 1,
-    PressStateDoubleClick = 2,
-    PressStateLongPress = 3,
+    PRESS_STATE_AWAIT = 0,
+    PRESS_STATE_CLICK = 1,
+    PRESS_STATE_DOUBLE_CLICK = 2,
+    PRESS_STATE_LONG_PRESS = 3,
   };
 
   struct RadioEmit {
     String name;
     String value;
     uint8_t channel = 0; // (0 ~ 256)
-    RadioPressState press = PressStateClick;
+    RadioPressState press = PRESS_STATE_CLICK;
   };
 
   struct RadioRule {
     String value;
     uint8_t channel = 0; // (0 ~ 256)
-    RadioPressState press = PressStateClick;
-    RadioAction action = RadioActionNone;
+    RadioPressState press = PRESS_STATE_CLICK;
+    RadioAction action = RADIO_ACTION_NONE;
   };
 
   enum RadioCommandEntry {
-    EntryNone = 0,
-    EntryWifi = 1,
-    EntryApp = 2,
-    EntryEsp = 3,
-    EntryBoolean = 4,
+    ENTRY_NONE = 0,
+    ENTRY_WIFI = 1,
+    ENTRY_APP = 2,
+    ENTRY_ESP = 3,
+    ENTRY_BOOLEAN = 4,
   };
 
   enum EntryWifiAction {
-    EntryWifiNone = 0,
-    EntryWifiJoin = 1, // parameter: {ssid}/{password}
-    EntryWifiMode = 2, // parameter: off, sta, ap, ap-sta
-    EntryWifiReset = 3, // parameter: NONE
+    ENTRY_WIFI_NONE = 0,
+    ENTRY_WIFI_JOIN = 1, // parameter: {ssid}/{password}
+    ENTRY_WIFI_MODE = 2, // parameter: off, sta, ap, ap-sta
+    ENTRY_WIFI_RESET = 3, // parameter: NONE
   };
 
   enum EntryAppAction {
-    EntryAppNone = 0,
-    EntryAppName = 1, // parameter: {name}
-    EntryAppOTA = 2, // parameter: fs, sketch(default)
+    ENTRY_APP_NONE = 0,
+    ENTRY_APP_NAME = 1, // parameter: {name}
+    ENTRY_APP_OTA = 2, // parameter: fs, sketch(default)
   };
 
   enum EntryEspAction {
-    EntryEspNone = 0,
-    EntryEspRestart = 1, // parameter: NONE
+    ENTRY_ESP_NONE = 0,
+    ENTRY_ESP_RESTART = 1, // parameter: NONE
   };
 
   enum EntryBooleanAction {
-    EntryBooleanNone = 0,
-    EntryBooleanSet = 1, // parameter: true, false
-    EntryBooleanToggle = 2,
+    ENTRY_BOOLEAN_NONE = 0,
+    ENTRY_BOOLEAN_SET = 1, // parameter: true, false
+    ENTRY_BOOLEAN_TOGGLE = 2,
   };
 
   struct RadioCommand {
-    RadioCommandEntry entry = EntryNone;
+    RadioCommandEntry entry = ENTRY_NONE;
     int8_t action = -1; // (-127 ~ 128)
-    RadioPressState press = PressStateClick;
+    RadioPressState press = PRESS_STATE_CLICK;
   };
 
   struct RadioCommandParsed :RadioCommand {

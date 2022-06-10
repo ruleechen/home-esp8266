@@ -430,9 +430,9 @@ namespace Victor::Components {
     const auto version = String(payload[F("version")]);
     const auto otaType = String(payload[F("otaType")]);
     const auto type =
-      otaType == F("all") ? VOta_All :
-      otaType == F("fs") ? VOta_FileSystem :
-      otaType == F("sketch") ? VOta_Sketch : VOta_Sketch;
+      otaType == F("all") ? OTA_ALL :
+      otaType == F("fs") ? OTA_FS :
+      otaType == F("sketch") ? OTA_SKETCH : OTA_SKETCH;
     // update
     victorOTA.update(version, type);
     // res

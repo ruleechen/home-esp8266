@@ -5,22 +5,22 @@ namespace Victor::Components {
   ActionButton::ActionButton(bool initState) : Button(initState) {
     onPressed = [&](const unsigned long timespan) {
       if (onAction != nullptr && timespan > VICTOR_ACTION_BUTTON_DEBOUNCE) {
-        onAction(ButtonActionPressed);
+        onAction(BUTTON_ACTION_PRESSED);
         if (
           VICTOR_ACTION_BUTTON_DOUBLE_MIN < timespan &&
           timespan <= VICTOR_ACTION_BUTTON_DOUBLE_MAX
         ) {
-          onAction(ButtonActionDoublePressed);
+          onAction(BUTTON_ACTION_DOUBLE_PRESSED);
         }
       }
     };
     onReleased = [&](const unsigned long timespan) {
       if (onAction != nullptr && timespan > VICTOR_ACTION_BUTTON_DEBOUNCE) {
-        onAction(ButtonActionReleased);
+        onAction(BUTTON_ACTION_RELEASED);
         if (timespan >= VICTOR_ACTION_BUTTON_RESTORE_MIN) {
-          onAction(ButtonActionRestore);
+          onAction(BUTTON_ACTION_RESTORE);
         } else if (timespan >= VICTOR_ACTION_BUTTON_RESTART_MIN) {
-          onAction(ButtonActionRestart);
+          onAction(BUTTON_ACTION_RESTART);
         }
       }
     };
