@@ -3,6 +3,7 @@
 #include "AppMain/AppMain.h"
 // #include "Button/DigitalInputButton.h"
 #include "Button/DigitalInterruptButton.h"
+#include "IntervalOver.h"
 
 using namespace Victor;
 using namespace Victor::Components;
@@ -10,6 +11,7 @@ using namespace Victor::Components;
 AppMain* appMain;
 // DigitalInputButton* button;
 DigitalInterruptButton* button;
+IntervalOver twoSecond(2000);
 
 void setup(void) {
   appMain = new AppMain();
@@ -63,6 +65,9 @@ void setup(void) {
 }
 
 void loop(void) {
+  if (twoSecond.isOver()) {
+    console.log("over");
+  }
   appMain->loop();
   button->loop();
   // loop radio
