@@ -3,19 +3,16 @@
 namespace Victor::Components {
 
   TimesCounter::TimesCounter(unsigned long resetMillis) {
-    _resetMillis = resetMillis;
+    _reset = new IntervalOver(resetMillis);
   }
 
   void TimesCounter::count() {
-    // https://www.arduino.cc/reference/en/language/functions/time/millis/
-    // Returns the number of milliseconds passed since the Arduino board began running the current program.
-    // This number will overflow (go back to zero), after approximately 50 days.
     const auto now = millis();
-    if (now - _last >= _resetMillis) {
+    if (_reset->isOver(now)) {
       reset();
     }
+    _reset->start(now);
     _count++;
-    _last = now;
     if (onCount != nullptr) {
       onCount(_count);
     }

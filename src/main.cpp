@@ -3,7 +3,7 @@
 #include "AppMain/AppMain.h"
 // #include "Button/DigitalInputButton.h"
 #include "Button/DigitalInterruptButton.h"
-#include "IntervalOver.h"
+#include "Timer/IntervalOverAuto.h"
 
 using namespace Victor;
 using namespace Victor::Components;
@@ -11,7 +11,7 @@ using namespace Victor::Components;
 AppMain* appMain;
 // DigitalInputButton* button;
 DigitalInterruptButton* button;
-IntervalOver twoSeconds(2000);
+IntervalOverAuto twoSeconds(2000);
 
 void setup(void) {
   appMain = new AppMain();

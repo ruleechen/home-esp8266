@@ -2,7 +2,7 @@
 #define TimesCounter_h
 
 #include <functional>
-#include <Arduino.h>
+#include "Timer/IntervalOver.h"
 
 namespace Victor::Components {
   class TimesCounter {
@@ -15,10 +15,9 @@ namespace Victor::Components {
 
    private:
     // args
-    unsigned long _resetMillis;
+    IntervalOver* _reset;
     // state
     uint8_t _count = 0;
-    unsigned long _last = 0;
   };
 } // namespace Victor::Components
 
