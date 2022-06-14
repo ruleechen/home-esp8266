@@ -88,7 +88,11 @@ namespace Victor::Components {
   };
 
   struct RadioModel {
+    // 0~128 = gpio
+    //    -1 = disabled
     int8_t inputPin = -1; // (-127 ~ 128)
+    // 0~128 = gpio
+    //    -1 = disabled
     int8_t outputPin = -1; // (-127 ~ 128)
     std::vector<RadioEmit> emits;
     std::vector<RadioRule> rules;

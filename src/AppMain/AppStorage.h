@@ -6,8 +6,12 @@
 namespace Victor::Components {
 
   struct LedSetting {
+    // led gpio pin
     uint8_t pin = 2;     // (0 ~ 256)
-    bool onHigh = false; // false: LOW, true: HIGH
+    // false = LOW
+    //  true = HIGH
+    bool onHigh = false;
+    // led enabled or not
     bool enabled = true;
   };
 

@@ -6,6 +6,7 @@
 namespace Victor::Components {
 
   struct OtaSetting {
+    // remote uri for query new Firmware/FileSystem image
     String remote;
   };
 

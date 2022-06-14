@@ -7,11 +7,20 @@ namespace Victor::Components {
 
   // https://zhuanlan.zhihu.com/p/137568249
   struct I2cSetting {
-    uint8_t sdaPin = 4; // (0 ~ 256) Inter-Integrated Circuit - Serial Data (I2C-SDA)
-    uint8_t sclPin = 5; // (0 ~ 256) Inter-Integrated Circuit - Serial Clock (I2C-SCL)
-    // enable pin
+    // pin I2C-SDA
+    // Inter-Integrated Circuit - Serial Data (I2C-SDA)
+    uint8_t sdaPin = 4; // (0 ~ 256)
+    // pin I2C-SCL
+    // Inter-Integrated Circuit - Serial Clock (I2C-SCL)
+    uint8_t sclPin = 5; // (0 ~ 256)
+
+    // chip select signal for power on/off i2c bus
+    // 0~128 = gpio
+    //    -1 = disabled
     int8_t enablePin = -1; // (-127 ~ 128)
-    uint8_t enableTrueValue = 0; // (0 ~ 256) LOW
+    // 0 = LOW
+    // 1 = HIGH
+    uint8_t enableTrueValue = 0; // (0 ~ 256)
   };
 
   class I2cStorage : public FileStorage<I2cSetting> {
