@@ -51,10 +51,10 @@ namespace Victor::Components {
     for (size_t i = 0; i < emitItems.size(); i++) {
       const auto item = emitItems[i];
       const RadioEmit emit = {
-        .name = item[0],
-        .value = item[1],
+        .name    = item[0],
+        .value   = item[1],
         .channel = item[2],
-        .press = item[3],
+        .press   = item[3],
       };
       model.emits.push_back(emit);
     }
@@ -62,10 +62,10 @@ namespace Victor::Components {
     for (size_t i = 0; i < ruleItems.size(); i++) {
       const auto item = ruleItems[i];
       const RadioRule rule = {
-        .value = item[0],
+        .value   = item[0],
         .channel = item[1],
-        .press = item[2],
-        .action = item[3],
+        .press   = item[2],
+        .action  = item[3],
       };
       model.rules.push_back(rule);
     }
@@ -73,9 +73,9 @@ namespace Victor::Components {
     for (size_t i = 0; i < commandItems.size(); i++) {
       const auto item = commandItems[i];
       const RadioCommand command = {
-        .entry = item[0],
+        .entry  = item[0],
         .action = item[1],
-        .press = item[2],
+        .press  = item[2],
       };
       model.commands.push_back(command);
     }

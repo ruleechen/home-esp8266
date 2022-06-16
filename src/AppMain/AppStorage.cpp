@@ -10,6 +10,7 @@ namespace Victor::Components {
   void AppStorage::_serializeTo(const AppSetting& model, DynamicJsonDocument& doc) {
     doc[F("name")] = model.name;
     doc[F("sleep")] = model.sleepMillis;
+    // led
     const auto ledArr = doc.createNestedArray(F("led"));
     ledArr[0] = model.led.pin;
     ledArr[1] = model.led.onHigh ? 1 : 0;
@@ -20,10 +21,11 @@ namespace Victor::Components {
     const char* name = doc[F("name")];
     model.name = String(name);
     model.sleepMillis = doc[F("sleep")];
+    // led
     const auto ledArr = doc[F("led")];
     model.led = {
-      .pin = ledArr[0],
-      .onHigh = ledArr[1] == 1,
+      .pin     = ledArr[0],
+      .onHigh  = ledArr[1] == 1,
       .enabled = ledArr[2] == 1,
     };
   }
