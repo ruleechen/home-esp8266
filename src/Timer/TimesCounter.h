@@ -15,7 +15,7 @@ namespace Victor::Components {
 
    private:
     // args
-    IntervalOver* _reset;
+    IntervalOver* _reset = nullptr;
     // state
     uint8_t _count = 0;
   };

@@ -11,8 +11,8 @@ namespace Victor::Components {
     virtual bool isOver(unsigned long now = 0);
 
    private:
-    unsigned long _ms;
-    unsigned long _start;
+    unsigned long _ms = 0;
+    unsigned long _start = 0;
   };
 } // namespace Victor::Components
 
