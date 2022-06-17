@@ -14,21 +14,21 @@ namespace Victor::Components {
   };
 
   enum RadioAction {
-    RADIO_ACTION_NONE = 0,
-    RADIO_ACTION_TRUE = 1,
-    RADIO_ACTION_FALSE = 2,
-    RADIO_ACTION_TOGGLE = 3,
-    RADIO_ACTION_WIFI_STA = 4,
+    RADIO_ACTION_NONE        = 0,
+    RADIO_ACTION_TRUE        = 1,
+    RADIO_ACTION_FALSE       = 2,
+    RADIO_ACTION_TOGGLE      = 3,
+    RADIO_ACTION_WIFI_STA    = 4,
     RADIO_ACTION_WIFI_STA_AP = 5,
-    RADIO_ACTION_WIFI_RESET = 6,
+    RADIO_ACTION_WIFI_RESET  = 6,
     RADIO_ACTION_ESP_RESTART = 7,
   };
 
   enum RadioPressState {
-    PRESS_STATE_AWAIT = 0,
-    PRESS_STATE_CLICK = 1,
+    PRESS_STATE_AWAIT        = 0,
+    PRESS_STATE_CLICK        = 1,
     PRESS_STATE_DOUBLE_CLICK = 2,
-    PRESS_STATE_LONG_PRESS = 3,
+    PRESS_STATE_LONG_PRESS   = 3,
   };
 
   struct RadioEmit {
@@ -46,34 +46,34 @@ namespace Victor::Components {
   };
 
   enum RadioCommandEntry {
-    ENTRY_NONE = 0,
-    ENTRY_WIFI = 1,
-    ENTRY_APP = 2,
-    ENTRY_ESP = 3,
+    ENTRY_NONE    = 0,
+    ENTRY_WIFI    = 1,
+    ENTRY_APP     = 2,
+    ENTRY_ESP     = 3,
     ENTRY_BOOLEAN = 4,
   };
 
   enum EntryWifiAction {
-    ENTRY_WIFI_NONE = 0,
-    ENTRY_WIFI_JOIN = 1, // parameter: {ssid}/{password}
-    ENTRY_WIFI_MODE = 2, // parameter: off, sta, ap, ap-sta
+    ENTRY_WIFI_NONE  = 0,
+    ENTRY_WIFI_JOIN  = 1, // parameter: {ssid}/{password}
+    ENTRY_WIFI_MODE  = 2, // parameter: off, sta, ap, ap-sta
     ENTRY_WIFI_RESET = 3, // parameter: NONE
   };
 
   enum EntryAppAction {
     ENTRY_APP_NONE = 0,
     ENTRY_APP_NAME = 1, // parameter: {name}
-    ENTRY_APP_OTA = 2, // parameter: fs, sketch(default)
+    ENTRY_APP_OTA  = 2, // parameter: fs, sketch(default)
   };
 
   enum EntryEspAction {
-    ENTRY_ESP_NONE = 0,
+    ENTRY_ESP_NONE    = 0,
     ENTRY_ESP_RESTART = 1, // parameter: NONE
   };
 
   enum EntryBooleanAction {
-    ENTRY_BOOLEAN_NONE = 0,
-    ENTRY_BOOLEAN_SET = 1, // parameter: true, false
+    ENTRY_BOOLEAN_NONE   = 0,
+    ENTRY_BOOLEAN_SET    = 1, // parameter: true, false
     ENTRY_BOOLEAN_TOGGLE = 2,
   };
 
@@ -94,9 +94,9 @@ namespace Victor::Components {
     // 0~128 = gpio
     //    -1 = disabled
     int8_t outputPin = -1; // (-127 ~ 128)
-    std::vector<RadioEmit> emits;
-    std::vector<RadioRule> rules;
-    std::vector<RadioCommand> commands;
+    std::vector<RadioEmit> emits       = {};
+    std::vector<RadioRule> rules       = {};
+    std::vector<RadioCommand> commands = {};
   };
 
 } // namespace Victor::Components

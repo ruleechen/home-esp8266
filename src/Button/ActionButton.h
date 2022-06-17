@@ -26,12 +26,12 @@
 namespace Victor::Components {
 
   enum ButtonAction {
-    BUTTON_ACTION_NONE = 0,
-    BUTTON_ACTION_PRESSED = 1,
+    BUTTON_ACTION_NONE           = 0,
+    BUTTON_ACTION_PRESSED        = 1,
     BUTTON_ACTION_DOUBLE_PRESSED = 2,
-    BUTTON_ACTION_RELEASED = 3,
-    BUTTON_ACTION_RESTART = 4,
-    BUTTON_ACTION_RESTORE = 5,
+    BUTTON_ACTION_RELEASED       = 3,
+    BUTTON_ACTION_RESTART        = 4,
+    BUTTON_ACTION_RESTORE        = 5,
   };
 
   class ActionButton : public Button<bool> {

@@ -8,9 +8,9 @@
 using namespace Victor;
 using namespace Victor::Components;
 
-AppMain* appMain;
-// DigitalInputButton* button;
-DigitalInterruptButton* button;
+AppMain* appMain = nullptr;
+// DigitalInputButton* button = nullptr;
+DigitalInterruptButton* button = nullptr;
 IntervalOverAuto twoSeconds(2000);
 
 void setup(void) {

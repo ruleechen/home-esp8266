@@ -12,7 +12,7 @@ namespace Victor::Components {
     RadioMessage getLastReceived() const;
 
    protected:
-    RadioMessage _lastReceived;
+    RadioMessage _lastReceived = {};
     void _serializeTo(const RadioModel& model, DynamicJsonDocument& doc) override;
     void _deserializeFrom(RadioModel& model, const DynamicJsonDocument& doc) override;
   };

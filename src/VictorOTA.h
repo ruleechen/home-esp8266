@@ -10,9 +10,9 @@
 namespace Victor::Components {
 
   enum OtaType {
-    OTA_ALL = 0,
+    OTA_ALL    = 0,
     OTA_SKETCH = 1,
-    OTA_FS = 2,
+    OTA_FS     = 2,
   };
 
   class VictorOTA {
