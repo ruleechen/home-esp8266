@@ -9,7 +9,7 @@ namespace Victor::Components {
   struct RadioMessage {
     String id;
     String value;
-    uint8_t channel = 0; // (0 ~ 256)
+    uint8_t channel = 0; // (0~255)
     unsigned long timestamp = 0;
   };
 
@@ -34,13 +34,13 @@ namespace Victor::Components {
   struct RadioEmit {
     String name;
     String value;
-    uint8_t channel = 0; // (0 ~ 256)
+    uint8_t channel = 0; // (0~255)
     RadioPressState press = PRESS_STATE_CLICK;
   };
 
   struct RadioRule {
     String value;
-    uint8_t channel = 0; // (0 ~ 256)
+    uint8_t channel = 0; // (0~255)
     RadioPressState press = PRESS_STATE_CLICK;
     RadioAction action = RADIO_ACTION_NONE;
   };
@@ -79,7 +79,7 @@ namespace Victor::Components {
 
   struct RadioCommand {
     RadioCommandEntry entry = ENTRY_NONE;
-    int8_t action = -1; // (-127 ~ 128)
+    int8_t action = -1; // (-128~127)
     RadioPressState press = PRESS_STATE_CLICK;
   };
 
@@ -88,12 +88,12 @@ namespace Victor::Components {
   };
 
   struct RadioModel {
-    // 0~128 = gpio
+    // 0~127 = gpio
     //    -1 = disabled
-    int8_t inputPin = -1; // (-127 ~ 128)
-    // 0~128 = gpio
+    int8_t inputPin = -1; // (-128~127)
+    // 0~127 = gpio
     //    -1 = disabled
-    int8_t outputPin = -1; // (-127 ~ 128)
+    int8_t outputPin = -1; // (-128~127)
     std::vector<RadioEmit> emits       = {};
     std::vector<RadioRule> rules       = {};
     std::vector<RadioCommand> commands = {};
