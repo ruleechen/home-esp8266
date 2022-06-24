@@ -5,7 +5,9 @@ namespace Victor {
   Console::Console() {}
 
   void Console::begin(unsigned long baud) {
-    Serial.begin(baud);
+    #ifndef RELEASE
+      Serial.begin(baud);
+    #endif
   }
 
   Console Console::log() {
@@ -53,17 +55,23 @@ namespace Victor {
   }
 
   Console Console::write(const String& msg) {
-    Serial.print(msg);
+    #ifndef RELEASE
+      Serial.print(msg);
+    #endif
     return console;
   }
 
   Console Console::write(unsigned long msg) {
-    Serial.print(msg);
+    #ifndef RELEASE
+      Serial.print(msg);
+    #endif
     return console;
   }
 
   Console Console::newline() {
-    Serial.println();
+    #ifndef RELEASE
+      Serial.println();
+    #endif
     return console;
   }
 
