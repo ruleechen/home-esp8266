@@ -73,13 +73,14 @@ namespace Victor::Components {
     serializeJson(doc, json);
     // replace
     html.replace(F("{json}"), json);
-    html.replace(F("{title}"), VICTOR_FIRMWARE_NAME);
+    html.replace(F("{title}"), VICTOR_FIRMWARE_SERVICE);
     html.replace(F("{timestamp}"), String(UNIX_TIME));
   }
 
   void VictorWeb::_getPageData(DynamicJsonDocument& res) {
     res[F("unixTime")] = UNIX_TIME;
-    res[F("firmwareName")] = VICTOR_FIRMWARE_NAME;
+    res[F("firmwareManufacturer")] = VICTOR_FIRMWARE_MANUFACTURER;
+    res[F("firmwareService")] = VICTOR_FIRMWARE_SERVICE;
     res[F("firmwareVersion")] = VICTOR_FIRMWARE_VERSION;
     res[F("maxEditSize")] = VICTOR_FILE_SIZE_LIMIT;
     if (onPageData != nullptr) {

@@ -121,7 +121,7 @@ namespace Victor::Components {
     const auto id = getHostId();
     const auto setting = _storage->load();
     const auto brand = setting.brand.isEmpty()
-      ? VICTOR_FIRMWARE_NAME
+      ? VICTOR_FIRMWARE_SERVICE
       : setting.brand;
     return brand + id;
   }
