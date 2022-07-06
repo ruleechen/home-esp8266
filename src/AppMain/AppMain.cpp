@@ -29,9 +29,9 @@ namespace Victor::Components {
     }
 
     const auto appSetting = appStorage.load();
-    _sleepMillis = appSetting.sleepMillis;
+    _sleepMillis = appSetting->sleepMillis;
 
-    builtinLed.setup(appSetting.led);
+    builtinLed.setup(appSetting->led);
     builtinLed.turnOn();
 
     victorOTA.setup("/ota.json");

@@ -19,7 +19,7 @@ namespace Victor::Components {
    public:
     BuiltinLed();
     ~BuiltinLed();
-    void setup(LedSetting setting);
+    void setup(LedSetting* setting);
     void turnOn();
     void turnOff();
     void toggle();

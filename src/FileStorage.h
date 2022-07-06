@@ -40,8 +40,8 @@ namespace Victor::Components {
   class FileStorage {
    public:
     FileStorage(const char* filePath);
-    TModel load();
-    bool save(const TModel& model);
+    TModel* load();
+    bool save(const TModel* model);
 
    protected:
     const char* _filePath;
@@ -49,8 +49,8 @@ namespace Victor::Components {
     bool _enableCache = false;
     TModel* _cache = nullptr;
     Console _error();
-    virtual void _serializeTo(const TModel& model, DynamicJsonDocument& doc);
-    virtual void _deserializeFrom(TModel& model, const DynamicJsonDocument& doc);
+    virtual void _serializeTo(const TModel* model, DynamicJsonDocument& doc);
+    virtual void _deserializeFrom(TModel* model, const DynamicJsonDocument& doc);
   };
 
   template <typename TModel>
@@ -59,12 +59,12 @@ namespace Victor::Components {
   }
 
   template <typename TModel>
-  TModel FileStorage<TModel>::load() {
+  TModel* FileStorage<TModel>::load() {
     if (_cache != nullptr) {
-      return *_cache;
+      return _cache;
     }
     // default result
-    TModel model;
+    auto model = new TModel();
     // check exists
     if (LittleFS.exists(_filePath)) {
       // open file
@@ -89,13 +89,13 @@ namespace Victor::Components {
       _error().section(F("notfound"), _filePath);
     }
     if (_enableCache) {
-      _cache = &model;
+      _cache = model;
     }
     return model;
   }
 
   template <typename TModel>
-  bool FileStorage<TModel>::save(const TModel& model) {
+  bool FileStorage<TModel>::save(const TModel* model) {
     _cache = nullptr;
     // convert
     DynamicJsonDocument doc(_maxSize); // Store data in the heap - Dynamic Memory Allocation

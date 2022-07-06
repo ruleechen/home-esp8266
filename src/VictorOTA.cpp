@@ -21,7 +21,7 @@ namespace Victor::Components {
     return F("99.4.99");
   }
 
-  void VictorOTA::update(const String& version, OtaType type) {
+  void VictorOTA::update(const String& version, const OtaType type) {
     switch (type) {
       case OTA_ALL: {
         ESPhttpUpdate.rebootOnUpdate(false);
@@ -46,7 +46,7 @@ namespace Victor::Components {
     }
   }
 
-  void VictorOTA::trigger(OtaType type) {
+  void VictorOTA::trigger(const OtaType type) {
     // versions
     auto currentVersion = getCurrentVersion();
     auto newVersion = checkNewVersion();
@@ -63,14 +63,14 @@ namespace Victor::Components {
     WiFiClient client;
     const auto setting = _storage->load();
     const auto currentVersion = getCurrentVersion();
-    ESPhttpUpdate.update(client, setting.remote, currentVersion);
+    ESPhttpUpdate.update(client, setting->remote, currentVersion);
   }
 
   void VictorOTA::_updateFileSystem() {
     WiFiClient client;
     const auto setting = _storage->load();
     const auto currentVersion = getCurrentVersion();
-    ESPhttpUpdate.updateFS(client, setting.remote, currentVersion);
+    ESPhttpUpdate.updateFS(client, setting->remote, currentVersion);
   }
 
   void VictorOTA::_handleStart() {

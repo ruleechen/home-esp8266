@@ -934,7 +934,9 @@ const RadioView = (() => {
         state.millis = res.millis;
         state.inputPin = res.inputPin;
         state.outputPin = res.outputPin;
-        state.lastReceived = res.lastReceived;
+        if (res.lastReceived) {
+          state.lastReceived = res.lastReceived;
+        }
         m.redraw();
       });
   };
@@ -1031,7 +1033,9 @@ const RadioEmitView = (() => {
       })
       .then((res) => {
         state.emits = res.emits;
-        state.lastReceived = res.lastReceived;
+        if (res.lastReceived) {
+          state.lastReceived = res.lastReceived;
+        }
         m.redraw();
       });
   };
@@ -1175,7 +1179,9 @@ const RadioRuleView = (() => {
       })
       .then((res) => {
         state.rules = res.rules;
-        state.lastReceived = res.lastReceived;
+        if (res.lastReceived) {
+          state.lastReceived = res.lastReceived;
+        }
         m.redraw();
       });
   };

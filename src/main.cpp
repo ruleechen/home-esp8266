@@ -18,12 +18,12 @@ void setup(void) {
   appMain->setup();
 
   // setup radio
-  appMain->radioPortal->onEmit = [](const RadioEmit& emit) {
+  appMain->radioPortal->onEmit = [](const RadioEmit* emit) {
     builtinLed.flash();
     console.log()
       .bracket(F("radio"))
-      .section(F("sent"), emit.value)
-      .section(F("via channel"), String(emit.channel));
+      .section(F("sent"), emit->value)
+      .section(F("via channel"), String(emit->channel));
   };
 
   // setup web

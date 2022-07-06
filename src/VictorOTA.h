@@ -20,8 +20,8 @@ namespace Victor::Components {
     void setup(const char* settingFile = "/ota.json");
     String getCurrentVersion() const;
     String checkNewVersion();
-    void update(const String& version, OtaType type);
-    void trigger(OtaType type);
+    void update(const String& version, const OtaType type);
+    void trigger(const OtaType type);
 
    private:
     OtaStorage* _storage = nullptr;

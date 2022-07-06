@@ -8,13 +8,13 @@ namespace Victor::Components {
   class RadioStorage : public FileStorage<RadioModel> {
    public:
     RadioStorage(const char* filePath = "/radio.json");
-    void broadcast(RadioMessage message); // message object should be copied
-    RadioMessage getLastReceived() const;
+    void broadcast(RadioMessage* message);
+    RadioMessage* getLastReceived() const;
 
    protected:
-    RadioMessage _lastReceived = {};
-    void _serializeTo(const RadioModel& model, DynamicJsonDocument& doc) override;
-    void _deserializeFrom(RadioModel& model, const DynamicJsonDocument& doc) override;
+    RadioMessage* _lastReceived = nullptr;
+    void _serializeTo(const RadioModel* model, DynamicJsonDocument& doc) override;
+    void _deserializeFrom(RadioModel* model, const DynamicJsonDocument& doc) override;
   };
 
   // global

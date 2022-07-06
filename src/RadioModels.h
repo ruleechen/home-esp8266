@@ -94,9 +94,9 @@ namespace Victor::Components {
     // 0~127 = gpio
     //    -1 = disabled
     int8_t outputPin = -1; // (-128~127)
-    std::vector<RadioEmit> emits       = {};
-    std::vector<RadioRule> rules       = {};
-    std::vector<RadioCommand> commands = {};
+    std::vector<RadioEmit*> emits       = {};
+    std::vector<RadioRule*> rules       = {};
+    std::vector<RadioCommand*> commands = {};
   };
 
 } // namespace Victor::Components

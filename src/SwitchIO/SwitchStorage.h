@@ -41,8 +41,8 @@ namespace Victor::Components {
     SwitchStorage(const char* filePath);
 
    protected:
-    void _serializeTo(const SwitchConfig& model, DynamicJsonDocument& doc) override;
-    void _deserializeFrom(SwitchConfig& model, const DynamicJsonDocument& doc) override;
+    void _serializeTo(const SwitchConfig* model, DynamicJsonDocument& doc) override;
+    void _deserializeFrom(SwitchConfig* model, const DynamicJsonDocument& doc) override;
   };
 
 } // namespace Victor::Components

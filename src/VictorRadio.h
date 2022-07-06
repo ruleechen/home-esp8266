@@ -33,25 +33,25 @@ namespace Victor::Components {
     ~VictorRadio();
     void emit(const String& name);
     void emit(uint8_t index);
-    typedef std::function<void(const RadioEmit& emit)> TRadioEmit;
+    typedef std::function<void(const RadioEmit* emit)> TRadioEmit;
     TRadioEmit onEmit = nullptr;
     void receive(String value, uint8_t channel);
-    typedef std::function<bool(const RadioRule& rule)> TRadioAction;
+    typedef std::function<bool(const RadioRule* rule)> TRadioAction;
     TRadioAction onAction = nullptr;
-    typedef std::function<bool(const RadioCommandParsed& command)> TRadioCommand;
+    typedef std::function<bool(const RadioCommandParsed* command)> TRadioCommand;
     TRadioCommand onCommand = nullptr;
 
    private:
     Ticker* _ticker = nullptr;
-    RadioEmit _lastEmitted = {};
+    RadioEmit* _lastEmitted = nullptr;
     RadioMessage _lastReceived = {};
     RadioPressState _lastPressState = PRESS_STATE_AWAIT;
-    void _handleEmit(const RadioEmit& emit);
-    void _handleReceived(const RadioMessage& message, RadioPressState press);
-    void _proceedAction(const RadioRule& rule);
-    void _proceedCommand(const RadioCommandParsed& command);
-    static RadioMessage _parseMessage(String value, uint8_t channel);
-    static RadioCommandParsed _parseCommand(const RadioMessage& message);
+    void _handleEmit(const RadioEmit* emit);
+    void _handleReceived(const RadioMessage* message, const RadioPressState press);
+    void _proceedAction(const RadioRule* rule);
+    void _proceedCommand(const RadioCommandParsed* command);
+    static RadioMessage* _parseMessage(String value, uint8_t channel);
+    static RadioCommandParsed* _parseCommand(const RadioMessage* message);
   };
 } // namespace Victor::Components
 

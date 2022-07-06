@@ -449,14 +449,16 @@ namespace Victor::Components {
       DynamicJsonDocument res(512);
       const auto setting = radioStorage.load();
       res[F("millis")] = millis();
-      res[F("inputPin")] = setting.inputPin;
-      res[F("outputPin")] = setting.outputPin;
+      res[F("inputPin")] = setting->inputPin;
+      res[F("outputPin")] = setting->outputPin;
       // last received
       const auto lastReceived = radioStorage.getLastReceived();
-      const JsonObject lastReceivedObj = res.createNestedObject(F("lastReceived"));
-      lastReceivedObj[F("value")] = lastReceived.value;
-      lastReceivedObj[F("channel")] = lastReceived.channel;
-      lastReceivedObj[F("timestamp")] = lastReceived.timestamp;
+      if (lastReceived != nullptr) {
+        const JsonObject lastReceivedObj = res.createNestedObject(F("lastReceived"));
+        lastReceivedObj[F("value")] = lastReceived->value;
+        lastReceivedObj[F("channel")] = lastReceived->channel;
+        lastReceivedObj[F("timestamp")] = lastReceived->timestamp;
+      }
       // end
       _sendJson(res);
       _dispatchRequestEnd();
@@ -473,8 +475,8 @@ namespace Victor::Components {
       const int8_t outputPin = payload[F("outputPin")];
       // action
       auto setting = radioStorage.load();
-      setting.inputPin = inputPin;
-      setting.outputPin = outputPin;
+      setting->inputPin = inputPin;
+      setting->outputPin = outputPin;
       radioStorage.save(setting);
       // res
       DynamicJsonDocument res(64);
@@ -489,18 +491,20 @@ namespace Victor::Components {
       // emits
       const auto setting = radioStorage.load();
       const JsonArray emitArr = res.createNestedArray(F("emits"));
-      for (const auto& emit : setting.emits) {
+      for (const auto& emit : setting->emits) {
         const JsonObject emitObj = emitArr.createNestedObject();
-        emitObj[F("name")] = emit.name;
-        emitObj[F("value")] = emit.value;
-        emitObj[F("channel")] = emit.channel;
-        emitObj[F("press")] = emit.press;
+        emitObj[F("name")] = emit->name;
+        emitObj[F("value")] = emit->value;
+        emitObj[F("channel")] = emit->channel;
+        emitObj[F("press")] = emit->press;
       }
       // last received
       const auto lastReceived = radioStorage.getLastReceived();
-      const JsonObject lastReceivedObj = res.createNestedObject(F("lastReceived"));
-      lastReceivedObj[F("value")] = lastReceived.value;
-      lastReceivedObj[F("channel")] = lastReceived.channel;
+      if (lastReceived != nullptr) {
+        const JsonObject lastReceivedObj = res.createNestedObject(F("lastReceived"));
+        lastReceivedObj[F("value")] = lastReceived->value;
+        lastReceivedObj[F("channel")] = lastReceived->channel;
+      }
       // end
       _sendJson(res);
       _dispatchRequestEnd();
@@ -516,15 +520,15 @@ namespace Victor::Components {
       const auto emitItems = payload[F("emits")];
       // save
       auto setting = radioStorage.load();
-      setting.emits.clear();
+      setting->emits.clear();
       for (size_t i = 0; i < emitItems.size(); i++) {
         const auto item = emitItems[i];
-        setting.emits.push_back({
+        setting->emits.push_back(new RadioEmit({
           .name = item[F("name")],
           .value = item[F("value")],
           .channel = item[F("channel")],
           .press = RadioPressState(item[F("press")]),
-        });
+        }));
       }
       radioStorage.save(setting);
       // res
@@ -559,18 +563,20 @@ namespace Victor::Components {
       // rules
       const auto setting = radioStorage.load();
       const JsonArray ruleArr = res.createNestedArray(F("rules"));
-      for (const auto& rule : setting.rules) {
+      for (const auto& rule : setting->rules) {
         const JsonObject ruleObj = ruleArr.createNestedObject();
-        ruleObj[F("value")] = rule.value;
-        ruleObj[F("channel")] = rule.channel;
-        ruleObj[F("press")] = rule.press;
-        ruleObj[F("action")] = rule.action;
+        ruleObj[F("value")] = rule->value;
+        ruleObj[F("channel")] = rule->channel;
+        ruleObj[F("press")] = rule->press;
+        ruleObj[F("action")] = rule->action;
       }
       // last received
       const auto lastReceived = radioStorage.getLastReceived();
-      const JsonObject lastReceivedObj = res.createNestedObject(F("lastReceived"));
-      lastReceivedObj[F("value")] = lastReceived.value;
-      lastReceivedObj[F("channel")] = lastReceived.channel;
+      if (lastReceived != nullptr) {
+        const JsonObject lastReceivedObj = res.createNestedObject(F("lastReceived"));
+        lastReceivedObj[F("value")] = lastReceived->value;
+        lastReceivedObj[F("channel")] = lastReceived->channel;
+      }
       // end
       _sendJson(res);
       _dispatchRequestEnd();
@@ -586,15 +592,15 @@ namespace Victor::Components {
       const auto ruleItems = payload[F("rules")];
       // save
       auto setting = radioStorage.load();
-      setting.rules.clear();
+      setting->rules.clear();
       for (size_t i = 0; i < ruleItems.size(); i++) {
         const auto item = ruleItems[i];
-        setting.rules.push_back({
+        setting->rules.push_back(new RadioRule({
           .value = item[F("value")],
           .channel = item[F("channel")],
           .press = RadioPressState(item[F("press")]),
           .action = RadioAction(item[F("action")]),
-        });
+        }));
       }
       radioStorage.save(setting);
       // res
@@ -610,11 +616,11 @@ namespace Victor::Components {
       // commands
       const auto setting = radioStorage.load();
       const JsonArray commandArr = res.createNestedArray(F("commands"));
-      for (const auto& command : setting.commands) {
+      for (const auto& command : setting->commands) {
         const JsonObject commandObj = commandArr.createNestedObject();
-        commandObj[F("entry")] = command.entry;
-        commandObj[F("action")] = command.action;
-        commandObj[F("press")] = command.press;
+        commandObj[F("entry")] = command->entry;
+        commandObj[F("action")] = command->action;
+        commandObj[F("press")] = command->press;
       }
       // end
       _sendJson(res);
@@ -631,14 +637,14 @@ namespace Victor::Components {
       const auto commandItems = payload[F("commands")];
       // save
       auto setting = radioStorage.load();
-      setting.commands.clear();
+      setting->commands.clear();
       for (size_t i = 0; i < commandItems.size(); i++) {
         const auto item = commandItems[i];
-        setting.commands.push_back({
+        setting->commands.push_back(new RadioCommand({
           .entry = RadioCommandEntry(item[F("entry")]),
           .action = item[F("action")],
           .press = RadioPressState(item[F("press")]),
-        });
+        }));
       }
       radioStorage.save(setting);
       // res
