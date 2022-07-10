@@ -20,7 +20,7 @@ void setup(void) {
   }
 
   const auto appSetting = appStorage.load();
-  builtinLed.setup(appSetting.led);
+  builtinLed.setup(appSetting->led);
   builtinLed.turnOn();
   victorOTA.setup("/ota.json");
   victorWifi.setup("/wifi.json");

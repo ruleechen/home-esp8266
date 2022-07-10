@@ -22,18 +22,18 @@ void setup(void) {
   }
 
   const auto appSetting = appStorage.load();
-  builtinLed.setup(appSetting.led);
+  builtinLed.setup(appSetting->led);
   builtinLed.turnOn();
   victorOTA.setup("/ota.json");
   victorWifi.setup("/wifi.json");
 
-  radioPortal.onEmit = [](const RadioEmit& emit) {
+  radioPortal.onEmit = [](const RadioEmit* emit) {
     builtinLed.flash();
     // emit via your radio tool
     console.log()
       .bracket(F("radio"))
-      .section(F("sent"), emit.value)
-      .section(F("via channel"), String(emit.channel));
+      .section(F("sent"), emit->value)
+      .section(F("via channel"), String(emit->channel));
   };
 
   webPortal.onRequestStart = []() { builtinLed.toggle(); };
