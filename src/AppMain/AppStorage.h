@@ -17,7 +17,10 @@ namespace Victor::Components {
 
   struct AppSetting {
     String name;
-    uint16_t sleepMillis = 200; // (0 ~ 65535) for light sleep mode
+    // (0 ~ 65535) for light sleep mode
+    // 0         = disabled
+    // 1 ~ 65535 = delay ms
+    uint16_t sleepMillis = 20;
     LedSetting* led = nullptr;
   };
 

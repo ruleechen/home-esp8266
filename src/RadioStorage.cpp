@@ -8,9 +8,7 @@ namespace Victor::Components {
   }
 
   void RadioStorage::broadcast(RadioMessage* message) {
-    if (message != nullptr) {
-      _lastReceived = message;
-    }
+    _lastReceived = message;
   }
 
   RadioMessage* RadioStorage::getLastReceived() const {
@@ -21,7 +19,7 @@ namespace Victor::Components {
     doc[F("input")] = model->inputPin;
     doc[F("output")] = model->outputPin;
     const JsonArray emitItems = doc.createNestedArray(F("emits"));
-    for (const auto& emit : model->emits) {
+    for (const auto emit : model->emits) {
       const JsonArray item = emitItems.createNestedArray();
       item[0] = emit->name;
       item[1] = emit->value;
@@ -29,7 +27,7 @@ namespace Victor::Components {
       item[3] = emit->press;
     }
     const JsonArray ruleItems = doc.createNestedArray(F("rules"));
-    for (const auto& rule : model->rules) {
+    for (const auto rule : model->rules) {
       const JsonArray item = ruleItems.createNestedArray();
       item[0] = rule->value;
       item[1] = rule->channel;
@@ -37,7 +35,7 @@ namespace Victor::Components {
       item[3] = rule->action;
     }
     const JsonArray commandItems = doc.createNestedArray(F("commands"));
-    for (const auto& command : model->commands) {
+    for (const auto command : model->commands) {
       const JsonArray item = commandItems.createNestedArray();
       item[0] = command->entry;
       item[1] = command->action;

@@ -491,7 +491,7 @@ namespace Victor::Components {
       // emits
       const auto setting = radioStorage.load();
       const JsonArray emitArr = res.createNestedArray(F("emits"));
-      for (const auto& emit : setting->emits) {
+      for (const auto emit : setting->emits) {
         const JsonObject emitObj = emitArr.createNestedObject();
         emitObj[F("name")] = emit->name;
         emitObj[F("value")] = emit->value;
@@ -563,7 +563,7 @@ namespace Victor::Components {
       // rules
       const auto setting = radioStorage.load();
       const JsonArray ruleArr = res.createNestedArray(F("rules"));
-      for (const auto& rule : setting->rules) {
+      for (const auto rule : setting->rules) {
         const JsonObject ruleObj = ruleArr.createNestedObject();
         ruleObj[F("value")] = rule->value;
         ruleObj[F("channel")] = rule->channel;
@@ -616,7 +616,7 @@ namespace Victor::Components {
       // commands
       const auto setting = radioStorage.load();
       const JsonArray commandArr = res.createNestedArray(F("commands"));
-      for (const auto& command : setting->commands) {
+      for (const auto command : setting->commands) {
         const JsonObject commandObj = commandArr.createNestedObject();
         commandObj[F("entry")] = command->entry;
         commandObj[F("action")] = command->action;

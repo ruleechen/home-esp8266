@@ -21,7 +21,7 @@ namespace Victor::Components {
   void VictorRadio::emit(const String& name) {
     const auto setting = radioStorage.load();
     if (setting->outputPin > -1) {
-      for (const auto& emit : setting->emits) {
+      for (const auto emit : setting->emits) {
         if (emit->name == name) {
           _handleEmit(emit);
           break;
@@ -111,6 +111,9 @@ namespace Victor::Components {
   }
 
   void VictorRadio::_handleReceived(const RadioMessage* message, const RadioPressState press) {
+    if (message == nullptr) {
+      return;
+    }
     // log states
     _lastReceived = *message;
     _lastPressState = press;
@@ -119,7 +122,7 @@ namespace Victor::Components {
       .section(F("detected pressed"), String(press));
     // check rules
     const auto setting = radioStorage.load();
-    for (const auto& rule : setting->rules) {
+    for (const auto rule : setting->rules) {
       if (
         rule->value == message->value &&
         rule->channel == message->channel &&
@@ -130,13 +133,15 @@ namespace Victor::Components {
     }
     // check commands
     auto parsedCommand = _parseCommand(message);
-    for (const auto& command : setting->commands) {
-      if (
-        command->entry == parsedCommand->entry &&
-        command->action == parsedCommand->action &&
-        command->press == press
-      ) {
-        _proceedCommand(parsedCommand);
+    if (parsedCommand != nullptr) {
+      for (const auto command : setting->commands) {
+        if (
+          command->entry == parsedCommand->entry &&
+          command->action == parsedCommand->action &&
+          command->press == press
+        ) {
+          _proceedCommand(parsedCommand);
+        }
       }
     }
   }
