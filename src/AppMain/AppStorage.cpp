@@ -13,7 +13,7 @@ namespace Victor::Components {
     // led
     const auto ledArr = doc.createNestedArray(F("led"));
     ledArr[0] = model->led->pin;
-    ledArr[1] = model->led->onHigh ? 1 : 0;
+    ledArr[1] = model->led->onHigh  ? 1 : 0;
     ledArr[2] = model->led->enabled ? 1 : 0;
   }
 

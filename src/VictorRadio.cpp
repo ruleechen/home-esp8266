@@ -78,7 +78,7 @@ namespace Victor::Components {
     }
   }
 
-  void VictorRadio::receive(String value, uint8_t channel) {
+  void VictorRadio::receive(const String& value, const uint8_t channel) {
     const auto message = _parseMessage(value, channel);
     radioStorage.broadcast(message);
     // press
@@ -268,9 +268,9 @@ namespace Victor::Components {
     }
   }
 
-  RadioMessage* VictorRadio::_parseMessage(String value, uint8_t channel) {
+  RadioMessage* VictorRadio::_parseMessage(const String& value, const uint8_t channel) {
     // read id
-    auto idPart = String(F("none"));
+    auto idPart = String(F("NONE"));
     auto valuePart = String(value);
     if (value.indexOf(F("!")) == 4) {
       idPart = value.substring(0, 4);

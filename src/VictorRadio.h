@@ -35,7 +35,7 @@ namespace Victor::Components {
     void emit(uint8_t index);
     typedef std::function<void(const RadioEmit* emit)> TRadioEmit;
     TRadioEmit onEmit = nullptr;
-    void receive(String value, uint8_t channel);
+    void receive(const String& value, const uint8_t channel);
     typedef std::function<bool(const RadioRule* rule)> TRadioAction;
     TRadioAction onAction = nullptr;
     typedef std::function<bool(const RadioCommandParsed* command)> TRadioCommand;
@@ -50,7 +50,7 @@ namespace Victor::Components {
     void _handleReceived(const RadioMessage* message, const RadioPressState press);
     void _proceedAction(const RadioRule* rule);
     void _proceedCommand(const RadioCommandParsed* command);
-    static RadioMessage* _parseMessage(String value, uint8_t channel);
+    static RadioMessage* _parseMessage(const String& value, const uint8_t channel);
     static RadioCommandParsed* _parseCommand(const RadioMessage* message);
   };
 } // namespace Victor::Components
