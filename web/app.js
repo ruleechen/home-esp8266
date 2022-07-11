@@ -215,8 +215,8 @@ const ServiceView = (() => {
         url: "/service/get",
       })
       .then((res) => {
-        state.states = res.states;
-        state.buttons = res.buttons;
+        state.states = res.states || [];
+        state.buttons = res.buttons || [];
         m.redraw();
       });
   };
@@ -431,7 +431,7 @@ const FileListView = (() => {
         url: "/files",
       })
       .then((res) => {
-        state.files = res.files;
+        state.files = res.files || [];
         m.redraw();
       });
   };
@@ -633,6 +633,7 @@ const WifiListView = (() => {
       })
       .then((res) => {
         Object.assign(state, res);
+        state.founds = res.founds || [];
         m.redraw();
       });
   };
@@ -934,9 +935,7 @@ const RadioView = (() => {
         state.millis = res.millis;
         state.inputPin = res.inputPin;
         state.outputPin = res.outputPin;
-        if (res.lastReceived) {
-          state.lastReceived = res.lastReceived;
-        }
+        state.lastReceived = res.lastReceived || {};
         m.redraw();
       });
   };
@@ -1032,10 +1031,8 @@ const RadioEmitView = (() => {
         url: "/radio/emit",
       })
       .then((res) => {
-        state.emits = res.emits;
-        if (res.lastReceived) {
-          state.lastReceived = res.lastReceived;
-        }
+        state.emits = res.emits || [];
+        state.lastReceived = res.lastReceived || {};
         m.redraw();
       });
   };
@@ -1178,10 +1175,8 @@ const RadioRuleView = (() => {
         url: "/radio/rule",
       })
       .then((res) => {
-        state.rules = res.rules;
-        if (res.lastReceived) {
-          state.lastReceived = res.lastReceived;
-        }
+        state.rules = res.rules || [];
+        state.lastReceived = res.lastReceived || [];
         m.redraw();
       });
   };
@@ -1313,7 +1308,7 @@ const RadioCommandView = (() => {
         url: "/radio/command",
       })
       .then((res) => {
-        state.commands = res.commands;
+        state.commands = res.commands || [];
         m.redraw();
       });
   };
