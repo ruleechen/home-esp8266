@@ -10,6 +10,7 @@ namespace Victor {
    public:
     static String randomString(uint8_t length) {
       auto result = String(F(""));
+      result.reserve(length);
       uint8_t generated = 0;
       while (generated < length) {
         // .platformio/packages/framework-arduinoespressif8266/cores/esp8266/WMath.cpp

@@ -338,7 +338,7 @@ namespace Victor::Components {
     res[F("bssid")] = WiFi.BSSIDstr();
     const JsonArray apArr = res.createNestedArray(F("founds"));
     const auto count = WiFi.scanNetworks();
-    for (int8_t i = 0; i < count; ++i) {
+    for (int8_t i = 0; i < count; i++) {
       const JsonObject apObj = apArr.createNestedObject();
       apObj[F("bssid")] = WiFi.BSSIDstr(i); // Basic Service Set Identifiers (a MAC)
       apObj[F("ssid")] = WiFi.SSID(i); // Service Set Identifier
