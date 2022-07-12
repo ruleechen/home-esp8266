@@ -4,7 +4,6 @@ namespace Victor::Components {
 
   WifiStorage::WifiStorage(const char* filePath) : FileStorage(filePath) {
     _maxSize = 128;
-    _enableCache = false;
   }
 
   void WifiStorage::_serializeTo(const WifiSetting* model, DynamicJsonDocument& doc) {

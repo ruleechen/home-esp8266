@@ -4,7 +4,6 @@ namespace Victor::Components {
 
   RadioStorage::RadioStorage(const char* filePath) : FileStorage(filePath) {
     _maxSize = 4096;
-    _enableCache = false;
   }
 
   void RadioStorage::broadcast(RadioMessage* message) {

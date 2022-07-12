@@ -46,7 +46,7 @@ namespace Victor::Components {
    protected:
     const char* _filePath;
     size_t _maxSize = DEFAULT_FILE_SIZE;
-    bool _enableCache = false;
+    bool _enableCache = true;
     TModel* _cache = nullptr;
     Console _error();
     virtual void _serializeTo(const TModel* model, DynamicJsonDocument& doc);
@@ -96,7 +96,14 @@ namespace Victor::Components {
 
   template <typename TModel>
   bool FileStorage<TModel>::save(const TModel* model) {
-    _cache = nullptr;
+    // release cache
+    if (
+      _cache != nullptr &&
+      _cache != model
+    ) {
+      delete _cache;
+      _cache = nullptr;
+    }
     // convert
     DynamicJsonDocument doc(_maxSize); // Store data in the heap - Dynamic Memory Allocation
     // StaticJsonDocument<DEFAULT_FILE_SIZE> doc; // Store data in the stack - Fixed Memory Allocation
