@@ -7,6 +7,10 @@ namespace Victor::Components {
   }
 
   void RadioStorage::broadcast(RadioMessage* message) {
+    if (_lastReceived != nullptr) {
+      delete _lastReceived;
+      _lastReceived = nullptr;
+    }
     _lastReceived = message;
   }
 

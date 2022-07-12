@@ -44,14 +44,14 @@ namespace Victor::Components {
    private:
     Ticker* _ticker = nullptr;
     RadioEmit* _lastEmitted = nullptr;
-    RadioMessage _lastReceived = {};
     RadioPressState _lastPressState = PRESS_STATE_AWAIT;
     void _handleEmit(const RadioEmit* emit);
+    void _fireOnEmit(const RadioEmit* emit, uint32_t ms);
     void _handleReceived(const RadioMessage* message, const RadioPressState press);
     void _proceedAction(const RadioRule* rule);
     void _proceedCommand(const RadioCommandParsed* command);
     static RadioMessage* _parseMessage(const String& value, const uint8_t channel);
-    static RadioCommandParsed* _parseCommand(const RadioMessage* message);
+    static RadioCommandParsed* _parseCommand(const String& value);
   };
 } // namespace Victor::Components
 

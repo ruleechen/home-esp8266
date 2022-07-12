@@ -39,36 +39,20 @@ namespace Victor::Components {
   }
 
   void VictorRadio::_handleEmit(const RadioEmit* emit) {
-    if (onEmit == nullptr || emit == nullptr) {
+    if (emit == nullptr) {
       return;
     }
-    if (_ticker == nullptr) {
-      _ticker = new Ticker();
-    }
-    const auto id = GlobalHelpers::randomString(4);
-    _lastEmitted = new RadioEmit({
-      .name = id,
-      .value = emit->value,
-      .channel = emit->channel,
-      .press = emit->press,
-    });
     switch (emit->press) {
       case PRESS_STATE_CLICK: {
-        onEmit(_lastEmitted);
+        _fireOnEmit(emit, 0);
         break;
       }
       case PRESS_STATE_DOUBLE_CLICK: {
-        onEmit(_lastEmitted);
-        _ticker->once_ms(300, [this]{
-          this->onEmit(this->_lastEmitted);
-        });
+        _fireOnEmit(emit, 300);
         break;
       }
       case PRESS_STATE_LONG_PRESS: {
-        onEmit(_lastEmitted);
-        _ticker->once_ms(2000, [this]{
-          this->onEmit(this->_lastEmitted);
-        });
+        _fireOnEmit(emit, 2000);
         break;
       }
       case PRESS_STATE_AWAIT:
@@ -78,36 +62,70 @@ namespace Victor::Components {
     }
   }
 
+  void VictorRadio::_fireOnEmit(const RadioEmit* emit, uint32_t ms) {
+    if (onEmit == nullptr || emit == nullptr) {
+      return;
+    }
+    _lastEmitted = new RadioEmit({
+      .name = GlobalHelpers::randomString(4), // radom id
+      .value = emit->value,
+      .channel = emit->channel,
+      .press = emit->press,
+    });
+    onEmit(_lastEmitted);
+    if (ms == 0) {
+      delete _lastEmitted;
+      _lastEmitted = nullptr;
+      return;
+    }
+    if (_ticker == nullptr) {
+      _ticker = new Ticker();
+    }
+    _ticker->once_ms(ms, [this]() {
+      this->onEmit(this->_lastEmitted);
+      delete _lastEmitted;
+      _lastEmitted = nullptr;
+    });
+  }
+
   void VictorRadio::receive(const String& value, const uint8_t channel) {
     const auto message = _parseMessage(value, channel);
-    radioStorage.broadcast(message);
     // press
-    const auto timespan = message->timestamp - _lastReceived.timestamp;
+    auto lastReceived = radioStorage.getLastReceived();
+    const auto timespan = message->timestamp - (lastReceived != nullptr ? lastReceived->timestamp : 0);
     if (
-      _lastReceived.id != message->id  ||
+      lastReceived == nullptr ||
+      lastReceived->id != message->id  ||
       timespan > VICTOR_RADIO_RESET_PRESS
     ) {
-      RadioMessage empty {};
-      _lastReceived = empty;
+      lastReceived = nullptr;
       _lastPressState = PRESS_STATE_AWAIT;
     }
     if (
       _lastPressState != PRESS_STATE_CLICK &&
-      (_lastReceived.value != message->value || _lastReceived.channel != message->channel)
+      (lastReceived == nullptr || lastReceived->value != message->value || lastReceived->channel != message->channel)
     ) {
       _handleReceived(message, PRESS_STATE_CLICK);
+      radioStorage.broadcast(new RadioMessage({
+        .id = message->id,
+        .value = message->value,
+        .channel = message->channel,
+        .timestamp = message->timestamp,
+      }));
     } else if (
       _lastPressState != PRESS_STATE_DOUBLE_CLICK &&
       timespan >= VICTOR_RADIO_DOUBLE_CLICK_FROM &&
       timespan < VICTOR_RADIO_DOUBLE_CLICK_TO
     ) {
-      _handleReceived(&_lastReceived, PRESS_STATE_DOUBLE_CLICK);
+      _handleReceived(lastReceived, PRESS_STATE_DOUBLE_CLICK);
     } else if (
       _lastPressState != PRESS_STATE_LONG_PRESS &&
-      (timespan >= VICTOR_RADIO_LONG_PRESS)
+      timespan >= VICTOR_RADIO_LONG_PRESS
     ) {
-      _handleReceived(&_lastReceived, PRESS_STATE_LONG_PRESS);
+      _handleReceived(lastReceived, PRESS_STATE_LONG_PRESS);
     }
+    // release
+    delete message;
   }
 
   void VictorRadio::_handleReceived(const RadioMessage* message, const RadioPressState press) {
@@ -115,7 +133,6 @@ namespace Victor::Components {
       return;
     }
     // log states
-    _lastReceived = *message;
     _lastPressState = press;
     console.log()
       .bracket(F("radio"))
@@ -132,7 +149,7 @@ namespace Victor::Components {
       }
     }
     // check commands
-    auto parsedCommand = _parseCommand(message);
+    auto parsedCommand = _parseCommand(message->value);
     if (parsedCommand != nullptr) {
       for (const auto command : setting->commands) {
         if (
@@ -141,6 +158,7 @@ namespace Victor::Components {
           command->press == press
         ) {
           _proceedCommand(parsedCommand);
+          delete parsedCommand;
         }
       }
     }
@@ -287,10 +305,10 @@ namespace Victor::Components {
     return message;
   }
 
-  RadioCommandParsed* VictorRadio::_parseCommand(const RadioMessage* message) {
-    auto value = String(message->value); // clone
-    value.replace(F(":"), F("-"));
-    const auto parts = GlobalHelpers::splitString(value, F("-"));
+  RadioCommandParsed* VictorRadio::_parseCommand(const String& value) {
+    auto cloned = String(value); // clone
+    cloned.replace(F(":"), F("-"));
+    const auto parts = GlobalHelpers::splitString(cloned, F("-"));
     if (parts.size() < 2) {
       return nullptr;
     }
