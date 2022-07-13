@@ -40,13 +40,13 @@ namespace Victor::Components {
       // reset
       for (auto context : _contexts) { delete context; }
       _contexts.clear();
-      // _contexts.shrink_to_fit(); // already fixed to specified size
+      _contexts.shrink_to_fit();
     }
   }
 
   DigitalInput* DigitalInterruptButton::_input = nullptr;
   volatile bool DigitalInterruptButton::_lastInputValue = false;
-  std::vector<InterruptContext*> DigitalInterruptButton::_contexts = std::vector<InterruptContext*>(VICTOR_DIGITAL_INPUT_MAX_CHANGES);
+  std::vector<InterruptContext*> DigitalInterruptButton::_contexts = std::vector<InterruptContext*>();
 
   void IRAM_ATTR DigitalInterruptButton::_interruptHandler() {
     if (_contexts.size() < VICTOR_DIGITAL_INPUT_MAX_CHANGES) {
