@@ -61,7 +61,14 @@ namespace Victor::Components {
   template <typename TModel>
   TModel* FileStorage<TModel>::load() {
     if (_cache != nullptr) {
-      return _cache;
+      if (_enableCache) {
+        // read from cache
+        return _cache;
+      }
+      // delete current cache
+      // since we are going to load new data
+      delete _cache;
+      _cache = nullptr;
     }
     // default result
     auto model = new TModel();
@@ -88,9 +95,11 @@ namespace Victor::Components {
     } else {
       _error().section(F("notfound"), _filePath);
     }
+    // set cache
     if (_enableCache) {
       _cache = model;
     }
+    // ret
     return model;
   }
 
