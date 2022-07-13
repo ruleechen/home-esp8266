@@ -520,7 +520,9 @@ namespace Victor::Components {
       const auto emitItems = payload[F("emits")];
       // save
       auto setting = radioStorage.load();
+      for (auto emit : setting->emits) { delete emit; }
       setting->emits.clear();
+      setting->emits.shrink_to_fit();
       for (size_t i = 0; i < emitItems.size(); i++) {
         const auto item = emitItems[i];
         setting->emits.push_back(new RadioEmit({
@@ -592,7 +594,9 @@ namespace Victor::Components {
       const auto ruleItems = payload[F("rules")];
       // save
       auto setting = radioStorage.load();
+      for (auto rule : setting->rules) { delete rule; }
       setting->rules.clear();
+      setting->rules.shrink_to_fit();
       for (size_t i = 0; i < ruleItems.size(); i++) {
         const auto item = ruleItems[i];
         setting->rules.push_back(new RadioRule({
@@ -637,7 +641,9 @@ namespace Victor::Components {
       const auto commandItems = payload[F("commands")];
       // save
       auto setting = radioStorage.load();
+      for (auto command : setting->commands) { delete command; }
       setting->commands.clear();
+      setting->commands.shrink_to_fit();
       for (size_t i = 0; i < commandItems.size(); i++) {
         const auto item = commandItems[i];
         setting->commands.push_back(new RadioCommand({

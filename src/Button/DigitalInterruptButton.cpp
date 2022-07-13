@@ -34,28 +34,29 @@ namespace Victor::Components {
       for (size_t i = 0; i + 1 < _contexts.size(); i = i + 2) {
         const auto item1 = _contexts[i];
         const auto item2 = _contexts[i + 1];
-        _button->update(item1.inputValue, item1.timestamp);
-        _button->update(item2.inputValue, item2.timestamp);
+        _button->update(item1->inputValue, item1->timestamp);
+        _button->update(item2->inputValue, item2->timestamp);
       }
       // reset
+      for (auto context : _contexts) { delete context; }
       _contexts.clear();
+      // _contexts.shrink_to_fit(); // already fixed to specified size
     }
   }
 
   DigitalInput* DigitalInterruptButton::_input = nullptr;
   volatile bool DigitalInterruptButton::_lastInputValue = false;
-  std::vector<InterruptContext> DigitalInterruptButton::_contexts = std::vector<InterruptContext>(VICTOR_DIGITAL_INPUT_MAX_CHANGES);
+  std::vector<InterruptContext*> DigitalInterruptButton::_contexts = std::vector<InterruptContext*>(VICTOR_DIGITAL_INPUT_MAX_CHANGES);
 
   void IRAM_ATTR DigitalInterruptButton::_interruptHandler() {
     if (_contexts.size() < VICTOR_DIGITAL_INPUT_MAX_CHANGES) {
       const auto inputValue = _input->getValue();
       if (inputValue != _lastInputValue) {
         _lastInputValue = inputValue;
-        const InterruptContext context = {
+        _contexts.push_back(new InterruptContext({
           .inputValue = inputValue,
           .timestamp = millis(),
-        };
-        _contexts.push_back(context);
+        }));
         console.log()
           .bracket("interrupt")
           .section(String(inputValue));
