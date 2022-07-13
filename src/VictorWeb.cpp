@@ -8,6 +8,14 @@ namespace Victor::Components {
   }
 
   VictorWeb::~VictorWeb() {
+    onRequestStart = nullptr;
+    onRequestEnd = nullptr;
+    onServiceGet = nullptr;
+    onServicePost = nullptr;
+    onPageData = nullptr;
+    #if VICTOR_FEATURES_RADIO == 1
+      onRadioEmit = nullptr;
+    #endif
     if (_server != nullptr) {
       _server->stop();
       delete _server;
@@ -142,7 +150,7 @@ namespace Victor::Components {
     // res
     DynamicJsonDocument res(1024);
     // status
-    res[F("millis")] = millis();
+    res[F("millis")] = millis(); // This number will overflow (go back to zero), after approximately 50 days.
     res[F("resetReason")] = ESP.getResetReason();
     res[F("freeStack")] = ESP.getFreeContStack();
     res[F("freeHeap")] = ESP.getFreeHeap();

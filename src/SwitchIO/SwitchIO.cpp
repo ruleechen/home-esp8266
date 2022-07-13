@@ -14,8 +14,10 @@ namespace Victor::Components {
   }
 
   SwitchIO::~SwitchIO() {
-    // ignore deleting external resource
-    _storage = nullptr;
+    if (_storage != nullptr) {
+      free(_storage);
+      _storage = nullptr;
+    }
     if (input != nullptr) {
       delete input;
       input = nullptr;

@@ -6,6 +6,14 @@ namespace Victor::Components {
     _reset = new IntervalOver(resetMillis);
   }
 
+  TimesCounter::~TimesCounter() {
+    onCount = nullptr;
+    if (_reset != nullptr) {
+      free(_reset); // delete _reset;
+      _reset = nullptr;
+    }
+  }
+
   void TimesCounter::count() {
     const auto now = millis();
     if (_reset->isOver(now)) {
