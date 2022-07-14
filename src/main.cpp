@@ -1,16 +1,16 @@
 #include <Arduino.h>
 
 #include "AppMain/AppMain.h"
-// #include "Button/DigitalButton.h"
-#include "Button/DigitalInterruptButton.h"
+// #include "Button/ActionButtonInput.h"
+#include "Button/ActionButtonInterrupt.h"
 #include "Timer/IntervalOverAuto.h"
 
 using namespace Victor;
 using namespace Victor::Components;
 
 AppMain* appMain = nullptr;
-// DigitalButton* button = nullptr;
-DigitalInterruptButton* button = nullptr;
+// ActionButtonInput* button = nullptr;
+ActionButtonInterrupt* button = nullptr;
 IntervalOverAuto twoSeconds(2000);
 
 void setup(void) {
@@ -38,8 +38,8 @@ void setup(void) {
   };
 
   // input button
-  // button = new DigitalButton(0, 0);
-  button = new DigitalInterruptButton(0, 0);
+  // button = new ActionButtonInput(0, 0);
+  button = new ActionButtonInterrupt(0, 0);
   button->onAction = [](const ButtonAction action) {
     console.log()
       .bracket(F("button"))

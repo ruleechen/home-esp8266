@@ -1,15 +1,15 @@
-#ifndef DigitalButton_h
-#define DigitalButton_h
+#ifndef ActionButtonInput_h
+#define ActionButtonInput_h
 
 #include "DigitalInput.h"
 #include "Button/ActionButton.h"
 
 namespace Victor::Components {
 
-  class DigitalButton {
+  class ActionButtonInput {
    public:
-    DigitalButton(uint8_t inputPin, uint8_t inputTrueValue);
-    virtual ~DigitalButton();
+    ActionButtonInput(uint8_t inputPin, uint8_t inputTrueValue);
+    virtual ~ActionButtonInput();
     virtual void loop();
     // events
     ActionButton::TActionHandler onAction = nullptr;
@@ -21,4 +21,4 @@ namespace Victor::Components {
 
 } // namespace Victor::Components
 
-#endif // DigitalButton_h
+#endif // ActionButtonInput_h

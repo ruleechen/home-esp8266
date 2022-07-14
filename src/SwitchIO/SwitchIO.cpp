@@ -5,7 +5,7 @@ namespace Victor::Components {
   SwitchIO::SwitchIO(const char* settingFile) {
     _storage = new SwitchStorage(settingFile);
     const auto setting = _storage->load();
-    input = new DigitalButton(setting->inputPin, setting->inputTrueValue);
+    input = new ActionButtonInput(setting->inputPin, setting->inputTrueValue);
     _output = new DigitalOutput(setting->outputPin, setting->outputTrueValue);
     if (setting->output2Pin > -1) {
       _output2 = new DigitalOutput(setting->output2Pin, setting->output2TrueValue);

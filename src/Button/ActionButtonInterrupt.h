@@ -1,9 +1,9 @@
-#ifndef DigitalInterruptButton_h
-#define DigitalInterruptButton_h
+#ifndef ActionButtonInterrupt_h
+#define ActionButtonInterrupt_h
 
 #include <vector>
 #include "Console.h"
-#include "Button/DigitalButton.h"
+#include "Button/ActionButtonInput.h"
 
 // should be a plural
 // double click has maximum 4 times change
@@ -18,10 +18,10 @@ namespace Victor::Components {
     unsigned long timestamp;
   };
 
-  class DigitalInterruptButton : public DigitalButton {
+  class ActionButtonInterrupt : public ActionButtonInput {
    public:
-    DigitalInterruptButton(uint8_t inputPin, uint8_t inputTrueValue);
-    ~DigitalInterruptButton();
+    ActionButtonInterrupt(uint8_t inputPin, uint8_t inputTrueValue);
+    ~ActionButtonInterrupt();
     void loop() override;
 
    private:
@@ -33,4 +33,4 @@ namespace Victor::Components {
 
 } // namespace Victor::Components
 
-#endif // DigitalInterruptButton_h
+#endif // ActionButtonInterrupt_h

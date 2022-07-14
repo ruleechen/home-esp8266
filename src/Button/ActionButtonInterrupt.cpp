@@ -1,19 +1,19 @@
-#include "DigitalInterruptButton.h"
+#include "ActionButtonInterrupt.h"
 
 namespace Victor::Components {
 
-  DigitalInterruptButton::DigitalInterruptButton(uint8_t inputPin, uint8_t inputTrueValue) : DigitalButton(inputPin, inputTrueValue) {
+  ActionButtonInterrupt::ActionButtonInterrupt(uint8_t inputPin, uint8_t inputTrueValue) : ActionButtonInput(inputPin, inputTrueValue) {
     _inputRef = _input;
     _lastInputValue = _input->getValue();
     attachInterrupt(digitalPinToInterrupt(inputPin), _interruptHandler, CHANGE);
   }
 
-  DigitalInterruptButton::~DigitalInterruptButton() {
+  ActionButtonInterrupt::~ActionButtonInterrupt() {
     _inputRef = nullptr;
     // detachInterrupt(digitalPinToInterrupt(inputPin));
   }
 
-  void DigitalInterruptButton::loop() {
+  void ActionButtonInterrupt::loop() {
     if (_contexts.size() > 1) { // at least 2
       // every loop apply 2 interrupt contexts
       for (size_t i = 0; i + 1 < _contexts.size(); i = i + 2) {
@@ -29,11 +29,11 @@ namespace Victor::Components {
     }
   }
 
-  DigitalInput* DigitalInterruptButton::_inputRef = nullptr;
-  volatile bool DigitalInterruptButton::_lastInputValue = false;
-  std::vector<InterruptContext*> DigitalInterruptButton::_contexts = std::vector<InterruptContext*>();
+  DigitalInput* ActionButtonInterrupt::_inputRef = nullptr;
+  volatile bool ActionButtonInterrupt::_lastInputValue = false;
+  std::vector<InterruptContext*> ActionButtonInterrupt::_contexts = std::vector<InterruptContext*>();
 
-  void IRAM_ATTR DigitalInterruptButton::_interruptHandler() {
+  void IRAM_ATTR ActionButtonInterrupt::_interruptHandler() {
     if (_contexts.size() < VICTOR_DIGITAL_INPUT_MAX_CHANGES) {
       const auto inputValue = _inputRef->getValue();
       if (inputValue != _lastInputValue) {
