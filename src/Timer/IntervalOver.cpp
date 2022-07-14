@@ -2,8 +2,8 @@
 
 namespace Victor::Components {
 
-  IntervalOver::IntervalOver(unsigned long ms) {
-    _ms = ms;
+  IntervalOver::IntervalOver(unsigned long interval) {
+    _interval = interval;
   }
 
   void IntervalOver::start(unsigned long now) {
@@ -16,7 +16,7 @@ namespace Victor::Components {
 
   bool IntervalOver::isOver(unsigned long now) {
     if (now == 0) { now = millis(); }
-    return (now - _start > _ms);
+    return (now - _start > _interval);
   }
 
 } // namespace Victor::Components

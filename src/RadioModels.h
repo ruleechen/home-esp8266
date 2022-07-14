@@ -28,7 +28,7 @@ namespace Victor::Components {
     PRESS_STATE_AWAIT        = 0,
     PRESS_STATE_CLICK        = 1,
     PRESS_STATE_DOUBLE_CLICK = 2,
-    PRESS_STATE_LONG_PRESS   = 3,
+    PRESS_STATE_PRESS_HOLD   = 3,
   };
 
   struct RadioEmit {

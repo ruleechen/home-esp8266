@@ -7,8 +7,8 @@ namespace Victor::Components {
       if (onAction != nullptr && timespan > VICTOR_ACTION_BUTTON_DEBOUNCE) {
         onAction(BUTTON_ACTION_PRESSED);
         if (
-          VICTOR_ACTION_BUTTON_DOUBLE_MIN < timespan &&
-          timespan <= VICTOR_ACTION_BUTTON_DOUBLE_MAX
+          VICTOR_ACTION_BUTTON_DOUBLE_PRESS_MIN < timespan &&
+          timespan <= VICTOR_ACTION_BUTTON_DOUBLE_PRESS_MAX
         ) {
           onAction(BUTTON_ACTION_DOUBLE_PRESSED);
         }
@@ -17,10 +17,10 @@ namespace Victor::Components {
     onReleased = [&](const unsigned long timespan) {
       if (onAction != nullptr && timespan > VICTOR_ACTION_BUTTON_DEBOUNCE) {
         onAction(BUTTON_ACTION_RELEASED);
-        if (timespan >= VICTOR_ACTION_BUTTON_RESTORE_MIN) {
-          onAction(BUTTON_ACTION_RESTORE);
-        } else if (timespan >= VICTOR_ACTION_BUTTON_RESTART_MIN) {
-          onAction(BUTTON_ACTION_RESTART);
+        if (timespan >= VICTOR_ACTION_BUTTON_PRESS_HOLD_L2) {
+          onAction(BUTTON_ACTION_PRESSED_HOLD_L2);
+        } else if (timespan >= VICTOR_ACTION_BUTTON_PRESS_HOLD_L1) {
+          onAction(BUTTON_ACTION_PRESSED_HOLD_L1);
         }
       }
     };

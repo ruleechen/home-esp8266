@@ -6,7 +6,7 @@
 namespace Victor::Components {
   class IntervalOverAuto : public IntervalOver {
    public:
-    IntervalOverAuto(unsigned long ms);
+    IntervalOverAuto(unsigned long interval);
     bool isOver(unsigned long now = 0) override;
   };
 } // namespace Victor::Components

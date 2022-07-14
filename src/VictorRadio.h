@@ -46,7 +46,7 @@ namespace Victor::Components {
     RadioEmit* _lastEmitted = nullptr;
     RadioPressState _lastPressState = PRESS_STATE_AWAIT;
     void _handleEmit(const RadioEmit* emit);
-    void _fireOnEmit(const RadioEmit* emit, uint32_t ms);
+    void _fireOnEmit(const RadioEmit* emit, const uint32_t delay);
     void _handleReceived(const RadioMessage* message, const RadioPressState press);
     void _proceedAction(const RadioRule* rule);
     void _proceedCommand(const RadioCommandParsed* command);

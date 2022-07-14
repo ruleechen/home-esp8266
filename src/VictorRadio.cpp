@@ -51,7 +51,7 @@ namespace Victor::Components {
         _fireOnEmit(emit, 300);
         break;
       }
-      case PRESS_STATE_LONG_PRESS: {
+      case PRESS_STATE_PRESS_HOLD: {
         _fireOnEmit(emit, 2000);
         break;
       }
@@ -62,7 +62,7 @@ namespace Victor::Components {
     }
   }
 
-  void VictorRadio::_fireOnEmit(const RadioEmit* emit, uint32_t ms) {
+  void VictorRadio::_fireOnEmit(const RadioEmit* emit, const uint32_t delay) {
     if (onEmit == nullptr || emit == nullptr) {
       return;
     }
@@ -73,7 +73,7 @@ namespace Victor::Components {
       .press = emit->press,
     });
     onEmit(_lastEmitted);
-    if (ms == 0) {
+    if (delay == 0) {
       delete _lastEmitted;
       _lastEmitted = nullptr;
       return;
@@ -81,7 +81,7 @@ namespace Victor::Components {
     if (_ticker == nullptr) {
       _ticker = new Ticker();
     }
-    _ticker->once_ms(ms, [this]() {
+    _ticker->once_ms(delay, [this]() {
       this->onEmit(this->_lastEmitted);
       delete _lastEmitted;
       _lastEmitted = nullptr;
@@ -119,10 +119,10 @@ namespace Victor::Components {
     ) {
       _handleReceived(lastReceived, PRESS_STATE_DOUBLE_CLICK);
     } else if (
-      _lastPressState != PRESS_STATE_LONG_PRESS &&
+      _lastPressState != PRESS_STATE_PRESS_HOLD &&
       timespan >= VICTOR_RADIO_LONG_PRESS
     ) {
-      _handleReceived(lastReceived, PRESS_STATE_LONG_PRESS);
+      _handleReceived(lastReceived, PRESS_STATE_PRESS_HOLD);
     }
     // release
     delete message;

@@ -29,7 +29,7 @@ namespace Victor::Components {
   }
 
   void DigitalInterruptButton::loop() {
-    if (_contexts.size() > 1) {
+    if (_contexts.size() > 1) { // at least 2
       // every loop apply 2 interrupt contexts
       for (size_t i = 0; i + 1 < _contexts.size(); i = i + 2) {
         const auto item1 = _contexts[i];

@@ -2,7 +2,7 @@
 
 namespace Victor::Components {
 
-  IntervalOverAuto::IntervalOverAuto(unsigned long ms) : IntervalOver(ms) {
+  IntervalOverAuto::IntervalOverAuto(unsigned long interval) : IntervalOver(interval) {
     start();
   }
 
