@@ -27,7 +27,6 @@ namespace Victor::Components {
   }
 
   ActionButton::~ActionButton() {
-    Button<bool>::~Button();
     onAction = nullptr;
   }
 
