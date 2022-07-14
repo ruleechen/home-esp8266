@@ -2,7 +2,6 @@
 #define VictorRadio_h
 
 #include <Arduino.h>
-#include <Ticker.h>
 #include "GlobalHelpers.h"
 #include "Console.h"
 #include "VictorOTA.h"
@@ -42,11 +41,9 @@ namespace Victor::Components {
     TRadioCommand onCommand = nullptr;
 
    private:
-    Ticker* _ticker = nullptr;
-    RadioEmit* _lastEmitted = nullptr;
     RadioPressState _lastPressState = PRESS_STATE_AWAIT;
     void _handleEmit(const RadioEmit* emit);
-    void _fireOnEmit(const RadioEmit* emit, const uint32_t delay);
+    void _fireOnEmit(const RadioEmit* emit, const uint32_t nextDelay);
     void _handleReceived(const RadioMessage* message, const RadioPressState press);
     void _proceedAction(const RadioRule* rule);
     void _proceedCommand(const RadioCommandParsed* command);

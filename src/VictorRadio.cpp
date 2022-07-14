@@ -8,14 +8,6 @@ namespace Victor::Components {
     onEmit = nullptr;
     onAction = nullptr;
     onCommand = nullptr;
-    if (_ticker != nullptr) {
-      delete _ticker;
-      _ticker = nullptr;
-    }
-    if (_lastEmitted != nullptr) {
-      delete _lastEmitted;
-      _lastEmitted = nullptr;
-    }
   }
 
   void VictorRadio::emit(const String& name) {
@@ -62,30 +54,22 @@ namespace Victor::Components {
     }
   }
 
-  void VictorRadio::_fireOnEmit(const RadioEmit* emit, const uint32_t delay) {
+  void VictorRadio::_fireOnEmit(const RadioEmit* emit, const uint32_t nextDelay) {
     if (onEmit == nullptr || emit == nullptr) {
       return;
     }
-    _lastEmitted = new RadioEmit({
+    const auto clonedEmit = new RadioEmit({
       .name = GlobalHelpers::randomString(4), // radom id
       .value = emit->value,
       .channel = emit->channel,
       .press = emit->press,
     });
-    onEmit(_lastEmitted);
-    if (delay == 0) {
-      delete _lastEmitted;
-      _lastEmitted = nullptr;
-      return;
+    onEmit(clonedEmit);
+    if (nextDelay > 0) {
+      delay(nextDelay);
+      onEmit(clonedEmit);
     }
-    if (_ticker == nullptr) {
-      _ticker = new Ticker();
-    }
-    _ticker->once_ms(delay, [this]() {
-      this->onEmit(this->_lastEmitted);
-      delete _lastEmitted;
-      _lastEmitted = nullptr;
-    });
+    delete clonedEmit;
   }
 
   void VictorRadio::receive(const String& value, const uint8_t channel) {
