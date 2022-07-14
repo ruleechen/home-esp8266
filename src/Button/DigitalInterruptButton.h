@@ -3,8 +3,7 @@
 
 #include <vector>
 #include "Console.h"
-#include "DigitalInput.h"
-#include "Button/ActionButton.h"
+#include "Button/DigitalButton.h"
 
 // should be a plural
 // double click has maximum 4 times change
@@ -19,18 +18,14 @@ namespace Victor::Components {
     unsigned long timestamp;
   };
 
-  class DigitalInterruptButton {
+  class DigitalInterruptButton : public DigitalButton {
    public:
     DigitalInterruptButton(uint8_t inputPin, uint8_t inputTrueValue);
     ~DigitalInterruptButton();
-    void loop();
-    // events
-    ActionButton::TActionHandler onAction = nullptr;
+    void loop() override;
 
    private:
-    ActionButton* _button = nullptr;
-    // interrupt
-    static DigitalInput* _input;
+   	static DigitalInput* _inputRef;
     volatile static bool _lastInputValue;
     static std::vector<InterruptContext*> _contexts;
     static void IRAM_ATTR _interruptHandler();

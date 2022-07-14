@@ -10,11 +10,11 @@ namespace Victor::Components {
    public:
     DigitalButton(uint8_t inputPin, uint8_t inputTrueValue);
     ~DigitalButton();
-    void loop();
+    virtual void loop();
     // events
     ActionButton::TActionHandler onAction = nullptr;
 
-   private:
+   protected:
     DigitalInput* _input = nullptr;
     ActionButton* _button = nullptr;
   };

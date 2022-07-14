@@ -19,7 +19,7 @@ namespace Victor::Components {
       _input = nullptr;
     }
     if (_button != nullptr) {
-      delete _button;
+      free(_button);
       _button = nullptr;
     }
   }
