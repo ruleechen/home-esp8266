@@ -9,7 +9,7 @@ namespace Victor::Components {
   class DigitalButton {
    public:
     DigitalButton(uint8_t inputPin, uint8_t inputTrueValue);
-    ~DigitalButton();
+    virtual ~DigitalButton();
     virtual void loop();
     // events
     ActionButton::TActionHandler onAction = nullptr;

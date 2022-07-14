@@ -19,7 +19,7 @@ namespace Victor::Components {
       _storage = nullptr;
     }
     if (input != nullptr) {
-      free(input);
+      delete input;
       input = nullptr;
     }
     if (_output != nullptr) {
