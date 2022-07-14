@@ -4,7 +4,7 @@
 #include "DigitalInput.h"
 #include "DigitalOutput.h"
 #include "SwitchStorage.h"
-#include "Button/DigitalInputButton.h"
+#include "Button/DigitalButton.h"
 
 namespace Victor::Components {
   class SwitchIO {
@@ -14,7 +14,7 @@ namespace Victor::Components {
     void loop();
     bool getOutputState();
     void setOutputState(bool value);
-    DigitalInputButton* input = nullptr;
+    DigitalButton* input = nullptr;
 
    private:
     SwitchStorage* _storage = nullptr;

@@ -1,8 +1,8 @@
-#include "DigitalInputButton.h"
+#include "DigitalButton.h"
 
 namespace Victor::Components {
 
-  DigitalInputButton::DigitalInputButton(uint8_t inputPin, uint8_t inputTrueValue) {
+  DigitalButton::DigitalButton(uint8_t inputPin, uint8_t inputTrueValue) {
     _input = new DigitalInput(inputPin, inputTrueValue);
     _button = new ActionButton(_input->getValue());
     _button->onAction = [&](ButtonAction action) {
@@ -12,7 +12,7 @@ namespace Victor::Components {
     };
   }
 
-  DigitalInputButton::~DigitalInputButton() {
+  DigitalButton::~DigitalButton() {
     onAction = nullptr;
     if (_input != nullptr) {
       delete _input;
@@ -24,7 +24,7 @@ namespace Victor::Components {
     }
   }
 
-  void DigitalInputButton::loop() {
+  void DigitalButton::loop() {
     _button->update(_input->getValue());
   }
 

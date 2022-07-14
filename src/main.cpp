@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
 #include "AppMain/AppMain.h"
-// #include "Button/DigitalInputButton.h"
+// #include "Button/DigitalButton.h"
 #include "Button/DigitalInterruptButton.h"
 #include "Timer/IntervalOverAuto.h"
 
@@ -9,7 +9,7 @@ using namespace Victor;
 using namespace Victor::Components;
 
 AppMain* appMain = nullptr;
-// DigitalInputButton* button = nullptr;
+// DigitalButton* button = nullptr;
 DigitalInterruptButton* button = nullptr;
 IntervalOverAuto twoSeconds(2000);
 
@@ -38,7 +38,7 @@ void setup(void) {
   };
 
   // input button
-  // button = new DigitalInputButton(0, 0);
+  // button = new DigitalButton(0, 0);
   button = new DigitalInterruptButton(0, 0);
   button->onAction = [](const ButtonAction action) {
     console.log()
