@@ -35,15 +35,15 @@ namespace Victor::Components {
       return;
     }
     switch (emit->press) {
-      case PRESS_STATE_CLICK: {
+      case PRESS_STATE_SINGLE_PRESS: {
         _fireOnEmit(emit, 0);
         break;
       }
-      case PRESS_STATE_DOUBLE_CLICK: {
+      case PRESS_STATE_DOUBLE_PRESS: {
         _fireOnEmit(emit, 300);
         break;
       }
-      case PRESS_STATE_PRESS_HOLD: {
+      case PRESS_STATE_LONG_PRESS: {
         _fireOnEmit(emit, 2000);
         break;
       }
@@ -80,16 +80,16 @@ namespace Victor::Components {
     if (
       lastReceived == nullptr ||
       lastReceived->id != message->id  ||
-      timespan > VICTOR_RADIO_RESET_PRESS
+      timespan > VICTOR_RADIO_RESET_THRESHOLD
     ) {
       lastReceived = nullptr;
       _lastPressState = PRESS_STATE_AWAIT;
     }
     if (
-      _lastPressState != PRESS_STATE_CLICK &&
+      _lastPressState != PRESS_STATE_SINGLE_PRESS &&
       (lastReceived == nullptr || lastReceived->value != message->value || lastReceived->channel != message->channel)
     ) {
-      _handleReceived(message, PRESS_STATE_CLICK);
+      _handleReceived(message, PRESS_STATE_SINGLE_PRESS);
       radioStorage.broadcast(new RadioMessage({
         .id = message->id,
         .value = message->value,
@@ -97,16 +97,16 @@ namespace Victor::Components {
         .timestamp = message->timestamp,
       }));
     } else if (
-      _lastPressState != PRESS_STATE_DOUBLE_CLICK &&
-      timespan >= VICTOR_RADIO_DOUBLE_CLICK_FROM &&
-      timespan < VICTOR_RADIO_DOUBLE_CLICK_TO
+      _lastPressState != PRESS_STATE_DOUBLE_PRESS &&
+      timespan >= VICTOR_RADIO_DOUBLE_PRESS_MIN &&
+      timespan < VICTOR_RADIO_DOUBLE_PRESS_MAX
     ) {
-      _handleReceived(lastReceived, PRESS_STATE_DOUBLE_CLICK);
+      _handleReceived(lastReceived, PRESS_STATE_DOUBLE_PRESS);
     } else if (
-      _lastPressState != PRESS_STATE_PRESS_HOLD &&
-      timespan >= VICTOR_RADIO_LONG_PRESS
+      _lastPressState != PRESS_STATE_LONG_PRESS &&
+      timespan >= VICTOR_RADIO_LONG_PRESS_THRESHOLD
     ) {
-      _handleReceived(lastReceived, PRESS_STATE_PRESS_HOLD);
+      _handleReceived(lastReceived, PRESS_STATE_LONG_PRESS);
     }
     // release
     delete message;

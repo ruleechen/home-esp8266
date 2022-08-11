@@ -26,22 +26,22 @@ namespace Victor::Components {
 
   enum RadioPressState {
     PRESS_STATE_AWAIT        = 0,
-    PRESS_STATE_CLICK        = 1,
-    PRESS_STATE_DOUBLE_CLICK = 2,
-    PRESS_STATE_PRESS_HOLD   = 3,
+    PRESS_STATE_SINGLE_PRESS = 1,
+    PRESS_STATE_DOUBLE_PRESS = 2,
+    PRESS_STATE_LONG_PRESS   = 3,
   };
 
   struct RadioEmit {
     String name;
     String value;
     uint8_t channel = 0; // (0~255)
-    RadioPressState press = PRESS_STATE_CLICK;
+    RadioPressState press = PRESS_STATE_SINGLE_PRESS;
   };
 
   struct RadioRule {
     String value;
     uint8_t channel = 0; // (0~255)
-    RadioPressState press = PRESS_STATE_CLICK;
+    RadioPressState press = PRESS_STATE_SINGLE_PRESS;
     RadioAction action = RADIO_ACTION_NONE;
   };
 
@@ -80,7 +80,7 @@ namespace Victor::Components {
   struct RadioCommand {
     RadioCommandEntry entry = ENTRY_NONE;
     int8_t action = -1; // (-128~127)
-    RadioPressState press = PRESS_STATE_CLICK;
+    RadioPressState press = PRESS_STATE_SINGLE_PRESS;
   };
 
   struct RadioCommandParsed :RadioCommand {

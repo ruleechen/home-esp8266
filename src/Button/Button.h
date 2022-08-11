@@ -9,7 +9,7 @@ namespace Victor::Components {
   template <typename TState>
   class Button {
    public:
-    Button(TState state);
+    Button(TState initState);
     virtual ~Button();
     // state
     virtual void update(TState state, unsigned long timestamp = 0);
