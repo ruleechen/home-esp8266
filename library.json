@@ -19,7 +19,7 @@
     }
   ],
   "dependencies": {
-    "bblanchon/ArduinoJson": "^6.18.4"
+    "bblanchon/ArduinoJson": "6.18.4"
   },
   "license": "MIT",
   "frameworks": "arduino",
