@@ -9,7 +9,7 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266HTTPUpdateServer.h>
-#if VICTOR_FEATURES_RADIO == 1
+#if VICTOR_FEATURES_RADIO
   #include "RadioStorage.h"
 #endif
 #include "VictorOTA.h"
@@ -39,7 +39,7 @@ namespace Victor::Components {
     typedef std::function<void(DynamicJsonDocument& res)> TPageDataHandler;
     TPageDataHandler onPageData = nullptr;
     // radio events
-    #if VICTOR_FEATURES_RADIO == 1
+    #if VICTOR_FEATURES_RADIO
       typedef std::function<void(uint8_t index)> TRadioEmitHandler;
       TRadioEmitHandler onRadioEmit = nullptr;
     #endif
@@ -76,7 +76,7 @@ namespace Victor::Components {
     void _handleOta();
     void _handleOtaFire();
     void _handleNotFound();
-    #if VICTOR_FEATURES_RADIO == 1
+    #if VICTOR_FEATURES_RADIO
       void _handleRadioGet();
       void _handleRadioSave();
       void _handleRadioEmitGet();

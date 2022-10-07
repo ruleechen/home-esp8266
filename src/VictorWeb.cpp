@@ -13,7 +13,7 @@ namespace Victor::Components {
     onServiceGet = nullptr;
     onServicePost = nullptr;
     onPageData = nullptr;
-    #if VICTOR_FEATURES_RADIO == 1
+    #if VICTOR_FEATURES_RADIO
       onRadioEmit = nullptr;
     #endif
     if (_server != nullptr) {
@@ -59,7 +59,7 @@ namespace Victor::Components {
     _server->on(F("/wifi/reset"), HTTP_POST, std::bind(&VictorWeb::_handleWifiReset, this));
     _server->on(F("/ota"), HTTP_GET, std::bind(&VictorWeb::_handleOta, this));
     _server->on(F("/ota/fire"), HTTP_POST, std::bind(&VictorWeb::_handleOtaFire, this));
-    #if VICTOR_FEATURES_RADIO == 1
+    #if VICTOR_FEATURES_RADIO
       _server->on(F("/radio"), HTTP_GET, std::bind(&VictorWeb::_handleRadioGet, this));
       _server->on(F("/radio"), HTTP_POST, std::bind(&VictorWeb::_handleRadioSave, this));
       _server->on(F("/radio/emit"), HTTP_GET, std::bind(&VictorWeb::_handleRadioEmitGet, this));
@@ -451,7 +451,7 @@ namespace Victor::Components {
     _dispatchRequestEnd();
   }
 
-  #if VICTOR_FEATURES_RADIO == 1
+  #if VICTOR_FEATURES_RADIO
     void VictorWeb::_handleRadioGet() {
       _dispatchRequestStart();
       DynamicJsonDocument res(512);

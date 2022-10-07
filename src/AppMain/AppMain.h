@@ -6,11 +6,11 @@
 #include "VictorOTA.h"
 #include "VictorWifi.h"
 
-#if VICTOR_FEATURES_WEB == 1
+#if VICTOR_FEATURES_WEB
   #include "VictorWeb.h"
 #endif
 
-#if VICTOR_FEATURES_RADIO == 1
+#if VICTOR_FEATURES_RADIO
   #include "VictorRadio.h"
 #endif
 
@@ -22,10 +22,10 @@ namespace Victor::Components {
     ~AppMain();
     void setup();
     void loop(int8_t sleepMode = 0);
-    #if VICTOR_FEATURES_WEB == 1
+    #if VICTOR_FEATURES_WEB
       VictorWeb* webPortal = nullptr;
     #endif
-    #if VICTOR_FEATURES_RADIO == 1
+    #if VICTOR_FEATURES_RADIO
       VictorRadio* radioPortal = nullptr;
     #endif
 
