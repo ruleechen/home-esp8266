@@ -3,7 +3,7 @@
 namespace Victor::Components {
 
   AppStorage::AppStorage(const char* filePath) : FileStorage(filePath) {
-    _maxSize = 128;
+    _maxSize = 256;
   }
 
   void AppStorage::_serializeTo(const AppSetting* model, DynamicJsonDocument& doc) {
