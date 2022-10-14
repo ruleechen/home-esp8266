@@ -118,12 +118,13 @@ namespace Victor::Components {
   }
 
   String VictorWifi::getHostName() {
-    const auto id = getHostId();
     const auto setting = _storage->load();
-    const auto brand = setting->brand.isEmpty()
+    auto service = setting->brand.isEmpty()
       ? VICTOR_FIRMWARE_SERVICE
       : setting->brand;
-    return brand + id;
+    service.trim();
+    service.replace(' ', '-');
+    return service + F("-") + getHostId();
   }
 
   void VictorWifi::_handleStaGotIP(const WiFiEventStationModeGotIP& args) {
