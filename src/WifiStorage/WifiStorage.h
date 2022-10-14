@@ -9,7 +9,6 @@ namespace Victor::Components {
     String ssid;
     String pswd;
     bool autoMode = true;
-    String brand;
   };
 
   class WifiStorage : public FileStorage<WifiSetting> {

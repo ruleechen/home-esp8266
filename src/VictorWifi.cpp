@@ -118,7 +118,7 @@ namespace Victor::Components {
   }
 
   String VictorWifi::getHostName() {
-    const auto setting = _storage->load();
+    const auto setting = appStorage.load();
     auto service = setting->brand.isEmpty()
       ? VICTOR_FIRMWARE_SERVICE
       : setting->brand;

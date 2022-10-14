@@ -17,6 +17,7 @@ namespace Victor::Components {
 
   struct AppSetting {
     String name;
+    String brand;
     // (0 ~ 65535) for light sleep mode
     // 0         = disabled
     // 1 ~ 65535 = delay ms
