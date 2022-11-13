@@ -1,9 +1,9 @@
-#include "SwitchIO.h"
+#include "BinaryIO.h"
 
 namespace Victor::Components {
 
-  SwitchIO::SwitchIO(const char* settingFile) {
-    _storage = new SwitchStorage(settingFile);
+  BinaryIO::BinaryIO(const char* settingFile) {
+    _storage = new BinaryStorage(settingFile);
     const auto setting = _storage->load();
     if (setting->inputPin > -1) {
       _input = new ActionButtonInput(setting->inputPin, setting->inputTrueValue);
@@ -24,7 +24,7 @@ namespace Victor::Components {
     }
   }
 
-  SwitchIO::~SwitchIO() {
+  BinaryIO::~BinaryIO() {
     if (_storage != nullptr) {
       free(_storage);
       _storage = nullptr;
@@ -43,19 +43,19 @@ namespace Victor::Components {
     }
   }
 
-  void SwitchIO::loop() {
+  void BinaryIO::loop() {
     if (_input != nullptr) {
       _input->loop();
     }
   }
 
-  bool SwitchIO::getOutputState() {
+  bool BinaryIO::getOutputState() {
     return _output != nullptr
       ? _output->lastValue()
       : false;
   }
 
-  void SwitchIO::setOutputState(bool value) {
+  void BinaryIO::setOutputState(bool value) {
     if (_output != nullptr) {
       _output->setValue(value);
     }

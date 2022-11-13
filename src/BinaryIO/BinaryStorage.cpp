@@ -1,12 +1,12 @@
-#include "SwitchStorage.h"
+#include "BinaryStorage.h"
 
 namespace Victor::Components {
 
-  SwitchStorage::SwitchStorage(const char* filePath) : FileStorage(filePath) {
+  BinaryStorage::BinaryStorage(const char* filePath) : FileStorage(filePath) {
     _maxSize = 256;
   }
 
-  void SwitchStorage::_serializeTo(const SwitchConfig* model, DynamicJsonDocument& doc) {
+  void BinaryStorage::_serializeTo(const BinaryConfig* model, DynamicJsonDocument& doc) {
     // input pin
     const JsonArray inputArr = doc.createNestedArray(F("input"));
     inputArr[0] = model->inputPin;
@@ -25,7 +25,7 @@ namespace Victor::Components {
     stateArr[1] = model->outputIsOn ? 1 : 0;
   }
 
-  void SwitchStorage::_deserializeFrom(SwitchConfig* model, const DynamicJsonDocument& doc) {
+  void BinaryStorage::_deserializeFrom(BinaryConfig* model, const DynamicJsonDocument& doc) {
     // input pin
     const auto inputArr   = doc[F("input")];
     model->inputPin       = inputArr[0];

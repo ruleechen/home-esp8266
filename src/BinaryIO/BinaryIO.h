@@ -1,16 +1,16 @@
-#ifndef SwitchIO_h
-#define SwitchIO_h
+#ifndef BinaryIO_h
+#define BinaryIO_h
 
 #include "DigitalInput.h"
 #include "DigitalOutput.h"
-#include "SwitchStorage.h"
+#include "BinaryStorage.h"
 #include "Button/ActionButtonInput.h"
 
 namespace Victor::Components {
-  class SwitchIO {
+  class BinaryIO {
    public:
-    SwitchIO(const char* settingFile = "/switch.json");
-    ~SwitchIO();
+    BinaryIO(const char* settingFile = "/binary.json");
+    ~BinaryIO();
     void loop();
     bool getOutputState();
     void setOutputState(bool value);
@@ -18,7 +18,7 @@ namespace Victor::Components {
     ActionButton::TActionHandler onInputAction = nullptr;
 
    private:
-    SwitchStorage* _storage = nullptr;
+    BinaryStorage* _storage = nullptr;
     ActionButtonInput* _input = nullptr;
     DigitalOutput* _output = nullptr;
     DigitalOutput* _output2 = nullptr;
@@ -26,4 +26,4 @@ namespace Victor::Components {
 
 } // namespace Victor::Components
 
-#endif // SwitchIO_h
+#endif // BinaryIO_h

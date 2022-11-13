@@ -1,11 +1,11 @@
-#ifndef SwitchStorage_h
-#define SwitchStorage_h
+#ifndef BinaryStorage_h
+#define BinaryStorage_h
 
 #include "FileStorage.h"
 
 namespace Victor::Components {
 
-  struct SwitchConfig {
+  struct BinaryConfig {
     // input pin
     // 0~127 = gpio
     //    -1 = disabled
@@ -36,15 +36,15 @@ namespace Victor::Components {
     bool outputIsOn = false;
   };
 
-  class SwitchStorage : public FileStorage<SwitchConfig> {
+  class BinaryStorage : public FileStorage<BinaryConfig> {
    public:
-    SwitchStorage(const char* filePath);
+    BinaryStorage(const char* filePath);
 
    protected:
-    void _serializeTo(const SwitchConfig* model, DynamicJsonDocument& doc) override;
-    void _deserializeFrom(SwitchConfig* model, const DynamicJsonDocument& doc) override;
+    void _serializeTo(const BinaryConfig* model, DynamicJsonDocument& doc) override;
+    void _deserializeFrom(BinaryConfig* model, const DynamicJsonDocument& doc) override;
   };
 
 } // namespace Victor::Components
 
-#endif // SwitchStorage_h
+#endif // BinaryStorage_h
