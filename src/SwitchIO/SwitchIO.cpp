@@ -5,12 +5,23 @@ namespace Victor::Components {
   SwitchIO::SwitchIO(const char* settingFile) {
     _storage = new SwitchStorage(settingFile);
     const auto setting = _storage->load();
-    input = new ActionButtonInput(setting->inputPin, setting->inputTrueValue);
-    _output = new DigitalOutput(setting->outputPin, setting->outputTrueValue);
+    if (setting->inputPin > -1) {
+      _input = new ActionButtonInput(setting->inputPin, setting->inputTrueValue);
+      _input->onAction = [&](ButtonAction action) {
+        if (onInputAction != nullptr) {
+          onInputAction(action);
+        }
+      };
+    }
+    if (setting->outputPin > -1) {
+      _output = new DigitalOutput(setting->outputPin, setting->outputTrueValue);
+    }
     if (setting->output2Pin > -1) {
       _output2 = new DigitalOutput(setting->output2Pin, setting->output2TrueValue);
     }
-    setOutputState(setting->outputIsOn);
+    if (setting->saveOutput) {
+      setOutputState(setting->outputIsOn);
+    }
   }
 
   SwitchIO::~SwitchIO() {
@@ -18,9 +29,9 @@ namespace Victor::Components {
       free(_storage);
       _storage = nullptr;
     }
-    if (input != nullptr) {
-      delete input;
-      input = nullptr;
+    if (_input != nullptr) {
+      delete _input;
+      _input = nullptr;
     }
     if (_output != nullptr) {
       delete _output;
@@ -33,15 +44,21 @@ namespace Victor::Components {
   }
 
   void SwitchIO::loop() {
-    input->loop();
+    if (_input != nullptr) {
+      _input->loop();
+    }
   }
 
   bool SwitchIO::getOutputState() {
-    return _output->lastValue();
+    return _output != nullptr
+      ? _output->lastValue()
+      : false;
   }
 
   void SwitchIO::setOutputState(bool value) {
-    _output->setValue(value);
+    if (_output != nullptr) {
+      _output->setValue(value);
+    }
     if (_output2 != nullptr) {
       _output2->setValue(value);
     }

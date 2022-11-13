@@ -14,10 +14,12 @@ namespace Victor::Components {
     void loop();
     bool getOutputState();
     void setOutputState(bool value);
-    ActionButtonInput* input = nullptr;
+    // events
+    ActionButton::TActionHandler onInputAction = nullptr;
 
    private:
     SwitchStorage* _storage = nullptr;
+    ActionButtonInput* _input = nullptr;
     DigitalOutput* _output = nullptr;
     DigitalOutput* _output2 = nullptr;
   };
