@@ -8,8 +8,10 @@ The foundation of home accessories base on chip ESP8266
 
 ### PlatformIO CLI
 ```bash
-pio run --environment esp01_1m
-pio run --environment esp01_1m --target buildfs
+pio run --environment esp01s
+pio run --environment esp01s --target buildfs
+pio package pack
+pio package publish
 ```
 
 ### PlatformIO Registry
