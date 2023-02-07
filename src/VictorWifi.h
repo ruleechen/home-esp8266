@@ -19,6 +19,7 @@ namespace Victor::Components {
     void enableLightSleep(bool enable);
     bool isLightSleepMode();
     static String modeName(WiFiMode_t mode);
+    static String sleepModeName(WiFiSleepType_t mode);
     void join(const String& ssid, const String& pswd = emptyString, int32_t channel = 0, uint8_t* bssid = nullptr);
     bool isConnected() const;
     bool isMDNSRunning() const;

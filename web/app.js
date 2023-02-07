@@ -592,6 +592,8 @@ const WifiView = (() => {
                 ],
                 ["MDNS", d.mdns ? "Running" : "-"],
                 ["Mode", d.mode],
+                ["Sleep Mode", d.sleepMode],
+                ["(DTIM) Listen Interval", d.listenInterval],
                 ["Joined", d.joined ? `${d.joined} (${100 + d.rssi}%)` : "-"],
                 [
                   "STA IP",

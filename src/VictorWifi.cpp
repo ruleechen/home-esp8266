@@ -67,6 +67,8 @@ namespace Victor::Components {
     } else {
       WiFi.setSleepMode(WIFI_MODEM_SLEEP);
     }
+    const auto sleepMode = WiFi.getSleepMode();
+    _log().section(F("sleepMode"), sleepModeName(sleepMode));
   }
 
   bool VictorWifi::isLightSleepMode() {
@@ -84,6 +86,18 @@ namespace Victor::Components {
       return F("AP+STA");
     } else if (mode == WIFI_OFF) {
       return F("OFF");
+    } else {
+      return F("Unknown");
+    }
+  }
+
+  String VictorWifi::sleepModeName(WiFiSleepType_t mode) {
+    if (mode == WIFI_LIGHT_SLEEP) {
+      return F("Light");
+    } else if (mode == WIFI_MODEM_SLEEP) {
+      return F("Modem");
+    } else if (mode == WIFI_NONE_SLEEP) {
+      return F("None");
     } else {
       return F("Unknown");
     }

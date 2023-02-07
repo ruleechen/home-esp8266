@@ -303,6 +303,7 @@ namespace Victor::Components {
     _dispatchRequestStart();
     // wifi
     const auto mode = WiFi.getMode();
+    const auto sleepMode = WiFi.getSleepMode();
     // station
     const auto staMacAddress = WiFi.macAddress();
     const auto isStaEnabled = ((mode & WIFI_STA) != 0);
@@ -329,6 +330,8 @@ namespace Victor::Components {
     res[F("hostName")] = victorWifi.getHostName();
     res[F("mdns")] = victorWifi.isMDNSRunning();
     res[F("mode")] = victorWifi.modeName(mode);
+    res[F("sleepMode")] = victorWifi.sleepModeName(sleepMode);
+    res[F("listenInterval")] = WiFi.getListenInterval();
     res[F("joined")] = WiFi.SSID();
     res[F("rssi")] = WiFi.RSSI();
     res[F("staAddress")] = staAddress;
