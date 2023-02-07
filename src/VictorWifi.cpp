@@ -62,7 +62,8 @@ namespace Victor::Components {
   void VictorWifi::enableLightSleep(bool enable) {
     _lightSleepEnabled = enable;
     if (enable) {
-      WiFi.setSleepMode(WIFI_LIGHT_SLEEP);
+      const auto setting = _storage->load();
+      WiFi.setSleepMode(WIFI_LIGHT_SLEEP, setting->dtimMultiplier);
     } else {
       WiFi.setSleepMode(WIFI_MODEM_SLEEP);
     }
