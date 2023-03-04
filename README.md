@@ -1,3 +1,6 @@
+# NOTICE
+This project has been migrated to https://github.com/ruleechen/home-smart.git
+
 # Home ESP8266
 The foundation of home accessories base on chip ESP8266
 
